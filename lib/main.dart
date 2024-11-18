@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'ui/screens/login.dart';
 import 'ui/screens/welcome.dart';
 import 'ui/screens/christmas/menu.dart';
+import 'ui/screens/christmas/sync_off.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         // '/': (context) => LoginPage(),
-        '/': (context) => MenuScreen(),
+        '/': (context) => SyncScreen(),
       },
     );
   }
