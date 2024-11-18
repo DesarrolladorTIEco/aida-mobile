@@ -50,9 +50,6 @@ class _SyncScreenState extends State<SyncScreen> {
               children: [
                 // Card Grande (60% ancho) con la misma altura que los botones
 
-
-
-
                 Container(
                   height: 115, // Altura del Card (más alta que antes)
                   width: MediaQuery.of(context).size.width * 0.6, // 60% ancho
@@ -119,13 +116,6 @@ class _SyncScreenState extends State<SyncScreen> {
                     ),
                   ),
                 ),
-
-
-
-
-
-
-
 
 
                 // Primer botón con ícono de nube (cloud sync) y margin-right
