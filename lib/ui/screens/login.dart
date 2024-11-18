@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,16 +16,14 @@ class LoginPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Logo en el top
                 Container(
-                  margin: EdgeInsets.only(bottom: 40),
+                  margin: const EdgeInsets.only(bottom: 40),
                   child: Image.asset(
                     'lib/assets/ecosac.png',
                     height: 120,
                   ),
                 ),
 
-                // Título: Iniciar Sesión
                 Text(
                   'Iniciar Sesión',
                   style: GoogleFonts.raleway(
@@ -32,9 +32,8 @@ class LoginPage extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
 
-                // Campo de Usuario con estilo Raleway
                 TextField(
                   decoration: InputDecoration(
                     labelText: 'Usuario',
@@ -46,16 +45,15 @@ class LoginPage extends StatelessWidget {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    prefixIcon: Icon(Icons.person),
+                    prefixIcon: const Icon(Icons.person),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.amber, width: 2.0),
+                      borderSide: const BorderSide(color: Colors.amber, width: 2.0),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-                // Campo de Contraseña con estilo Raleway
                 TextField(
                   obscureText: true,
                   decoration: InputDecoration(
@@ -68,14 +66,14 @@ class LoginPage extends StatelessWidget {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    prefixIcon: Icon(Icons.lock),
+                    prefixIcon: const Icon(Icons.lock),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.amber, width: 1.0),
+                      borderSide: const BorderSide(color: Colors.amber, width: 1.0),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 // Botón de Ingresar
                 ElevatedButton(
@@ -83,7 +81,7 @@ class LoginPage extends StatelessWidget {
                     // Lógica para iniciar sesión
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 100, vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -98,7 +96,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 // Olvido contraseña y Cambiar contraseña
                 Row(
