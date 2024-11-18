@@ -41,63 +41,76 @@ class _SyncScreenState extends State<SyncScreen> {
             ),
           ),
           const SizedBox(height: 20),
+
           // Layout con Row para los Cards y botones
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                // Card Grande (70% ancho)
+                // Card Grande (60% ancho) con la misma altura que los botones
                 Container(
-                  height: 70, // Altura del Card
-                  width: MediaQuery.of(context).size.width * 0.7, // 70% ancho
+                  height: 162, // Altura del Card (más alta que antes)
+                  width: MediaQuery.of(context).size.width * 0.6, // 60% ancho
                   child: Card(
-                    color: Colors.blue.shade100,
-                    elevation: 4,
+                    color: Colors.white70,
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15), // Menos redondeo en el borde
+                    ),
                     child: const Center(child: Text("Card Grande")),
                   ),
                 ),
-                // Espacio entre el Card grande y los botones pequeños
-                const SizedBox(width: 10),
-                // Columna para los dos botones pequeños
-                Column(
-                  children: [
-                    // Primer botón pequeño (15% ancho)
-                    Container(
-                      height: 70, // Altura del botón
-                      width: MediaQuery.of(context).size.width * 0.15, // 15% ancho
-                      margin: const EdgeInsets.only(bottom: 10), // Margen entre los botones
-                      child: ElevatedButton(
-                        onPressed: () {
-                          print("Botón 1 presionado");
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white, backgroundColor: Colors.amber.shade800, // Color del texto
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8), // Borde del botón
-                          ),
-                        ),
-                        child: const Text("Botón 1"),
+                // Primer botón con ícono de nube (cloud sync) y margin-right
+                Container(
+                  height: 150, // Altura del botón (igual a la altura del Card)
+                  width: MediaQuery.of(context).size.width * 0.15, // 15% ancho
+                  margin: const EdgeInsets.only(right: 4.0), // Espacio entre los botones
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print("Botón 1 presionado");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      foregroundColor: Colors.black54,
+                      backgroundColor: Colors.white70, // Color del texto
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // Sin borde redondeado
+                      ),
+                      elevation: 2, // Elevación para sombra
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.cloud_sync,
+                        size: 40, // Tamaño del ícono
                       ),
                     ),
-                    // Segundo botón pequeño (15% ancho)
-                    Container(
-                      height: 70, // Altura del botón
-                      width: MediaQuery.of(context).size.width * 0.15, // 15% ancho
-                      child: ElevatedButton(
-                        onPressed: () {
-                          print("Botón 2 presionado");
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.white, backgroundColor: Colors.green.shade800, // Color del texto
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8), // Borde del botón
-                          ),
-                        ),
-                        child: const Text("Botón 2"),
+                  ),
+                ),
+                // Segundo botón con ícono de editar
+                Container(
+                  height: 150, // Altura del botón (igual a la altura del Card)
+                  width: MediaQuery.of(context).size.width * 0.15, // 15% ancho
+                  child: ElevatedButton(
+                    onPressed: () {
+                      print("Botón 2 presionado");
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      foregroundColor: Colors.black54,
+                      backgroundColor: Colors.white70, // Color del texto
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // Sin borde redondeado
+                      ),
+                      elevation: 2, // Elevación para sombra
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.edit,
+                        size: 40, // Tamaño del ícono
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
