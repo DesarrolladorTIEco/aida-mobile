@@ -8,7 +8,7 @@ class TopNavBarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.amber.shade800,
+      backgroundColor: Colors.green,
       actions: [
         // Aquí estamos usando un Row para distribuir los íconos
         Expanded(
@@ -57,7 +57,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      backgroundColor: Colors.amber.shade800,
+      backgroundColor: Colors.red.shade800,
       currentIndex: _selectedIndex,
       onTap: _onItemTapped,
       type: BottomNavigationBarType.fixed,
@@ -80,7 +80,7 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
         ),
       ],
       selectedLabelStyle: GoogleFonts.raleway(fontSize: 12, fontWeight: FontWeight.w600),
-      selectedItemColor: Colors.black54,
+      selectedItemColor: Colors.white70,
       unselectedLabelStyle: GoogleFonts.raleway(fontSize: 12, fontWeight: FontWeight.w500),
       unselectedItemColor: Colors.white,
     );

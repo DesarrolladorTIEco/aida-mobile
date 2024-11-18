@@ -10,16 +10,15 @@ class ChageScreen extends StatefulWidget {
 }
 
 class _ChageScreenState extends State<ChageScreen> {
-  // Lista de nombres
-  final List<String> _names = [
-    "Joys Navarro Adanaque",
-    "Jhon Soto Navarro",
-    "Jackson Alfaro Correa",
-    "Marlon Chira Correa",
-    "María Pérez Gonzales",
-    "Marco Soto Gonzales",
-    "Jackson Adanaque Pérez",
-    "Carlos Ramírez Salas"
+  // Lista de objetos que contienen nombres y DNIs
+  final List<Map<String, String>> _people = [
+    {"name": "Joys Navarro Adanaque", "dni": "12345678"},
+    {"name": "Jhon Soto Navarro", "dni": "23456789"},
+    {"name": "Jackson Alfaro Correa", "dni": "34567890"},
+    {"name": "Marlon Chira Correa", "dni": "45678901"},
+    {"name": "María Pérez Gonzales", "dni": "56789012"},
+    {"name": "Marco Soto Gonzales", "dni": "67890123"},
+    {"name": "Carlos Ramírez Salas", "dni": "78901234"},
   ];
 
   DateTime? _selectedDate;
@@ -51,7 +50,7 @@ class _ChageScreenState extends State<ChageScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Reporte de Canasta entregas",
+              "Reporte de Canasta entregas por Responsable",
               style: GoogleFonts.raleway(
                 fontSize: 16,
                 letterSpacing: 0.22,
@@ -91,7 +90,7 @@ class _ChageScreenState extends State<ChageScreen> {
             // TextField para escanear código QR
             TextField(
               decoration: InputDecoration(
-                labelText: "Escanear código",
+                labelText: "Buscar por DNI",
                 labelStyle: GoogleFonts.raleway(fontSize: 14, fontWeight: FontWeight.w600),
                 prefixIcon: const Icon(Icons.qr_code_scanner),
                 prefixIconConstraints: const BoxConstraints(
@@ -106,7 +105,7 @@ class _ChageScreenState extends State<ChageScreen> {
             const SizedBox(height: 20),
 
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // Alineación a la izquierda
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Entregados: 40",
@@ -116,7 +115,7 @@ class _ChageScreenState extends State<ChageScreen> {
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 8), // Espacio entre las dos líneas
+                const SizedBox(height: 8),
                 Text(
                   "Saldo: 20",
                   style: GoogleFonts.raleway(
@@ -132,8 +131,8 @@ class _ChageScreenState extends State<ChageScreen> {
 
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.only(top: 0), // Opcional para ajustar el espaciado
-                itemCount: _names.length,
+                padding: const EdgeInsets.only(top: 0),
+                itemCount: _people.length,
                 itemBuilder: (context, index) {
                   return Card(
                     elevation: 2,
@@ -141,10 +140,18 @@ class _ChageScreenState extends State<ChageScreen> {
                     child: ListTile(
                       leading: const Icon(Icons.person, size: 40, color: Colors.grey),
                       title: Text(
-                        _names[index],
+                        _people[index]["name"]!,
                         style: GoogleFonts.raleway(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      trailing: Text(
+                        _people[index]["dni"]!,
+                        style: GoogleFonts.raleway(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
                         ),
                       ),
                     ),
@@ -155,7 +162,7 @@ class _ChageScreenState extends State<ChageScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBarScreen(), // Usando BottomNavBarScreen
+      bottomNavigationBar: const BottomNavBarScreen(),
     );
   }
 }

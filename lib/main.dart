@@ -5,6 +5,7 @@ import 'ui/screens/christmas/menu.dart';
 import 'ui/screens/christmas/sync_off.dart';
 import 'ui/screens/christmas/xmas_log.dart';
 import 'ui/screens/christmas/charge_log.dart';
+import 'ui/screens/christmas/worker_log.dart';
 
 void main() => runApp(MyApp());
 
