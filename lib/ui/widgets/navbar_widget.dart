@@ -31,7 +31,7 @@ class TopNavBarScreen extends StatelessWidget {
         const SizedBox(width: 20),
         const Padding(
           padding: EdgeInsets.only(right: 20),
-          child: Icon(Icons.settings),
+          child: Icon(Icons.more_vert),
         ),
       ],
     );}
