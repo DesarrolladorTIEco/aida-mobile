@@ -40,7 +40,7 @@ class _SyncScreenState extends State<SyncScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
 
           // Layout con Row para los Cards y botones
           Padding(
@@ -49,8 +49,12 @@ class _SyncScreenState extends State<SyncScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 // Card Grande (60% ancho) con la misma altura que los botones
+
+
+
+
                 Container(
-                  height: 162, // Altura del Card (más alta que antes)
+                  height: 115, // Altura del Card (más alta que antes)
                   width: MediaQuery.of(context).size.width * 0.6, // 60% ancho
                   child: Card(
                     color: Colors.white70,
@@ -58,12 +62,75 @@ class _SyncScreenState extends State<SyncScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15), // Menos redondeo en el borde
                     ),
-                    child: const Center(child: Text("Card Grande")),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Ícono de documento a la izquierda
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.description, // Ícono de documento
+                                size: 40, // Tamaño del ícono
+                              ),
+                              const SizedBox(width: 8), // Espacio entre el ícono y el texto
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Responsable:",
+                                    style: GoogleFonts.raleway(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Joys Navarro Adanaque",
+                                    style: GoogleFonts.raleway(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12), // Espacio vertical entre el nombre y la fecha
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.calendar_today, // Ícono de fecha
+                                size: 20, // Tamaño del ícono
+                              ),
+                              const SizedBox(width: 8), // Espacio entre el ícono y la fecha
+                              Text(
+                                "18/11/2024", // Fecha formateada
+                                style: GoogleFonts.raleway(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
+
+
+
+
+
+
+
+
+
                 // Primer botón con ícono de nube (cloud sync) y margin-right
                 Container(
-                  height: 150, // Altura del botón (igual a la altura del Card)
+                  height: 103, // Altura del botón (igual a la altura del Card)
                   width: MediaQuery.of(context).size.width * 0.15, // 15% ancho
                   margin: const EdgeInsets.only(right: 4.0), // Espacio entre los botones
                   child: ElevatedButton(
@@ -83,13 +150,14 @@ class _SyncScreenState extends State<SyncScreen> {
                       child: Icon(
                         Icons.cloud_sync,
                         size: 40, // Tamaño del ícono
+                        color: Colors.black,
                       ),
                     ),
                   ),
                 ),
                 // Segundo botón con ícono de editar
                 Container(
-                  height: 150, // Altura del botón (igual a la altura del Card)
+                  height: 103, // Altura del botón (igual a la altura del Card)
                   width: MediaQuery.of(context).size.width * 0.15, // 15% ancho
                   child: ElevatedButton(
                     onPressed: () {
@@ -107,7 +175,8 @@ class _SyncScreenState extends State<SyncScreen> {
                     child: Center(
                       child: Icon(
                         Icons.edit,
-                        size: 40, // Tamaño del ícono
+                        size: 40,
+                        color: Colors.black,
                       ),
                     ),
                   ),
