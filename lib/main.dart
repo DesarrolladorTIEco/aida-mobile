@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'ui/screens/login.dart';
-import 'ui/screens/welcome.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,8 +10,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Navegación',
       initialRoute: '/',
       routes: {
-        '/': (context) => Pantalla1(),
-        '/pantalla2': (context) => Pantalla2(),
+        '/': (context) => LoginPage(),
       },
     );
   }
