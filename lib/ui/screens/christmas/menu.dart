@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../widgets/bottom_navigation_widget.dart'; // Asegúrate de importar el archivo BottomNavBarScreen
-import '../../widgets/top_navigation_widget.dart'; // Asegúrate de importar el archivo TopNavBarScreen
+import '../../widgets/navbar_widget.dart'; // Asegúrate de importar correctamente el archivo
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -21,7 +20,7 @@ class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Agregar Top Navigation Bar
+      // Top Navigation Bar
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60.0), // Ajusta la altura del AppBar
         child: const TopNavBarScreen(), // Usando TopNavBarScreen
@@ -67,9 +66,8 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
         ],
       ),
-      // Agregar Bottom Navigation Bar
-      bottomNavigationBar: BottomNavBarScreen(), // Usando BottomNavBarScreen
-      backgroundColor: Colors.amber.shade50, // Fondo general de la pantalla
+      // Bottom Navigation Bar
+      bottomNavigationBar: const BottomNavBarScreen(), // Usando BottomNavBarScreen
     );
   }
 }
