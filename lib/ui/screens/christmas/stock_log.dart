@@ -2,23 +2,33 @@ import 'package:flutter/material.dart';
 import '../../widgets/navbar_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ChageScreen extends StatefulWidget {
-  const ChageScreen({super.key});
+class StockScreen extends StatefulWidget {
+  const StockScreen({super.key});
 
   @override
-  _ChageScreenState createState() => _ChageScreenState();
+  _StockScreenState createState() => _StockScreenState();
 }
 
-class _ChageScreenState extends State<ChageScreen> {
-  // Lista de objetos que contienen nombres y DNIs
+class _StockScreenState extends State<StockScreen> {
   final List<Map<String, String>> _people = [
-    {"name": "Joys Navarro Adanaque", "dni": "12345678"},
-    {"name": "Jhon Soto Navarro", "dni": "23456789"},
-    {"name": "Jackson Alfaro Correa", "dni": "34567890"},
-    {"name": "Marlon Chira Correa", "dni": "45678901"},
-    {"name": "María Pérez Gonzales", "dni": "56789012"},
-    {"name": "Marco Soto Gonzales", "dni": "67890123"},
-    {"name": "Carlos Ramírez Salas", "dni": "78901234"},
+    {
+      "name": "Joys Navarro Adanaque",
+      "dni": "12345678",
+      "entregadas": "40",
+      "saldo": "35"
+    },
+    {
+      "name": "Jhon Soto Navarro",
+      "dni": "23456789",
+      "entregadas": "77",
+      "saldo": "115"
+    },
+    {
+      "name": "Jackson Alfaro Correa",
+      "dni": "34567890",
+      "entregadas": "124",
+      "saldo": "53"
+    },
   ];
 
   DateTime? _selectedDate;
@@ -50,7 +60,7 @@ class _ChageScreenState extends State<ChageScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Reporte de Canasta entregas por Responsable",
+              "Lista responsable stock",
               style: GoogleFonts.raleway(
                 fontSize: 16,
                 letterSpacing: 0.22,
@@ -87,48 +97,6 @@ class _ChageScreenState extends State<ChageScreen> {
 
             const SizedBox(height: 20),
 
-            // TextField para escanear código QR
-            TextField(
-              decoration: InputDecoration(
-                labelText: "Buscar por DNI",
-                labelStyle: GoogleFonts.raleway(fontSize: 14, fontWeight: FontWeight.w600),
-                prefixIcon: const Icon(Icons.qr_code_scanner),
-                prefixIconConstraints: const BoxConstraints(
-                  minWidth: 40,
-                  minHeight: 40,
-                ),
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(vertical: 22.0, horizontal: 16.0),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Entregados: 40",
-                  style: GoogleFonts.raleway(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "Saldo: 20",
-                  style: GoogleFonts.raleway(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 0),
@@ -138,21 +106,43 @@ class _ChageScreenState extends State<ChageScreen> {
                     elevation: 2,
                     margin: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTile(
-                      leading: const Icon(Icons.person, size: 40, color: Colors.grey),
-                      title: Text(
-                        _people[index]["name"]!,
-                        style: GoogleFonts.raleway(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      trailing: Text(
-                        _people[index]["dni"]!,
-                        style: GoogleFonts.raleway(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey,
-                        ),
+                      leading: const Icon(Icons.person,
+                          size: 40, color: Colors.grey),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _people[index]["name"] as String,
+                            style: GoogleFonts.raleway(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            "DNI: ${_people[index]["dni"]}",
+                            style: GoogleFonts.raleway(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "Entregadas: ${_people[index]["entregadas"]}",
+                            style: GoogleFonts.raleway(
+                              fontSize: 12,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            "Saldo: ${_people[index]["saldo"]}",
+                            style: GoogleFonts.raleway(
+                              fontSize: 12,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );

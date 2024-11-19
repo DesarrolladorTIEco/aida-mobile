@@ -91,14 +91,16 @@ class _ChageScreenState extends State<ChageScreen> {
             TextField(
               decoration: InputDecoration(
                 labelText: "Buscar por DNI",
-                labelStyle: GoogleFonts.raleway(fontSize: 14, fontWeight: FontWeight.w600),
+                labelStyle: GoogleFonts.raleway(
+                    fontSize: 14, fontWeight: FontWeight.w600),
                 prefixIcon: const Icon(Icons.qr_code_scanner),
                 prefixIconConstraints: const BoxConstraints(
                   minWidth: 40,
                   minHeight: 40,
                 ),
                 border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(vertical: 22.0, horizontal: 16.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 22.0, horizontal: 16.0),
               ),
             ),
 
@@ -138,7 +140,8 @@ class _ChageScreenState extends State<ChageScreen> {
                     elevation: 2,
                     margin: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTile(
-                      leading: const Icon(Icons.person, size: 40, color: Colors.grey),
+                      leading: const Icon(Icons.person,
+                          size: 40, color: Colors.grey),
                       title: Text(
                         _people[index]["name"]!,
                         style: GoogleFonts.raleway(

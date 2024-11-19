@@ -47,7 +47,8 @@ class LoginPage extends StatelessWidget {
                     ),
                     prefixIcon: const Icon(Icons.person),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.red, width: 2.0),
+                      borderSide:
+                          const BorderSide(color: Colors.red, width: 2.0),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -68,7 +69,8 @@ class LoginPage extends StatelessWidget {
                     ),
                     prefixIcon: const Icon(Icons.lock),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.red, width: 1.0),
+                      borderSide:
+                          const BorderSide(color: Colors.red, width: 1.0),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -81,7 +83,8 @@ class LoginPage extends StatelessWidget {
                     // Lógica para iniciar sesión
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 100, vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
