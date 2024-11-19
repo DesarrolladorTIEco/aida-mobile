@@ -17,10 +17,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Navegación',
-      initialRoute: '/',
+      initialRoute: '/login',
       routes: {
-        // '/': (context) => LoginPage(),
-        '/': (context) => LoginPage(),
+        '/login': (context) => const LoginPage(),
+        '/welcome': (context) {
+          final args = ModalRoute.of(context)?.settings.arguments as String;
+          return WelcomePage(fullName: args);
+        },
       },
     );
   }

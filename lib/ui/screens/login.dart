@@ -1,8 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'welcome.dart'; // Importa el archivo welcome.dart
+import '../../services/auth_service.dart'; // Asegúrate de importar tu AuthService
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _userController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final AuthService _authService = AuthService(); // Instancia AuthService
+
+  void _login() async {
+    final user = _userController.text;
+    final password = _passwordController.text;
+
+    try {
+      Map<String, dynamic> data = {"user": user, "password": password};
+
+      final response = await _authService.authenticate(data);
+      if (response['message'] == 'Autenticación exitosa') {
+        // Extrae el nombre completo del usuario
+        final fullName = response['user']['UsrFullName'];
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => WelcomePage(fullName: fullName), // Pasa el nombre
+          ),
+        );
+      } else {
+        throw Exception('Credenciales incorrectas');
+      }
+    } catch (e) {
+      // Maneja errores (incluyendo excepciones del servidor)
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Error"),
+          content: const Text("Credenciales incorrectas"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +72,6 @@ class LoginPage extends StatelessWidget {
                     height: 120,
                   ),
                 ),
-
                 Text(
                   'Iniciar Sesión',
                   style: GoogleFonts.raleway(
@@ -33,8 +81,8 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20),
-
                 TextField(
+                  controller: _userController,
                   decoration: InputDecoration(
                     labelText: 'Usuario',
                     labelStyle: GoogleFonts.raleway(
@@ -54,8 +102,8 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-
                 TextField(
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Contraseña',
@@ -76,12 +124,8 @@ class LoginPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // Botón de Ingresar
                 ElevatedButton(
-                  onPressed: () {
-                    // Lógica para iniciar sesión
-                  },
+                  onPressed: _login, // Llama a la función _login
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 100, vertical: 16),
@@ -98,38 +142,6 @@ class LoginPage extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-
-                // Olvido contraseña y Cambiar contraseña
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        // Lógica para recuperar contraseña
-                      },
-                      child: Text(
-                        '¿Olvidaste tu contraseña?',
-                        style: GoogleFonts.raleway(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // Lógica para cambiar contraseña
-                      },
-                      child: Text(
-                        'Cambiar contraseña',
-                        style: GoogleFonts.raleway(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
+  const WelcomePage({super.key, required this.fullName});
+  final String fullName; // Recibe el nombre completo
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class WelcomePage extends StatelessWidget {
                     const SizedBox(width: 16),
                     // Nombre del usuario
                     Text(
-                      'Johny Soto Navarro',
+                        fullName,
                       style: GoogleFonts.raleway(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -55,11 +56,11 @@ class WelcomePage extends StatelessWidget {
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,  // Dos columnas
+                  crossAxisCount: 2, // Dos columnas
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
-                itemCount: 6,  // Seis elementos de menú
+                itemCount: 6, // Seis elementos de menú
                 itemBuilder: (context, index) {
                   // Lista de elementos de menú
                   final menuItems = ['Inventario', 'Seguridad', 'Entrega Navideña', 'Packing', 'Tareo', 'PCP'];
@@ -85,7 +86,7 @@ class WelcomePage extends StatelessWidget {
                           Icon(
                             menuIcons[index],
                             size: 40,
-                            color: Colors.amber,
+                            color: Colors.amber.shade800,
                           ),
                           const SizedBox(height: 10),
                           Text(
@@ -103,11 +104,34 @@ class WelcomePage extends StatelessWidget {
                 },
               ),
             ),
+            // Botón de Cerrar Sesión
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  // Navegar al Login
+                  Navigator.pushReplacementNamed(context, '/login'); // Asegúrate de tener la ruta configurada
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  backgroundColor: Colors.red.shade600,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(Icons.logout, color: Colors.white),
+                label: Text(
+                  'Cerrar Sesión',
+                  style: GoogleFonts.raleway(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-
