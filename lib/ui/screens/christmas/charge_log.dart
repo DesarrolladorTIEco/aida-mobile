@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../../widgets/navbar_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ChageScreen extends StatefulWidget {
-  const ChageScreen({super.key});
+class ChargeScreen extends StatefulWidget {
+  const ChargeScreen({super.key});
 
   @override
-  _ChageScreenState createState() => _ChageScreenState();
+  _ChargeScreenState createState() => _ChargeScreenState();
 }
 
-class _ChageScreenState extends State<ChageScreen> {
+class _ChargeScreenState extends State<ChargeScreen> {
   // Lista de objetos que contienen nombres y DNIs
   final List<Map<String, String>> _people = [
     {"name": "Joys Navarro Adanaque", "dni": "12345678"},

@@ -15,11 +15,9 @@ class TopNavBarScreen extends StatelessWidget {
           child: Row(
             children: const [
               const Padding(
-                padding: EdgeInsets.only(right: 20, left: 15), // Asegura que haya espacio en el extremo derecho
-                child: Icon(Icons.menu),
+                padding: EdgeInsets.only(right: 20), // Asegura que haya espacio en el extremo derecho
               ),
               // Los íconos a la izquierda (pero con espacio entre ellos)
-              Icon(Icons.arrow_back),
             ],
           ),
         ),

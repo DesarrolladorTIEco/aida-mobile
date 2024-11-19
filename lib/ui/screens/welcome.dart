@@ -73,31 +73,40 @@ class WelcomePage extends StatelessWidget {
                     Icons.group, // Tareo (Usuarios)
                     Icons.grain, // PCP (Uva)
                   ];
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 5,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Icon(
-                            menuIcons[index],
-                            size: 40,
-                            color: Colors.amber.shade800,
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            menuItems[index],
-                            style: GoogleFonts.raleway(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
+
+                  return GestureDetector(
+                    onTap: () {
+                      if (menuItems[index] == 'Entrega Navideña') {
+                        // Redirigir a menu.dart
+                        Navigator.pushNamed(context, '/menu');
+                      }
+                    },
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 5,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              menuIcons[index],
+                              size: 40,
+                              color: Colors.amber.shade800,
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 10),
+                            Text(
+                              menuItems[index],
+                              style: GoogleFonts.raleway(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );

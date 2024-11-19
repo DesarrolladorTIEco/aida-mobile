@@ -24,8 +24,7 @@ class _LoginPageState extends State<LoginPage> {
 
       final response = await _authService.authenticate(data);
       if (response['message'] == 'Autenticación exitosa') {
-        // Extrae el nombre completo del usuario
-        final fullName = response['user']['UsrFullName'];
+        final fullName = response['session_data']['user']['UsrFullName'];
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -36,7 +35,6 @@ class _LoginPageState extends State<LoginPage> {
         throw Exception('Credenciales incorrectas');
       }
     } catch (e) {
-      // Maneja errores (incluyendo excepciones del servidor)
       showDialog(
         context: context,
         builder: (context) => AlertDialog(

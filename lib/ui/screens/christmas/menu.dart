@@ -66,14 +66,14 @@ class _MenuScreenState extends State<MenuScreen> {
                 width: MediaQuery.of(context).size.width / 1.5, // Ajusta el tamaño del botón
                 child: ElevatedButton(
                   onPressed: () {
-                    print("Visualizando entregas");
+                    Navigator.pushNamed(context, '/xmas-menu');
                   },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size(double.infinity, 50),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    backgroundColor: Colors.amber.shade800,
+                    backgroundColor: Colors.red.shade600,
                     foregroundColor: Colors.white,
                   ),
                   child: Text(

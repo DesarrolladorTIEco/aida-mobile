@@ -42,7 +42,8 @@ class _XMasMenuState extends State<XMasMenu> {
                   margin: const EdgeInsets.only(bottom: 8.0), // Espacio entre botones
                   child: ElevatedButton(
                     onPressed: () {
-                      print("Reporte por Responsables presionado");
+                      Navigator.pushNamed(context, '/charge-xmas');
+
                     },
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.zero,
@@ -73,7 +74,8 @@ class _XMasMenuState extends State<XMasMenu> {
                   margin: const EdgeInsets.only(bottom: 8.0), // Espacio entre botones
                   child: ElevatedButton(
                     onPressed: () {
-                      print("Reporte por Trabajador presionado");
+                      Navigator.pushNamed(context, '/worker-xmas');
+
                     },
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.zero,
@@ -103,7 +105,7 @@ class _XMasMenuState extends State<XMasMenu> {
                   width: MediaQuery.of(context).size.width * 0.92, // 92% ancho
                   child: ElevatedButton(
                     onPressed: () {
-                      print("Reporte de Stock presionado");
+                      Navigator.pushNamed(context, '/stock-xmas');
                     },
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.zero,

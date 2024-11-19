@@ -24,6 +24,11 @@ class MyApp extends StatelessWidget {
           final args = ModalRoute.of(context)?.settings.arguments as String;
           return WelcomePage(fullName: args);
         },
+        '/menu': (context) => const MenuScreen(), // Ruta para entrega navideña
+        '/xmas-menu': (context) => const XMasMenu(),
+        '/charge-xmas': (context) => const ChargeScreen(),
+        '/worker-xmas': (context) => const WorkerScreen(),
+        '/stock-xmas': (context) => const StockScreen(),
       },
     );
   }
