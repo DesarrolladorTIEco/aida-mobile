@@ -67,13 +67,13 @@ class WelcomePage extends StatelessWidget {
                 itemCount: 6, // Seis elementos de menú
                 itemBuilder: (context, index) {
                   // Lista de elementos de menú
-                  final menuItems = ['Inventario', 'Seguridad', 'Entrega Navideña', 'Packing', 'Tareo', 'PCP'];
+                  final menuItems = ['Inventario', 'Seguridad', 'Entrega Navideña', 'Horometro', 'Tareo', 'PCP'];
                   // Lista de iconos correspondientes
                   final menuIcons = [
                     Icons.archive, // Inventario (Caja)
                     Icons.security, // Seguridad (Tuerca o algo relacionado)
                     Icons.card_giftcard, // Entrega Navideña (Regalo)
-                    Icons.bento, // Packing (Caja)
+                    Icons.lock_clock, // Horometro (Caja)
                     Icons.group, // Tareo (Usuarios)
                     Icons.grain, // PCP (Uva)
                   ];
