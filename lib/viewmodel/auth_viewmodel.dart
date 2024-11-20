@@ -20,7 +20,8 @@ class AuthViewModel extends ChangeNotifier {
 
       if (response['message'] == 'Autenticación exitosa') {
         // Guardamos el nombre completo en el provider
-        fullName = response['session_data']['user']['UsrFullName'] ?? 'Nombre no disponible';
+        fullName = response['session_data']['user']['UsrFullName'] ??
+            'Nombre no disponible';
         notifyListeners();
         return UserModel.fromJson(response['session_data']['user']);
       } else {

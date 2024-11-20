@@ -67,13 +67,13 @@ class WelcomePage extends StatelessWidget {
                 itemCount: 6, // Seis elementos de menú
                 itemBuilder: (context, index) {
                   // Lista de elementos de menú
-                  final menuItems = ['Inventario', 'Seguridad', 'Entrega Navideña', 'Horometro', 'Tareo', 'PCP'];
+                  final menuItems = ['Inventario', 'Seguridad', 'Entrega Navideña', 'Transportista', 'Tareo', 'PCP'];
                   // Lista de iconos correspondientes
                   final menuIcons = [
                     Icons.archive, // Inventario (Caja)
                     Icons.security, // Seguridad (Tuerca o algo relacionado)
                     Icons.card_giftcard, // Entrega Navideña (Regalo)
-                    Icons.lock_clock, // Horometro (Caja)
+                    Icons.lock_clock, // Transportista (Caja)
                     Icons.group, // Tareo (Usuarios)
                     Icons.grain, // PCP (Uva)
                   ];
@@ -81,6 +81,10 @@ class WelcomePage extends StatelessWidget {
                   return GestureDetector(
                     onTap: () {
                       if (menuItems[index] == 'Entrega Navideña') {
+                        // Redirigir a menu.dart
+                        Navigator.pushNamed(context, '/menu');
+                      }
+                      if (menuItems[index] == 'Transportista') {
                         // Redirigir a menu.dart
                         Navigator.pushNamed(context, '/menu');
                       }

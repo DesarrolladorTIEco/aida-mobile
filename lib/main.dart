@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'viewmodel/auth_viewmodel.dart';
 import 'ui/screens/login.dart';
 import 'ui/screens/welcome.dart';
+import 'ui/screens/carriers/carrier.dart';
 import 'ui/screens/christmas/menu.dart';
 import 'ui/screens/christmas/stock_log.dart';
 import 'ui/screens/christmas/charge_log.dart';
@@ -29,11 +30,16 @@ class MyApp extends StatelessWidget {
         routes: {
           '/login': (context) => const LoginPage(),
           '/welcome': (context) => const WelcomePage(), // Asegúrate de tener esta ruta
+
+          //christmas
           '/menu' :(context) => const MenuScreen(),
           '/xmas-menu' :(context) => const XMasMenu(),
           '/charge-xmas' :(context) => const ChargeScreen(),
           '/worker-xmas' :(context) => const WorkerScreen(),
           '/stock-xmas' :(context) => const StockScreen(),
+
+          //carrier
+          '/carrier' : (context) => const CarrierScreen()
         },
       ),
     );
