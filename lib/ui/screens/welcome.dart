@@ -86,7 +86,7 @@ class WelcomePage extends StatelessWidget {
                       }
                       if (menuItems[index] == 'Transportista') {
                         // Redirigir a menu.dart
-                        Navigator.pushNamed(context, '/menu');
+                        Navigator.pushNamed(context, '/carrier');
                       }
                     },
                     child: Card(

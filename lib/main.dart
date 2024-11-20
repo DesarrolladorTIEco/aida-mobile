@@ -1,3 +1,4 @@
+import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodel/auth_viewmodel.dart';
@@ -19,8 +20,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AuthViewModel(),  // Proveemos el AuthViewModel
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthViewModel()),
+        ChangeNotifierProvider(create: (context) => CarrierViewModel()), // Agrega el CarrierViewModel aquí
+      ],
       child: MaterialApp(
         title: 'Mi Aplicación',
         theme: ThemeData(
@@ -29,17 +33,17 @@ class MyApp extends StatelessWidget {
         initialRoute: '/login',
         routes: {
           '/login': (context) => const LoginPage(),
-          '/welcome': (context) => const WelcomePage(), // Asegúrate de tener esta ruta
+          '/welcome': (context) => const WelcomePage(),
 
           //christmas
-          '/menu' :(context) => const MenuScreen(),
-          '/xmas-menu' :(context) => const XMasMenu(),
-          '/charge-xmas' :(context) => const ChargeScreen(),
-          '/worker-xmas' :(context) => const WorkerScreen(),
-          '/stock-xmas' :(context) => const StockScreen(),
+          '/menu': (context) => const MenuScreen(),
+          '/xmas-menu': (context) => const XMasMenu(),
+          '/charge-xmas': (context) => const ChargeScreen(),
+          '/worker-xmas': (context) => const WorkerScreen(),
+          '/stock-xmas': (context) => const StockScreen(),
 
           //carrier
-          '/carrier' : (context) => const CarrierScreen()
+          '/carrier': (context) => CarrierScreen(),
         },
       ),
     );

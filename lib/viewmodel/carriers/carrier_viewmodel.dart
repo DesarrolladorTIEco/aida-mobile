@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:aida/services/carriers/carrier_service.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/carriers/carrier_model.dart';
@@ -18,37 +20,46 @@ class CarrierViewModel extends ChangeNotifier {
       String route,
       String gate,
       String type,
-      DateTime fecha,
+      String fecha,
       num user) async {
     isLoading = true;
     notifyListeners();
 
     try {
       Map<String, dynamic> data = {
-        "licencia": licencia,
-        "occupants": occupants,
-        "dni": dni,
-        "drive": driver,
-        "route": route,
-        "gate": gate,
-        "type": type,
-        "fecha": fecha,
-        "user": user
+        "MbptLicensePlateNumber": licencia,
+        "MbptOccupantsNumber": occupants,
+        "MbptDniDriver": dni,
+        "MbptDriver": driver,
+        "MbptRoute": route,
+        "MbptGate": gate,
+        "MbptType": type,
+        "MbptDate": fecha,
+        "UsrCreate": user
       };
 
       final response = await _carrierService.insert(data);
 
-      if (response['original']['message'] ==
-          "Registro insertado exitosamente") {
-        notifyListeners();
-        return CarrierModel.fromJson(response['original']['message']);
+      if (response != null) {
+        print("Response received: ${jsonEncode(response)}");
+
+        if (response['original'] != null &&
+            response['original']['message'] == "Registro insertado exitosamente") {
+          notifyListeners();
+          return CarrierModel.fromJson(response['original']);
+        } else {
+          errorMessage = "Hubo un error: ${response['original']['message'] ?? 'Error desconocido'}";
+          notifyListeners();
+          return null;
+        }
       } else {
-        errorMessage = "Hubo un error";
+        errorMessage = "No se recibió respuesta del servidor.";
         notifyListeners();
         return null;
       }
     } catch (e) {
       errorMessage = 'Hubo un error: ${e.toString()}';
+      print("Error: ${e.toString()}");
       notifyListeners();
       return null;
     } finally {
@@ -56,4 +67,5 @@ class CarrierViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
 }

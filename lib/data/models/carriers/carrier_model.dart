@@ -6,7 +6,7 @@ class CarrierModel {
   final String route;
   final String gate;
   final String type;
-  final DateTime qrDateReader;
+  final String qrDateReader;
   final num user;
 
   CarrierModel(
@@ -32,7 +32,7 @@ class CarrierModel {
       occupantNumber: json['MbptOccupantsNumber'] ?? 0,
       user: json['UsrCreate'] ?? 0, // user
       type: json['MbptType'] ?? '0', // Ensure it’s the correct type
-      qrDateReader: json['MbptDate'] ?? '', // qrDateReader
+      qrDateReader: json['MbptDate'], // Asegúrate de que el campo es válido
     );
   }
 }
