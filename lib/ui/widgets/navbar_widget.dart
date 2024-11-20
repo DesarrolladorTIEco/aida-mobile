@@ -15,7 +15,9 @@ class TopNavBarScreen extends StatelessWidget {
           child: Row(
             children: const [
               const Padding(
-                padding: EdgeInsets.only(right: 20), // Asegura que haya espacio en el extremo derecho
+                padding: EdgeInsets.only(
+                    right:
+                        20), // Asegura que haya espacio en el extremo derecho
               ),
               // Los íconos a la izquierda (pero con espacio entre ellos)
             ],
@@ -23,7 +25,8 @@ class TopNavBarScreen extends StatelessWidget {
         ),
         // Los íconos que permanecen en su lugar
         const Padding(
-          padding: EdgeInsets.only(right: 20), // Asegura que haya espacio en el extremo derecho
+          padding: EdgeInsets.only(right: 20),
+          // Asegura que haya espacio en el extremo derecho
           child: Icon(Icons.notifications),
         ),
         const SizedBox(width: 20),
@@ -32,7 +35,8 @@ class TopNavBarScreen extends StatelessWidget {
           child: Icon(Icons.more_vert),
         ),
       ],
-    );}
+    );
+  }
 }
 
 // Bottom Navigation Bar Widget
@@ -50,6 +54,18 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
     setState(() {
       _selectedIndex = index;
     });
+
+    // Navegación basada en el índice seleccionado
+    switch (index) {
+      case 1:
+        Navigator.pushNamed(context, '/menu');
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/xmas-menu');
+        break;
+      default:
+        break;
+    }
   }
 
   @override

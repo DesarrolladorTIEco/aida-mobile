@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key, required this.fullName});
+  const WelcomePage({Key? key, required this.fullName}) : super(key: key);
   final String fullName; // Recibe el nombre completo
 
   @override

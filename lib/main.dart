@@ -20,10 +20,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginPage(),
-        '/welcome': (context) {
-          final args = ModalRoute.of(context)?.settings.arguments as String;
-          return WelcomePage(fullName: args);
-        },
+        '/welcome': (context) => WelcomePage(fullName: ModalRoute.of(context)!.settings.arguments as String),
         '/menu': (context) => const MenuScreen(), // Ruta para entrega navideña
         '/xmas-menu': (context) => const XMasMenu(),
         '/charge-xmas': (context) => const ChargeScreen(),
