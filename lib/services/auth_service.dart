@@ -4,11 +4,14 @@ import 'service.dart'; // Importa el archivo service.dart
 
 class AuthService {
   final ApiService _apiService = ApiService();
-  final String _resource = "mobile/";
 
+  //login
   Future<Map<String, dynamic>> authenticate(Map<String, dynamic> data) async {
+    // Construye la URL usando la URL base de ApiService
+    final String url = '${_apiService.baseUrl}mobile/login';
+
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:8000/api/mobile/login'),
+      Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
       body: json.encode(data),
     );
@@ -20,4 +23,8 @@ class AuthService {
     }
   }
 
+  //session()
+
+
+  //logout
 }

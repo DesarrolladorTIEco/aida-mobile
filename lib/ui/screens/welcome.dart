@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart'; // Asegúrate de importar Provider
+import '../../viewmodel/auth_viewmodel.dart'; // Importa el AuthViewModel
 
 class WelcomePage extends StatelessWidget {
-  const WelcomePage({Key? key, required this.fullName}) : super(key: key);
-  final String fullName; // Recibe el nombre completo
+  const WelcomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Obtener el fullName desde el Provider
+    final fullName = Provider.of<AuthViewModel>(context).fullName;
+
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(Icons.home, color: Colors.white),
@@ -14,7 +18,7 @@ class WelcomePage extends StatelessWidget {
           'Bienvenido',
           style: GoogleFonts.raleway(color: Colors.white),
         ),
-        backgroundColor: Colors.amber.shade800,
+        backgroundColor: Colors.green.shade600,
       ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
@@ -34,13 +38,13 @@ class WelcomePage extends StatelessWidget {
                     // Logo del usuario
                     CircleAvatar(
                       radius: 30,
-                      backgroundColor: Colors.amber.shade800,
+                      backgroundColor: Colors.green.shade600,
                       child: const Icon(Icons.person, color: Colors.white),
                     ),
                     const SizedBox(width: 16),
                     // Nombre del usuario
                     Text(
-                        fullName,
+                      fullName, // Mostrar el fullName desde el Provider
                       style: GoogleFonts.raleway(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -94,13 +98,13 @@ class WelcomePage extends StatelessWidget {
                             Icon(
                               menuIcons[index],
                               size: 40,
-                              color: Colors.amber.shade800,
+                              color: Colors.green.shade600,
                             ),
                             const SizedBox(height: 10),
                             Text(
                               menuItems[index],
                               style: GoogleFonts.raleway(
-                                fontSize: 18,
+                                fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
