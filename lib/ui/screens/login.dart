@@ -93,8 +93,6 @@ class LoginPage extends StatelessWidget {
                     final user = userController.text;
                     final password = passwordController.text;
 
-                    print("user" + user );
-                    print("password" + password );
                     final userModel = await authViewModel.login(user, password);
 
                     if (userModel != null) {
