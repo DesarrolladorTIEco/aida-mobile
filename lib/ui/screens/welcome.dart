@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart'; // Asegúrate de importar Provider
-import '../../viewmodel/auth_viewmodel.dart'; // Importa el AuthViewModel
+import 'package:provider/provider.dart';
+import '../../viewmodel/auth_viewmodel.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Obtener el fullName desde el Provider
-    final fullName = Provider.of<AuthViewModel>(context).fullName;
+    // Obtener el nombre completo y los módulos desde el AuthViewModel
+    final authViewModel = Provider.of<AuthViewModel>(context);
+    final fullName = authViewModel.fullName;
+    final modules = authViewModel.modules;
 
     return Scaffold(
       appBar: AppBar(
@@ -35,16 +37,14 @@ class WelcomePage extends StatelessWidget {
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   children: [
-                    // Logo del usuario
                     CircleAvatar(
                       radius: 30,
                       backgroundColor: Colors.green.shade600,
                       child: const Icon(Icons.person, color: Colors.white),
                     ),
                     const SizedBox(width: 16),
-                    // Nombre del usuario
                     Text(
-                      fullName, // Mostrar el fullName desde el Provider
+                      fullName,
                       style: GoogleFonts.raleway(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -56,37 +56,45 @@ class WelcomePage extends StatelessWidget {
             ),
             const SizedBox(height: 25),
 
-            // Cuadros anidados
+            // Cuadros anidados dinámicos
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Dos columnas
+                  crossAxisCount: 2,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
-                itemCount: 6, // Seis elementos de menú
+                itemCount: modules.length, // Cantidad de módulos dinámicos
                 itemBuilder: (context, index) {
-                  // Lista de elementos de menú
-                  final menuItems = ['Inventario', 'Seguridad', 'Entrega Navideña', 'Transportista', 'Tareo', 'PCP'];
-                  // Lista de iconos correspondientes
-                  final menuIcons = [
-                    Icons.archive, // Inventario (Caja)
-                    Icons.security, // Seguridad (Tuerca o algo relacionado)
-                    Icons.card_giftcard, // Entrega Navideña (Regalo)
-                    Icons.lock_clock, // Transportista (Caja)
-                    Icons.group, // Tareo (Usuarios)
-                    Icons.grain, // PCP (Uva)
-                  ];
+                  final module = modules[index];
+                  final moduleName = module['Modulo'] ?? 'Sin nombre'; // Obtiene el nombre del módulo
+
+                  // Asignar íconos según el nombre del módulo
+                  final iconsMap = {
+                    'Inventario': Icons.archive,
+                    'Seguridad': Icons.security,
+                    'Entrega de Canastas': Icons.card_giftcard,
+                    'Control de Ingreso y salida de Carros': Icons.directions_car,
+                    'Transporte de Personal': Icons.directions_bus,
+                    'Asistencia': Icons.assignment,
+                    'Tareo': Icons.group,
+                  };
+
+                  final moduleIcon = iconsMap[moduleName] ?? Icons.help; // Icono por defecto si no se encuentra
 
                   return GestureDetector(
                     onTap: () {
-                      if (menuItems[index] == 'Entrega Navideña') {
-                        // Redirigir a menu.dart
+                      // Navegar según el nombre del módulo
+                      if (moduleName == 'Entrega de Canastas') {
                         Navigator.pushNamed(context, '/menu');
-                      }
-                      if (menuItems[index] == 'Transportista') {
-                        // Redirigir a menu.dart
+                      } else if (moduleName == 'Transporte de Personal') {
                         Navigator.pushNamed(context, '/carrier');
+                      } else if (moduleName == 'Control de Ingreso y salida de Carros') {
+                        Navigator.pushNamed(context, '/carControl');
+                      } else if (moduleName == 'Asistencia') {
+                        Navigator.pushNamed(context, '/attendance');
+                      } else if (moduleName == 'Tareo') {
+                        Navigator.pushNamed(context, '/workHours');
                       }
                     },
                     child: Card(
@@ -100,13 +108,14 @@ class WelcomePage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
-                              menuIcons[index],
+                              moduleIcon,
                               size: 40,
                               color: Colors.green.shade600,
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              menuItems[index],
+                              moduleName,
+                              textAlign: TextAlign.center,
                               style: GoogleFonts.raleway(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -121,12 +130,12 @@ class WelcomePage extends StatelessWidget {
                 },
               ),
             ),
+
             // Botón de Cerrar Sesión
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // Navegar al Login
-                  Navigator.pushReplacementNamed(context, '/login'); // Asegúrate de tener la ruta configurada
+                  Navigator.pushReplacementNamed(context, '/login');
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
