@@ -11,7 +11,6 @@ class CarrierViewModel extends ChangeNotifier {
   bool isLoading = false;
 
   // Metodo para manejar el insert a transportista
-
   Future<CarrierModel?> insert(
       String licencia,
       num occupants,
@@ -43,12 +42,20 @@ class CarrierViewModel extends ChangeNotifier {
       if (response != null) {
         print("Response received: ${jsonEncode(response)}");
 
-        if (response['original'] != null &&
-            response['original']['message'] == "Registro insertado exitosamente") {
+        if (response['original']['success'] == true){
+          print("fdsafdsafdsafdsafdsa");
+
+          final carrier = CarrierModel.fromJson(response['original']['carrier']);
+          print("CarrierModel retornado: ${carrier.toString()}");
+
+
+          // print("CarrierModel retornado: ${carrier.toString()}");
+
           notifyListeners();
-          return CarrierModel.fromJson(response['original']);
+          return carrier;
         } else {
-          errorMessage = "Hubo un error: ${response['original']['message'] ?? 'Error desconocido'}";
+          errorMessage =
+              "Hubo un error: ${response['original']['message'] ?? 'Error desconocido'}";
           notifyListeners();
           return null;
         }
@@ -67,5 +74,4 @@ class CarrierViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
-
 }

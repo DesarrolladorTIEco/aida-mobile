@@ -13,7 +13,7 @@ class CarrierModel {
       this.dniDriver,
       this.driver,
       this.route,
-      this.gate,{
+      this.gate, {
         required this.licensePlateNumber,
         required this.occupantNumber,
         required this.type,
@@ -27,12 +27,30 @@ class CarrierModel {
       json['MbptDriver'] ?? '', // driver
       json['MbptRoute'] ?? '', // route
       json['MbptGate'] ?? '', // gate
-
       licensePlateNumber: json['MbptLicensePlateNumber'] ?? 'Nombre no disponible',
-      occupantNumber: json['MbptOccupantsNumber'] ?? 0,
-      user: json['UsrCreate'] ?? 0, // user
+      occupantNumber: int.tryParse(json['MbptOccupantsNumber'] ?? '0') ?? 0,
+      user: int.tryParse(json['UsrCreate'] ?? '0') ?? 0,
       type: json['MbptType'] ?? '0', // Ensure it’s the correct type
       qrDateReader: json['MbptDate'], // Asegúrate de que el campo es válido
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'licensePlateNumber': licensePlateNumber,
+      'occupantNumber': occupantNumber,
+      'dniDriver': dniDriver,
+      'driver': driver,
+      'route': route,
+      'gate': gate,
+      'type': type,
+      'qrDateReader': qrDateReader,
+      'user': user,
+    };
+  }
+
+  @override
+  String toString() {
+    return 'CarrierModel{licensePlateNumber: $licensePlateNumber, occupantNumber: $occupantNumber, dniDriver: $dniDriver, driver: $driver, route: $route, gate: $gate, type: $type, qrDateReader: $qrDateReader, user: $user}';
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -48,19 +50,34 @@ class _CarrierScreenState extends State<CarrierScreen> {
         _driverController.text,
         _routeController.text,
         _selectedGate ?? '',
-        type, // Usar el tipo determinado
-        formattedDate, // Usar la fecha formateada
-        1,
+        type,
+        formattedDate,
+        1, //usuario
       );
 
+      print("response "+ jsonEncode(response));
+
       if (response != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Registro insertado exitosamente"),
-            backgroundColor: Colors.green,
-          ),
+        // Mostrar popup de éxito
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Éxito"),
+              content: const Text("Registro insertado exitosamente."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Cerrar el popup
+                  },
+                  child: const Text("Aceptar"),
+                ),
+              ],
+            );
+          },
         );
-        _clearFields();
+
+        _clearFields(); // Limpiar los campos
       } else {
         throw Exception(carrierViewModel.errorMessage);
       }
@@ -76,6 +93,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
       carrierViewModel.notifyListeners();
     }
   }
+
 
   void _clearFields() {
     _placaController.clear();
