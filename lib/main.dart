@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
           '/stock-xmas': (context) => const StockScreen(),
 
           //carrier
-          '/carrier': (context) => CarrierScreen(),
+          '/carrier': (context) => const CarrierScreen(),
         },
       ),
     );

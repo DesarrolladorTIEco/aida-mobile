@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart'; // Asegúrate de importar Provider
+import '../../../viewmodel/auth_viewmodel.dart'; // Importa el AuthViewModel
 import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../viewmodel/carriers/carrier_viewmodel.dart';
 import '../../../data/models/carriers/carrier_model.dart';
@@ -22,12 +23,15 @@ class _CarrierScreenState extends State<CarrierScreen> {
   final TextEditingController _occupantController = TextEditingController();
   final TextEditingController _driverController = TextEditingController();
   final TextEditingController _routeController = TextEditingController();
+  final TextEditingController _seatNumberController = TextEditingController();
 
   String? _selectedGate;
   final MobileScannerController _cameraController = MobileScannerController();
   bool _scanned = false; // Variable para determinar si se escaneó un código
 
   Future<void> _sendData(BuildContext context) async {
+    final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
+
     final carrierViewModel = Provider.of<CarrierViewModel>(context, listen: false);
 
     // Capturar la fecha actual
@@ -43,6 +47,19 @@ class _CarrierScreenState extends State<CarrierScreen> {
     carrierViewModel.notifyListeners();
 
     try {
+
+      print("Parámetros a enviar:");
+      print("Placa: ${_placaController.text}");
+      print("Ocupantes: ${int.parse(_occupantController.text)}");
+      print("Cantidad: ${int.parse(_seatNumberController.text)}");
+      print("DNI: ${_dniController.text}");
+      print("Conductor: ${_driverController.text}");
+      print("Ruta: ${_routeController.text}");
+      print("Puerta: ${_selectedGate ?? ''}");
+      print("Tipo: $type");
+      print("Fecha formateada: $formattedDate");
+      print("ID de usuario: ${int.parse(userID.trim())}");
+
       CarrierModel? response = await carrierViewModel.insert(
         _placaController.text,
         int.parse(_occupantController.text),
@@ -52,7 +69,8 @@ class _CarrierScreenState extends State<CarrierScreen> {
         _selectedGate ?? '',
         type,
         formattedDate,
-        1, //usuario
+        int.parse(userID.trim()),
+        int.parse(_seatNumberController.text),
       );
 
       print("response "+ jsonEncode(response));
@@ -68,7 +86,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Cerrar el popup
+                    Navigator.of(context).pop();
                   },
                   child: const Text("Aceptar"),
                 ),
@@ -77,7 +95,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
           },
         );
 
-        _clearFields(); // Limpiar los campos
+        _clearFields();
       } else {
         throw Exception(carrierViewModel.errorMessage);
       }
@@ -94,13 +112,13 @@ class _CarrierScreenState extends State<CarrierScreen> {
     }
   }
 
-
   void _clearFields() {
     _placaController.clear();
     _occupantController.clear();
     _dniController.clear();
     _driverController.clear();
     _routeController.clear();
+    _seatNumberController.clear();
     _scanned = false; // Reiniciar la variable de escaneo
   }
 
@@ -221,6 +239,8 @@ class _CarrierScreenState extends State<CarrierScreen> {
             _buildTextField("Conductor", _driverController),
             const SizedBox(height: 10),
             _buildTextField("Ocupantes", _occupantController),
+            const SizedBox(height: 10),
+            _buildTextField("Cantidad Asientos", _seatNumberController),
             const Spacer(),
             Center(
               child: Padding(

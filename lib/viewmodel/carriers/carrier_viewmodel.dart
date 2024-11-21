@@ -20,7 +20,8 @@ class CarrierViewModel extends ChangeNotifier {
       String gate,
       String type,
       String fecha,
-      num user) async {
+      num user,
+      num seatNumber) async {
     isLoading = true;
     notifyListeners();
 
@@ -34,23 +35,16 @@ class CarrierViewModel extends ChangeNotifier {
         "MbptGate": gate,
         "MbptType": type,
         "MbptDate": fecha,
-        "UsrCreate": user
+        "UsrCreate": user,
+        "MbptNumberSeats": seatNumber,
       };
 
       final response = await _carrierService.insert(data);
 
       if (response != null) {
-        print("Response received: ${jsonEncode(response)}");
-
-        if (response['original']['success'] == true){
-          print("fdsafdsafdsafdsafdsa");
-
-          final carrier = CarrierModel.fromJson(response['original']['carrier']);
-          print("CarrierModel retornado: ${carrier.toString()}");
-
-
-          // print("CarrierModel retornado: ${carrier.toString()}");
-
+        if (response['original']['success'] == true) {
+          final carrier =
+              CarrierModel.fromJson(response['original']['carrier']);
           notifyListeners();
           return carrier;
         } else {

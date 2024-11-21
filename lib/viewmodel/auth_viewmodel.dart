@@ -8,6 +8,7 @@ class AuthViewModel extends ChangeNotifier {
   String errorMessage = '';
   bool isLoading = false;
   String fullName = ''; // Añadir la propiedad fullName
+  String userID = ''; // Añadir la propiedad userID
 
   // Método para manejar el login
   Future<UserModel?> login(String user, String password) async {
@@ -22,7 +23,9 @@ class AuthViewModel extends ChangeNotifier {
         // Guardamos el nombre completo en el provider
         fullName = response['session_data']['user']['UsrFullName'] ??
             'Nombre no disponible';
+        userID = response['session_data']['user']['UsrID'] ?? 0;
         notifyListeners();
+
         return UserModel.fromJson(response['session_data']['user']);
       } else {
         errorMessage = 'Credenciales incorrectas';

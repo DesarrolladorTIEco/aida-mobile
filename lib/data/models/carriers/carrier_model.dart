@@ -8,18 +8,20 @@ class CarrierModel {
   final String type;
   final String qrDateReader;
   final num user;
+  final num seatNumber;
 
   CarrierModel(
-      this.dniDriver,
-      this.driver,
-      this.route,
-      this.gate, {
-        required this.licensePlateNumber,
-        required this.occupantNumber,
-        required this.type,
-        required this.qrDateReader,
-        required this.user,
-      });
+    this.dniDriver,
+    this.driver,
+    this.route,
+    this.gate,{
+    required this.licensePlateNumber,
+    required this.occupantNumber,
+    required this.type,
+    required this.seatNumber,
+    required this.qrDateReader,
+    required this.user,
+  });
 
   factory CarrierModel.fromJson(Map<String, dynamic> json) {
     return CarrierModel(
@@ -27,10 +29,13 @@ class CarrierModel {
       json['MbptDriver'] ?? '', // driver
       json['MbptRoute'] ?? '', // route
       json['MbptGate'] ?? '', // gate
-      licensePlateNumber: json['MbptLicensePlateNumber'] ?? 'Nombre no disponible',
-      occupantNumber: int.tryParse(json['MbptOccupantsNumber'] ?? '0') ?? 0,
+      licensePlateNumber:
+      json['MbptLicensePlateNumber'] ?? 'Nombre no disponible',
+      occupantNumber: int.tryParse(json['MbptNumberSeats'] ?? '0') ?? 0,
+      seatNumber: int.tryParse(json['MbptNumberSeats'] ?? '0') ?? 0,
       user: int.tryParse(json['UsrCreate'] ?? '0') ?? 0,
-      type: json['MbptType'] ?? '0', // Ensure it’s the correct type
+      type: json['MbptType'] ?? '0',
+      // Ensure it’s the correct type
       qrDateReader: json['MbptDate'], // Asegúrate de que el campo es válido
     );
   }
@@ -46,11 +51,12 @@ class CarrierModel {
       'type': type,
       'qrDateReader': qrDateReader,
       'user': user,
+      'seatNumber' : seatNumber
     };
   }
 
   @override
   String toString() {
-    return 'CarrierModel{licensePlateNumber: $licensePlateNumber, occupantNumber: $occupantNumber, dniDriver: $dniDriver, driver: $driver, route: $route, gate: $gate, type: $type, qrDateReader: $qrDateReader, user: $user}';
+    return 'CarrierModel{licensePlateNumber: $licensePlateNumber, occupantNumber: $occupantNumber, dniDriver: $dniDriver, driver: $driver, route: $route, gate: $gate, type: $type, qrDateReader: $qrDateReader, user: $user, seatNumber : $seatNumber}';
   }
 }
