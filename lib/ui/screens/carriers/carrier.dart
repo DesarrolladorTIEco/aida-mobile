@@ -1,26 +1,41 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../../widgets/navbar_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../viewmodel/carriers/carrier_viewmodel.dart';
 import '../../../data/models/carriers/carrier_model.dart';
+import '../../widgets/navbar_widget.dart';
+import 'package:intl/intl.dart'; // Necesario para el formato de fechas
 
-class CarrierScreen extends StatelessWidget {
+class CarrierScreen extends StatefulWidget {
+  const CarrierScreen({super.key});
+
+  @override
+  _CarrierScreenState createState() => _CarrierScreenState();
+}
+
+class _CarrierScreenState extends State<CarrierScreen> {
   final TextEditingController _dniController = TextEditingController();
   final TextEditingController _placaController = TextEditingController();
   final TextEditingController _occupantController = TextEditingController();
   final TextEditingController _driverController = TextEditingController();
   final TextEditingController _routeController = TextEditingController();
-  final TextEditingController _typeController = TextEditingController();
-  final TextEditingController _dateController = TextEditingController();
 
   String? _selectedGate;
-
-  CarrierScreen({super.key});
+  final MobileScannerController _cameraController = MobileScannerController();
+  bool _scanned = false; // Variable para determinar si se escaneó un código
 
   Future<void> _sendData(BuildContext context) async {
     final carrierViewModel = Provider.of<CarrierViewModel>(context, listen: false);
+
+    // Capturar la fecha actual
+    final now = DateTime.now();
+    final String formattedDate = _scanned
+        ? DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now) // Fecha y hora si se escaneó
+        : DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now); // Solo fecha si no se escaneó
+
+    // Determinar el tipo según si se escaneó o no
+    final String type = _scanned ? "RA" : "RM";
 
     carrierViewModel.isLoading = true;
     carrierViewModel.notifyListeners();
@@ -33,8 +48,8 @@ class CarrierScreen extends StatelessWidget {
         _driverController.text,
         _routeController.text,
         _selectedGate ?? '',
-        "RM",
-        "2024-11-14T12:20:37",
+        type, // Usar el tipo determinado
+        formattedDate, // Usar la fecha formateada
         1,
       );
 
@@ -68,8 +83,53 @@ class CarrierScreen extends StatelessWidget {
     _dniController.clear();
     _driverController.clear();
     _routeController.clear();
-    _typeController.clear();
-    _dateController.clear();
+    _scanned = false; // Reiniciar la variable de escaneo
+  }
+
+  void _scanQRCode(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SizedBox(
+            height: 300,
+            width: 300,
+            child: MobileScanner(
+              controller: _cameraController,
+              onDetect: (BarcodeCapture barcode) {
+                final String code = barcode.barcodes.first.rawValue ?? '';
+                if (code.isNotEmpty) {
+                  setState(() {
+                    _placaController.text = code;
+                    _scanned = true; // Marcar como escaneado
+                  });
+                }
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {Widget? suffixIcon}) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: GoogleFonts.raleway(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+        ),
+        border: const OutlineInputBorder(),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.green.shade600, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        suffixIcon: suffixIcon,
+      ),
+    );
   }
 
   @override
@@ -95,13 +155,13 @@ class CarrierScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Dropdown para Puerta
             DropdownButtonFormField<String>(
               value: _selectedGate,
               hint: const Text('Seleccionar Puerta'),
               onChanged: (value) {
-                _selectedGate = value;
+                setState(() {
+                  _selectedGate = value;
+                });
               },
               items: [
                 'Tranquera 01',
@@ -127,44 +187,24 @@ class CarrierScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-
-            // TextField para Ruta
             _buildTextField("Ruta", _routeController),
             const SizedBox(height: 20),
-
-            // TextField para Placa con ícono de QR
-            TextField(
-              controller: _placaController,
-              decoration: InputDecoration(
-                labelText: "Placa",
-                labelStyle: GoogleFonts.raleway(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-                border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                suffixIcon: Icon(Icons.qr_code_scanner),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.green.shade600, width: 2),
-                ),
+            _buildTextField(
+              "Placa",
+              _placaController,
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.qr_code_scanner, color: Colors.black54),
+                onPressed: () => _scanQRCode(context),
               ),
             ),
-            const SizedBox(height: 50),
-
-            // Otros campos de texto
+            const SizedBox(height: 60),
             _buildTextField("DNI", _dniController),
-            const SizedBox(height: 8),
-            _buildTextField("Nombre y Apellido Conductor", _driverController),
-            const SizedBox(height: 8),
-            _buildTextField("Número de Ocupantes", _occupantController),
-            const SizedBox(height: 8),
-
-            // Añadir un Expanded para que el contenido ocupe todo el espacio disponible
-            Expanded(child: Container()),
-
-            //boton de enviar
-            Align(
-              alignment: Alignment.bottomCenter,
+            const SizedBox(height: 10),
+            _buildTextField("Conductor", _driverController),
+            const SizedBox(height: 10),
+            _buildTextField("Ocupantes", _occupantController),
+            const Spacer(),
+            Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 12.0),
                 child: ElevatedButton.icon(
@@ -192,24 +232,6 @@ class CarrierScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: const BottomNavBarScreen(),
-    );
-  }
-
-  Widget _buildTextField(String label, TextEditingController controller) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: GoogleFonts.raleway(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-        border: const OutlineInputBorder(),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.green.shade600, width: 2),
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-      ),
     );
   }
 }
