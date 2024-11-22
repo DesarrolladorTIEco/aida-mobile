@@ -23,19 +23,28 @@ class AuthService {
 
   //login
   Future<Map<String, dynamic>> authenticate(Map<String, dynamic> data) async {
-    // Construye la URL usando la URL base de ApiService
     final String url = '${_apiService.baseUrl}mobile/login';
 
-    final response = await http.post(
-      Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode(data),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(data),
+      );
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body); // Devuelve el mapa decodificado
-    } else {
-      throw Exception('Error ${response.statusCode}: ${response.reasonPhrase}');
+      if (response.statusCode == 200) {
+        return json.decode(response.body); // Devuelve la respuesta exitosa
+      } else if (response.statusCode == 401) {
+        // Maneja el error 401 devolviendo un mensaje de error
+        return {
+          'message': 'Credenciales incorrectas',
+        };
+      } else {
+        throw Exception('Error ${response.statusCode}: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      throw Exception('Hubo un error: $e');
     }
   }
+
 }

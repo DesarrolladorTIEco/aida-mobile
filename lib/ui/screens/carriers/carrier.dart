@@ -1,16 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Importar para usar los inputFormatters
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart'; // Asegúrate de importar Provider
-import '../../../viewmodel/auth_viewmodel.dart'; // Importa el AuthViewModel
-import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:provider/provider.dart';
+import '../../../viewmodel/auth_viewmodel.dart';
+import 'package:aida/core/utils/scanner_qr.dart';
 import '../../../viewmodel/carriers/carrier_viewmodel.dart';
 import '../../../data/models/carriers/carrier_model.dart';
 import '../../widgets/navbar_widget.dart';
-import 'package:intl/intl.dart'; // Necesario para el formato de fechas
+import 'package:intl/intl.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 
 class CarrierScreen extends StatefulWidget {
   const CarrierScreen({super.key});
@@ -28,8 +26,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
   final TextEditingController _seatNumberController = TextEditingController();
 
   String? _selectedGate;
-  final MobileScannerController _cameraController = MobileScannerController();
-  bool _scanned = false; // Variable para determinar si se escaneó un código
+  bool _scanned = false;
 
   Future<void> _sendData(BuildContext context) async {
     if (!_validateFields()) {
@@ -42,7 +39,6 @@ class _CarrierScreenState extends State<CarrierScreen> {
       return;
     }
 
-    // Continúa con el envío solo si todos los campos son válidos.
     final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
     final carrierViewModel = Provider.of<CarrierViewModel>(context, listen: false);
 
@@ -69,7 +65,6 @@ class _CarrierScreenState extends State<CarrierScreen> {
       );
 
       if (response != null) {
-        // Mostrar popup de éxito
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -105,7 +100,6 @@ class _CarrierScreenState extends State<CarrierScreen> {
     }
   }
 
-
   bool _validateFields() {
     if (_placaController.text.isEmpty ||
         _dniController.text.isEmpty ||
@@ -122,19 +116,6 @@ class _CarrierScreenState extends State<CarrierScreen> {
       return false;
     }
 
-    // Validar si ocupantes y cantidad de asientos son números válidos
-    try {
-      int.parse(_occupantController.text);
-      int.parse(_seatNumberController.text);
-    } catch (e) {
-      Fluttertoast.showToast(
-        msg: "¡Ocupantes y asientos deben ser números válidos!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-      );
-      return false;
-    }
-
     return true;
   }
 
@@ -145,39 +126,29 @@ class _CarrierScreenState extends State<CarrierScreen> {
     _driverController.clear();
     _routeController.clear();
     _seatNumberController.clear();
-    _scanned = false; // Reiniciar la variable de escaneo
+    _scanned = false;
   }
 
   void _scanQRCode(BuildContext context) {
-    showDialog(
+    QRScanner.scanQRCode(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: SizedBox(
-            height: 300,
-            width: 300,
-            child: MobileScanner(
-              controller: _cameraController,
-              onDetect: (BarcodeCapture barcode) {
-                final String code = barcode.barcodes.first.rawValue ?? '';
-                if (code.isNotEmpty) {
-                  setState(() {
-                    _placaController.text = code;
-                    _scanned = true; // Marcar como escaneado
-                  });
-                }
-                Navigator.pop(context);
-              },
-            ),
-          ),
-        );
+      onCodeScanned: (String code) {
+        setState(() {
+          _placaController.text = code;
+          _scanned = true;
+        });
       },
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {Widget? suffixIcon}) {
+
+  Widget _buildTextField(String label, TextEditingController controller,
+      {Widget? suffixIcon, TextInputType? keyboardType, List<TextInputFormatter>? inputFormatters, int? maxLength}) {
     return TextField(
       controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      maxLength: maxLength,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: GoogleFonts.raleway(
@@ -259,14 +230,39 @@ class _CarrierScreenState extends State<CarrierScreen> {
                 onPressed: () => _scanQRCode(context),
               ),
             ),
-            const SizedBox(height: 60),
-            _buildTextField("DNI", _dniController),
-            const SizedBox(height: 10),
-            _buildTextField("Conductor", _driverController),
-            const SizedBox(height: 10),
-            _buildTextField("Ocupantes", _occupantController),
-            const SizedBox(height: 10),
-            _buildTextField("Cantidad Asientos", _seatNumberController),
+            const SizedBox(height: 20),
+            _buildTextField(
+              "DNI",
+              _dniController,
+              maxLength: 8,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+            ),
+            const SizedBox(height: 20),
+            _buildTextField(
+              "Conductor",
+              _driverController,
+            ),
+            const SizedBox(height: 20),
+            _buildTextField(
+              "Ocupantes",
+              _occupantController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+            ),
+            const SizedBox(height: 20),
+            _buildTextField(
+              "Cantidad Asientos",
+              _seatNumberController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+            ),
             const Spacer(),
             Center(
               child: Padding(
@@ -276,26 +272,24 @@ class _CarrierScreenState extends State<CarrierScreen> {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     backgroundColor: Colors.red.shade600,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    foregroundColor: Colors.white,
                   ),
-                  icon: const Icon(Icons.logout, color: Colors.white),
+                  icon: const Icon(Icons.save),
                   label: Text(
-                    'Enviar',
+                    "Registrar Transportista",
                     style: GoogleFonts.raleway(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: Colors.white,  // Puedes cambiar el color si lo deseas
+                      fontSize: 16,          // Ajusta el tamaño del texto si es necesario
+                      fontWeight: FontWeight.bold,  // Puedes ajustar el peso de la fuente
                     ),
                   ),
                 ),
               ),
             ),
+
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBarScreen(),
     );
   }
 }

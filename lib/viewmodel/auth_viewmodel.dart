@@ -9,7 +9,8 @@ class AuthViewModel extends ChangeNotifier {
   bool isLoading = false;
   String fullName = ''; // Añadir la propiedad fullName
   String userID = ''; // Añadir la propiedad userID
-  List<Map<String, dynamic>> modules = []; // Agrega esta lista para almacenar los módulos
+  List<Map<String, dynamic>> modules =
+      []; // Agrega esta lista para almacenar los módulos
 
   Future<void> fetchModules(String userID) async {
     try {
@@ -22,6 +23,7 @@ class AuthViewModel extends ChangeNotifier {
       print('Error al obtener módulos: $e');
     }
   }
+
   // Método para manejar el login
   Future<UserModel?> login(String user, String password) async {
     isLoading = true;
@@ -31,16 +33,23 @@ class AuthViewModel extends ChangeNotifier {
       Map<String, dynamic> data = {"user": user, "password": password};
       final response = await _authService.authenticate(data);
 
-      if (response['message'] == 'Autenticación exitosa') {
+      if (response['message'] == 'Credenciales incorrectas') {
+        errorMessage = 'Credenciales incorrectas';
+        notifyListeners();
+        return null;
+      }
+
+      if (response.containsKey('session_data')) {
         fullName = response['session_data']['user']['UsrFullName'] ??
             'Nombre no disponible';
         userID = response['session_data']['user']['UsrID'] ?? 0;
-        await fetchModules(userID); // Llama a fetchModules después de iniciar sesión
+        await fetchModules(
+            userID); // Llama a fetchModules después de iniciar sesión
 
         notifyListeners();
         return UserModel.fromJson(response['session_data']['user']);
       } else {
-        errorMessage = 'Credenciales incorrectas';
+        errorMessage = 'Error inesperado en la autenticación';
         notifyListeners();
         return null;
       }
