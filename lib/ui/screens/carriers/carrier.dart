@@ -9,6 +9,8 @@ import '../../../viewmodel/carriers/carrier_viewmodel.dart';
 import '../../../data/models/carriers/carrier_model.dart';
 import '../../widgets/navbar_widget.dart';
 import 'package:intl/intl.dart'; // Necesario para el formato de fechas
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 class CarrierScreen extends StatefulWidget {
   const CarrierScreen({super.key});
@@ -30,36 +32,29 @@ class _CarrierScreenState extends State<CarrierScreen> {
   bool _scanned = false; // Variable para determinar si se escaneó un código
 
   Future<void> _sendData(BuildContext context) async {
-    final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
+    if (!_validateFields()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Por favor, completa todos los campos obligatorios."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
+    // Continúa con el envío solo si todos los campos son válidos.
+    final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
     final carrierViewModel = Provider.of<CarrierViewModel>(context, listen: false);
 
-    // Capturar la fecha actual
     final now = DateTime.now();
-    final String formattedDate = _scanned
-        ? DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now) // Fecha y hora si se escaneó
-        : DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now); // Solo fecha si no se escaneó
+    final String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
 
-    // Determinar el tipo según si se escaneó o no
     final String type = _scanned ? "RA" : "RM";
 
     carrierViewModel.isLoading = true;
     carrierViewModel.notifyListeners();
 
     try {
-
-      print("Parámetros a enviar:");
-      print("Placa: ${_placaController.text}");
-      print("Ocupantes: ${int.parse(_occupantController.text)}");
-      print("Cantidad: ${int.parse(_seatNumberController.text)}");
-      print("DNI: ${_dniController.text}");
-      print("Conductor: ${_driverController.text}");
-      print("Ruta: ${_routeController.text}");
-      print("Puerta: ${_selectedGate ?? ''}");
-      print("Tipo: $type");
-      print("Fecha formateada: $formattedDate");
-      print("ID de usuario: ${int.parse(userID.trim())}");
-
       CarrierModel? response = await carrierViewModel.insert(
         _placaController.text,
         int.parse(_occupantController.text),
@@ -72,8 +67,6 @@ class _CarrierScreenState extends State<CarrierScreen> {
         int.parse(userID.trim()),
         int.parse(_seatNumberController.text),
       );
-
-      print("response "+ jsonEncode(response));
 
       if (response != null) {
         // Mostrar popup de éxito
@@ -110,6 +103,39 @@ class _CarrierScreenState extends State<CarrierScreen> {
       carrierViewModel.isLoading = false;
       carrierViewModel.notifyListeners();
     }
+  }
+
+
+  bool _validateFields() {
+    if (_placaController.text.isEmpty ||
+        _dniController.text.isEmpty ||
+        _driverController.text.isEmpty ||
+        _routeController.text.isEmpty ||
+        _selectedGate == null ||
+        _occupantController.text.isEmpty ||
+        _seatNumberController.text.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "¡Debe completar todos los campos!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+      return false;
+    }
+
+    // Validar si ocupantes y cantidad de asientos son números válidos
+    try {
+      int.parse(_occupantController.text);
+      int.parse(_seatNumberController.text);
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: "¡Ocupantes y asientos deben ser números válidos!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+      return false;
+    }
+
+    return true;
   }
 
   void _clearFields() {
