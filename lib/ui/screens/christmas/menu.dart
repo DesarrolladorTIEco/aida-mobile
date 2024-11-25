@@ -15,7 +15,7 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
-  final TextEditingController _dniController = TextEditingController(); // Controller for TextField
+  final TextEditingController _dniController = TextEditingController();
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -24,18 +24,14 @@ class _MenuScreenState extends State<MenuScreen> {
     });
   }
 
-  // Método para manejar el escaneo del código QR o de barras
   Future<void> _handleQrScan(WorkerViewModel workerViewModel) async {
     await QRScanner.scanQRCode(
       context: context,
       onCodeScanned: (String code) async {
         if (code.isNotEmpty) {
-          // Determina si el código es DNI o QR por longitud o formato
           if (code.length == 8 && int.tryParse(code) != null) {
-            // Es un DNI válido (longitud 8 y numérico)
             await _saveData(workerViewModel, dni: code);
           } else {
-            // Es un código QR u otro tipo de barra
             await _saveData(workerViewModel, qrCode: code);
           }
         }
@@ -43,8 +39,8 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  // Guardar los datos en base al DNI o QR
-  Future<void> _saveData(WorkerViewModel workerViewModel, {String? dni, String? qrCode}) async {
+  Future<void> _saveData(WorkerViewModel workerViewModel,
+      {String? dni, String? qrCode}) async {
     final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
     final userDni = Provider.of<AuthViewModel>(context, listen: false).userDni;
 
@@ -58,7 +54,6 @@ class _MenuScreenState extends State<MenuScreen> {
       resultMessage = "Código no válido.";
     }
 
-    // Muestra un AlertDialog con el mensaje
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -79,7 +74,7 @@ class _MenuScreenState extends State<MenuScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Cerrar el dialog
+                Navigator.of(context).pop();
               },
               child: const Text(
                 'Aceptar',
@@ -90,21 +85,35 @@ class _MenuScreenState extends State<MenuScreen> {
         );
       },
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadWorkers();
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadWorkers();
+    });
 
-    // Listener para cuando se escriban 8 dígitos
     _dniController.addListener(() async {
       final dni = _dniController.text.trim();
       if (dni.length == 8 && int.tryParse(dni) != null) {
         final workerViewModel = Provider.of<WorkerViewModel>(context, listen: false);
         await _saveData(workerViewModel, dni: dni);
-        _dniController.clear(); // Limpia el campo después de insertar
+        _dniController.clear();
       }
     });
+  }
+
+  void _loadWorkers() async {
+    final workerViewModel = Provider.of<WorkerViewModel>(context, listen: false);
+    final userDni = Provider.of<AuthViewModel>(context, listen: false).userDni;
+
+    String date = DateTime.now().toIso8601String().split('T').first;
+
+    await workerViewModel.fetchWorkers(userDni, date);
   }
 
   @override
@@ -131,56 +140,93 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
             ),
           ),
-          // Input para escanear código QR o escribir manualmente
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: TextField(
-              controller: _dniController, // Bind controller
+              controller: _dniController,
               decoration: InputDecoration(
                 labelText: "Escanear código o escribir DNI",
-                labelStyle: GoogleFonts.raleway(fontSize: 14, fontWeight: FontWeight.w600),
+                labelStyle: GoogleFonts.raleway(
+                    fontSize: 14, fontWeight: FontWeight.w600),
                 prefixIcon: IconButton(
                   icon: const Icon(Icons.qr_code_scanner),
-                  onPressed: () => _handleQrScan(workerViewModel), // Escanear QR
+                  onPressed: () => _handleQrScan(workerViewModel),
                 ),
                 prefixIconConstraints: const BoxConstraints(
                   minWidth: 40,
                   minHeight: 40,
                 ),
                 border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(vertical: 22.0, horizontal: 16.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 22.0, horizontal: 16.0),
               ),
               keyboardType: TextInputType.number,
             ),
           ),
-          const SizedBox(height: 220),
+          const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width / 1.5,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/xmas-menu');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    backgroundColor: Colors.red.shade600,
-                    foregroundColor: Colors.white,
-                  ),
-                  child: Text(
-                    "Visualizar Entregas",
-                    style: GoogleFonts.raleway(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+            child: Text(
+              "Entregas del Día", // Aquí es donde se agrega el título pequeño
+              style: GoogleFonts.raleway(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Colors.black54,
               ),
+            ),
+          ),
+          const SizedBox(height: 16), // Espacio entre el título y el Expanded
+          Expanded(
+            child: ListView.builder(
+              itemCount: workerViewModel.workers.length,
+              itemBuilder: (context, index) {
+                final worker = workerViewModel.workers[index];
+                return Card(
+                  elevation: 2,
+                  margin: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: ListTile(
+                    leading: const Icon(Icons.person, size: 40, color: Colors.grey),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          worker['FullName'] ?? 'Sin nombre',
+                          style: GoogleFonts.raleway(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: 4.0),
+                        // Mostrar la Planilla y FechaCreacion
+                        Text(
+                          'Planilla: ${worker['Planilla'] ?? 'No disponible'}',
+                          style: GoogleFonts.raleway(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        Text(
+                          'Fecha de Creación: ${worker['FechaCreacion'] ?? 'No disponible'}',
+                          style: GoogleFonts.raleway(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: Text(
+                      'DNI: ${worker['DNI']}',
+                      style: GoogleFonts.raleway(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],

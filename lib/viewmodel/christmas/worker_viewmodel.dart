@@ -10,6 +10,8 @@ class WorkerViewModel extends ChangeNotifier {
   String errorMessage = '';
   bool isLoading = false;
 
+  List<Map<String, dynamic>> workers = []; // Lista para almacenar los datos
+
   // Metodo para manejar el save worker on christmas delivery
 
   Future<String> save(String workerDni, String responsibleDni, num user) async {
@@ -31,20 +33,15 @@ class WorkerViewModel extends ChangeNotifier {
         print('Respuesta del servicio: $response');
 
         if (message.contains('Operación completada exitosamente')) {
-          print("message " + message);
           return 'success';
         } else if (message.contains('Ya se entregó canasta')) {
-          print("message " + message);
           return message;
         } else if (message
             .contains('El responsable no tiene stock suficiente')) {
-          print("message " + message);
           return message;
         } else if (message.contains('No existe trabajador')) {
-          print("message " + message);
           return message;
         } else {
-          print("message " + message);
           return 'Mensaje no reconocido: $message';
         }
       } else {
@@ -57,4 +54,34 @@ class WorkerViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> fetchWorkers(String userDni, String date) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      Map<String, dynamic> data = {
+        "dni": userDni,
+        "date": date,
+      };
+
+      // Aquí se pasa el Map a tu servicio
+      final response = await _workerService.get_worker_deliver_dni(data);
+      print('Respuesta de la API: $response');
+
+      if (response is List<Map<String, dynamic>> && response.isNotEmpty) {
+        workers = response;
+        notifyListeners();
+      } else {
+        throw Exception('No se recibieron trabajadores o la respuesta es vacía.');
+      }
+    } catch (e) {
+      errorMessage = 'Error al obtener los trabajadores: ${e.toString()}';
+      print('Error: $errorMessage');
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
 }
