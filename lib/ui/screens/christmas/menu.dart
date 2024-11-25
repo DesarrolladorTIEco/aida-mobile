@@ -1,3 +1,4 @@
+import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -23,18 +24,44 @@ class _MenuScreenState extends State<MenuScreen> {
     });
   }
 
-  // Método para manejar el escaneo del código QR
+  // Método para manejar el escaneo del código QR o de barras
   Future<void> _handleQrScan(WorkerViewModel workerViewModel) async {
     await QRScanner.scanQRCode(
       context: context,
       onCodeScanned: (String code) async {
         if (code.isNotEmpty) {
-          await workerViewModel.save(code, "12345678", 1); // Insertar datos
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Datos insertados con éxito")),
-          );
+          // Determina si el código es DNI o QR por longitud o formato
+          if (code.length == 8 && int.tryParse(code) != null) {
+            // Es un DNI válido (longitud 8 y numérico)
+            await _saveData(workerViewModel, dni: code);
+          } else {
+            // Es un código QR u otro tipo de barra
+            await _saveData(workerViewModel, qrCode: code);
+          }
         }
       },
+    );
+  }
+
+  // Guardar los datos en base al DNI o QR
+  Future<void> _saveData(WorkerViewModel workerViewModel, {String? dni, String? qrCode}) async {
+    final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
+    final userDni = Provider.of<AuthViewModel>(context, listen: false).userDni;
+
+    String message;
+    if (dni != null) {
+      // Inserta usando DNI
+      message = (await workerViewModel.save(dni, userDni, int.parse(userID.trim()))) as String;
+    } else if (qrCode != null) {
+      // Inserta usando QR
+      message = (await workerViewModel.save(qrCode, userDni, int.parse(userID.trim()))) as String;
+    } else {
+      message = "Código no válido.";
+    }
+
+    // Mostrar un snackbar con el resultado
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
     );
   }
 
@@ -45,13 +72,10 @@ class _MenuScreenState extends State<MenuScreen> {
     // Listener para cuando se escriban 8 dígitos
     _dniController.addListener(() async {
       final dni = _dniController.text.trim();
-      if (dni.length == 8) {
+      if (dni.length == 8 && int.tryParse(dni) != null) {
         final workerViewModel = Provider.of<WorkerViewModel>(context, listen: false);
-        await workerViewModel.save(dni, "12345678", 1); // Guardar datos
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Datos insertados con éxito")),
-        );
-        _dniController.clear(); // Limpiar el campo después de insertar
+        await _saveData(workerViewModel, dni: dni);
+        _dniController.clear(); // Limpia el campo después de insertar
       }
     });
   }
@@ -61,9 +85,9 @@ class _MenuScreenState extends State<MenuScreen> {
     final workerViewModel = Provider.of<WorkerViewModel>(context);
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60.0),
-        child: const TopNavBarScreen(),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: TopNavBarScreen(),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

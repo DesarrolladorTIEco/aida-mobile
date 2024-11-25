@@ -18,9 +18,10 @@ class QRScanner {
             child: MobileScanner(
               controller: cameraController,
               onDetect: (BarcodeCapture barcode) {
+                // Detecta el valor del código (QR o Barra)
                 final String code = barcode.barcodes.first.rawValue ?? '';
                 if (code.isNotEmpty) {
-                  onCodeScanned(code); // Llama al callback
+                  onCodeScanned(code); // Llama al callback con el código escaneado
                   Navigator.pop(context); // Cierra el diálogo
                 }
               },
