@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../widgets/navbar_widget.dart'; // Asegúrate de importar correctamente el archivo
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../../widgets/navbar_widget.dart'; // Navbar
+import 'package:aida/core/utils/scanner_qr.dart'; // QR scanner
+import 'package:aida/viewmodel/christmas/worker_viewmodel.dart'; // ViewModel
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -10,6 +14,7 @@ class MenuScreen extends StatefulWidget {
 }
 
 class _MenuScreenState extends State<MenuScreen> {
+  final TextEditingController _dniController = TextEditingController(); // Controller for TextField
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -18,15 +23,50 @@ class _MenuScreenState extends State<MenuScreen> {
     });
   }
 
+  // Método para manejar el escaneo del código QR
+  Future<void> _handleQrScan(WorkerViewModel workerViewModel) async {
+    await QRScanner.scanQRCode(
+      context: context,
+      onCodeScanned: (String code) async {
+        if (code.isNotEmpty) {
+          await workerViewModel.save(code, "12345678", 1); // Insertar datos
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Datos insertados con éxito")),
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Listener para cuando se escriban 8 dígitos
+    _dniController.addListener(() async {
+      final dni = _dniController.text.trim();
+      if (dni.length == 8) {
+        final workerViewModel = Provider.of<WorkerViewModel>(context, listen: false);
+        await workerViewModel.save(dni, "12345678", 1); // Guardar datos
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Datos insertados con éxito")),
+        );
+        _dniController.clear(); // Limpiar el campo después de insertar
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final workerViewModel = Provider.of<WorkerViewModel>(context);
+
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60.0), // Ajusta la altura del AppBar
-        child: const TopNavBarScreen(), // Usando TopNavBarScreen
+        preferredSize: const Size.fromHeight(60.0),
+        child: const TopNavBarScreen(),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // Alineación de los elementos a la izquierda
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -40,30 +80,34 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
             ),
           ),
-          // Input para escanear código QR con el ícono dentro del input
+          // Input para escanear código QR o escribir manualmente
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: TextField(
+              controller: _dniController, // Bind controller
               decoration: InputDecoration(
-                labelText: "Escanear código",
+                labelText: "Escanear código o escribir DNI",
                 labelStyle: GoogleFonts.raleway(fontSize: 14, fontWeight: FontWeight.w600),
-                prefixIcon: const Icon(Icons.qr_code_scanner),
-                prefixIconConstraints: BoxConstraints(
+                prefixIcon: IconButton(
+                  icon: const Icon(Icons.qr_code_scanner),
+                  onPressed: () => _handleQrScan(workerViewModel), // Escanear QR
+                ),
+                prefixIconConstraints: const BoxConstraints(
                   minWidth: 40,
                   minHeight: 40,
                 ),
                 border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(vertical: 22.0, horizontal: 16.0), // Ajuste para centrar el texto
+                contentPadding: const EdgeInsets.symmetric(vertical: 22.0, horizontal: 16.0),
               ),
+              keyboardType: TextInputType.number,
             ),
           ),
-          // Espaciado antes del botón
           const SizedBox(height: 220),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Center( // Centra el botón dentro del espacio disponible
+            child: Center(
               child: Container(
-                width: MediaQuery.of(context).size.width / 1.5, // Ajusta el tamaño del botón
+                width: MediaQuery.of(context).size.width / 1.5,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/xmas-menu');
@@ -78,10 +122,10 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   child: Text(
                     "Visualizar Entregas",
-                    style: GoogleFonts.raleway( // Cambia la tipografía del botón
-                      fontSize: 16, // Tamaño de fuente
-                      fontWeight: FontWeight.w600, // Peso de la fuente
-                      color: Colors.white, // Color del texto
+                    style: GoogleFonts.raleway(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -90,7 +134,7 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
         ],
       ),
-      bottomNavigationBar: const BottomNavBarScreen(), // Usando BottomNavBarScreen
+      bottomNavigationBar: const BottomNavBarScreen(),
     );
   }
 }

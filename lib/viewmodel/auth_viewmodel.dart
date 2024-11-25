@@ -7,19 +7,18 @@ class AuthViewModel extends ChangeNotifier {
 
   String errorMessage = '';
   bool isLoading = false;
-  String fullName = ''; // Añadir la propiedad fullName
-  String userID = ''; // Añadir la propiedad userID
-  List<Map<String, dynamic>> modules =
-      []; // Agrega esta lista para almacenar los módulos
+  String fullName = '';
+  String userID = '';
+  String userDni = '';
+
+  List<Map<String, dynamic>> modules = [];
 
   Future<void> fetchModules(String userID) async {
     try {
-      // Aquí llamas a tu servicio que hace la petición a la API
       final response = await _authService.getModules(userID);
-      modules = response; // Asignas la respuesta a la lista de módulos
-      notifyListeners(); // Notificas a los oyentes para que se actualice la UI
+      modules = response;
+      notifyListeners();
     } catch (e) {
-      // Manejo de errores
       print('Error al obtener módulos: $e');
     }
   }
@@ -43,8 +42,8 @@ class AuthViewModel extends ChangeNotifier {
         fullName = response['session_data']['user']['UsrFullName'] ??
             'Nombre no disponible';
         userID = response['session_data']['user']['UsrID'] ?? 0;
-        await fetchModules(
-            userID); // Llama a fetchModules después de iniciar sesión
+        userDni = response['session_data']['user']['UsrDni'] ?? '';
+        await fetchModules(userID);
 
         notifyListeners();
         return UserModel.fromJson(response['session_data']['user']);

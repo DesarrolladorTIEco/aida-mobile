@@ -20,8 +20,8 @@ class QRScanner {
               onDetect: (BarcodeCapture barcode) {
                 final String code = barcode.barcodes.first.rawValue ?? '';
                 if (code.isNotEmpty) {
-                  onCodeScanned(code);
-                  Navigator.pop(context);
+                  onCodeScanned(code); // Llama al callback
+                  Navigator.pop(context); // Cierra el diálogo
                 }
               },
             ),
