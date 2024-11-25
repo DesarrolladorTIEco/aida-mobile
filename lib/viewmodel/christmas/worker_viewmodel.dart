@@ -10,9 +10,15 @@ class WorkerViewModel extends ChangeNotifier {
   String errorMessage = '';
   bool isLoading = false;
 
-  List<Map<String, dynamic>> workers = []; // Lista para almacenar los datos
+  List<Map<String, dynamic>> _workers = [];
 
-  // Metodo para manejar el save worker on christmas delivery
+  List<Map<String, dynamic>> get workers => _workers;
+
+  // Método para limpiar los trabajadores
+  void clearWorkers() {
+    _workers.clear();
+    notifyListeners(); // Notificar a los listeners (pantalla) que la lista se ha actualizado
+  }
 
   Future<String> save(String workerDni, String responsibleDni, num user) async {
     isLoading = true;
@@ -65,16 +71,16 @@ class WorkerViewModel extends ChangeNotifier {
         "date": date,
       };
 
-      // Aquí se pasa el Map a tu servicio
       final response = await _workerService.get_worker_deliver_dni(data);
       print('Respuesta de la API: $response');
 
-      if (response is List<Map<String, dynamic>> && response.isNotEmpty) {
-        workers = response;
-        notifyListeners();
+      if (response is List && response.isNotEmpty) {
+        _workers = List<Map<String, dynamic>>.from(response); // Asigna la lista de trabajadores si no está vacía
       } else {
-        throw Exception('No se recibieron trabajadores o la respuesta es vacía.');
+        // Si no hay trabajadores, dejamos la lista vacía
+        _workers = [];
       }
+      notifyListeners();
     } catch (e) {
       errorMessage = 'Error al obtener los trabajadores: ${e.toString()}';
       print('Error: $errorMessage');
@@ -84,4 +90,31 @@ class WorkerViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> fetchWorkerDni(String userDni) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      Map<String, dynamic> data = {
+        "dni": userDni
+      };
+
+      final response = await _workerService.get_worker_dni(data);
+      print('Respuesta de la API: $response');
+
+      if (response is List && response.isNotEmpty) {
+        _workers = List<Map<String, dynamic>>.from(response); // Asigna la lista de trabajadores si no está vacía
+      } else {
+        // Si no hay trabajadores, dejamos la lista vacía
+        _workers = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      errorMessage = 'Error al obtener los trabajadores: ${e.toString()}';
+      print('Error: $errorMessage');
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }

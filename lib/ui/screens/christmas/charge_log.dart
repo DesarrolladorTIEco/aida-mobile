@@ -1,6 +1,10 @@
+import 'package:aida/core/utils/scanner_qr.dart';
 import 'package:flutter/material.dart';
-import '../../widgets/navbar_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
+import '../../widgets/navbar_widget.dart';
+import 'package:aida/viewmodel/christmas/worker_viewmodel.dart'; // Worker ViewModel
 
 class ChargeScreen extends StatefulWidget {
   const ChargeScreen({super.key});
@@ -10,19 +14,38 @@ class ChargeScreen extends StatefulWidget {
 }
 
 class _ChargeScreenState extends State<ChargeScreen> {
-  // Lista de objetos que contienen nombres y DNIs
-  final List<Map<String, String>> _people = [
-    {"name": "Joys Navarro Adanaque", "dni": "12345678"},
-    {"name": "Jhon Soto Navarro", "dni": "23456789"},
-    {"name": "Jackson Alfaro Correa", "dni": "34567890"},
-    {"name": "Marlon Chira Correa", "dni": "45678901"},
-    {"name": "María Pérez Gonzales", "dni": "56789012"},
-    {"name": "Marco Soto Gonzales", "dni": "67890123"},
-    {"name": "Carlos Ramírez Salas", "dni": "78901234"},
-  ];
-
+  final TextEditingController _dniController = TextEditingController();
   DateTime? _selectedDate;
 
+  // Fetch workers based on the selected DNI and date
+  Future<void> _loadWorkers(WorkerViewModel workerViewModel) async {
+    final dni = _dniController.text.trim(); // Get entered DNI
+    if (dni.isNotEmpty && dni.length == 8 && _selectedDate != null) {
+      final date = _selectedDate!.toIso8601String().split('T').first;
+      try {
+        await workerViewModel.fetchWorkers(dni, date);
+      } catch (e) {
+        print("Error: Error al obtener los trabajadores: $e");
+      }
+    }
+  }
+
+  // Handle QR scan
+  Future<void> _handleQrScan(WorkerViewModel workerViewModel) async {
+    await QRScanner.scanQRCode(
+      context: context,
+      onCodeScanned: (String code) async {
+        if (code.isNotEmpty) {
+          if (code.length == 8 && int.tryParse(code) != null) {
+            _dniController.text = code;  // Update the DNI controller with the scanned code
+            await _loadWorkers(workerViewModel);  // Load workers with the scanned DNI
+          }
+        }
+      },
+    );
+  }
+
+  // Handle date selection
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -38,11 +61,22 @@ class _ChargeScreenState extends State<ChargeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final workerViewModel = Provider.of<WorkerViewModel>(context, listen: false);
+      workerViewModel.clearWorkers();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final workerViewModel = Provider.of<WorkerViewModel>(context);
+
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60.0),
-        child: const TopNavBarScreen(),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: TopNavBarScreen(),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -60,7 +94,7 @@ class _ChargeScreenState extends State<ChargeScreen> {
             ),
             const SizedBox(height: 10),
 
-            // DatePicker como combobox
+            // DatePicker as combobox
             GestureDetector(
               onTap: () => _selectDate(context),
               child: Container(
@@ -87,13 +121,17 @@ class _ChargeScreenState extends State<ChargeScreen> {
 
             const SizedBox(height: 20),
 
-            // TextField para escanear código QR
+            // TextField to scan or enter DNI
             TextField(
+              controller: _dniController,
               decoration: InputDecoration(
                 labelText: "Buscar por DNI",
                 labelStyle: GoogleFonts.raleway(
                     fontSize: 14, fontWeight: FontWeight.w600),
-                prefixIcon: const Icon(Icons.qr_code_scanner),
+                prefixIcon: IconButton(
+                  icon: const Icon(Icons.qr_code_scanner),
+                  onPressed: () => _handleQrScan(workerViewModel),
+                ),
                 prefixIconConstraints: const BoxConstraints(
                   minWidth: 40,
                   minHeight: 40,
@@ -102,15 +140,21 @@ class _ChargeScreenState extends State<ChargeScreen> {
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 22.0, horizontal: 16.0),
               ),
+              onChanged: (value) {
+                if (value.length == 8) {
+                  _loadWorkers(workerViewModel);
+                }
+              },
             ),
 
             const SizedBox(height: 20),
 
+            // Information about the delivered and remaining items
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Entregados: 40",
+                  "Entregados: ${workerViewModel.workers.length}",
                   style: GoogleFonts.raleway(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -118,39 +162,54 @@ class _ChargeScreenState extends State<ChargeScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  "Saldo: 20",
-                  style: GoogleFonts.raleway(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
               ],
             ),
 
             const SizedBox(height: 20),
 
+            // List of workers based on the selected date and DNI
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.only(top: 0),
-                itemCount: _people.length,
+                itemCount: workerViewModel.workers.length,
                 itemBuilder: (context, index) {
+                  final worker = workerViewModel.workers[index];
                   return Card(
                     elevation: 2,
                     margin: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTile(
-                      leading: const Icon(Icons.person,
-                          size: 40, color: Colors.grey),
-                      title: Text(
-                        _people[index]["name"]!,
-                        style: GoogleFonts.raleway(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      leading: const Icon(Icons.person, size: 40, color: Colors.grey),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            worker['FullName'] ?? 'Sin nombre',
+                            style: GoogleFonts.raleway(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 4.0),
+                          // Mostrar la Planilla y FechaCreacion
+                          Text(
+                            'Planilla: ${worker['Planilla'] ?? 'No disponible'}',
+                            style: GoogleFonts.raleway(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Text(
+                            'Fecha de Creación: ${worker['FechaCreacion'] ?? 'No disponible'}',
+                            style: GoogleFonts.raleway(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
                       trailing: Text(
-                        _people[index]["dni"]!,
+                        'DNI: ${worker['DNI']}',
                         style: GoogleFonts.raleway(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
