@@ -48,20 +48,47 @@ class _MenuScreenState extends State<MenuScreen> {
     final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
     final userDni = Provider.of<AuthViewModel>(context, listen: false).userDni;
 
-    String message;
+    String resultMessage;
+
     if (dni != null) {
-      // Inserta usando DNI
-      message = (await workerViewModel.save(dni, userDni, int.parse(userID.trim()))) as String;
+      resultMessage = await workerViewModel.save(dni, userDni, int.parse(userID.trim()));
     } else if (qrCode != null) {
-      // Inserta usando QR
-      message = (await workerViewModel.save(qrCode, userDni, int.parse(userID.trim()))) as String;
+      resultMessage = await workerViewModel.save(qrCode, userDni, int.parse(userID.trim()));
     } else {
-      message = "Código no válido.";
+      resultMessage = "Código no válido.";
     }
 
-    // Mostrar un snackbar con el resultado
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+    // Muestra un AlertDialog con el mensaje
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            resultMessage == 'success' ? 'Éxito' : 'Error',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: resultMessage == 'success' ? Colors.green : Colors.red,
+            ),
+          ),
+          content: Text(
+            resultMessage == 'success'
+                ? 'Entrega registrada exitosamente.'
+                : resultMessage,
+            style: const TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el dialog
+              },
+              child: const Text(
+                'Aceptar',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
