@@ -27,6 +27,33 @@ class _CarrierScreenState extends State<CarrierScreen> {
 
   String? _selectedGate;
   bool _scanned = false;
+  String? _initialScannedValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _placaController.addListener(_handlePlacaChange);
+  }
+
+  @override
+  void dispose() {
+    _placaController.removeListener(_handlePlacaChange);
+    _placaController.dispose();
+    _dniController.dispose();
+    _occupantController.dispose();
+    _driverController.dispose();
+    _routeController.dispose();
+    _seatNumberController.dispose();
+    super.dispose();
+  }
+
+  void _handlePlacaChange() {
+    if (_scanned && _initialScannedValue != _placaController.text) {
+      setState(() {
+        _scanned = false; // Cambiar a RM
+      });
+    }
+  }
 
   Future<void> _sendData(BuildContext context) async {
     if (!_validateFields()) {
@@ -136,6 +163,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
         setState(() {
           _placaController.text = code;
           _scanned = true;
+          _initialScannedValue = code; // Guardar el valor escaneado
         });
       },
     );
