@@ -163,7 +163,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
         setState(() {
           _placaController.text = code;
           _scanned = true;
-          _initialScannedValue = code; // Guardar el valor escaneado
+          _initialScannedValue = code;
         });
       },
     );

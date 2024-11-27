@@ -21,7 +21,10 @@ class _ChargeScreenState extends State<ChargeScreen> {
   Future<void> _loadWorkers(WorkerViewModel workerViewModel) async {
     final dni = _dniController.text.trim(); // Get entered DNI
     if (dni.isNotEmpty && dni.length == 8 && _selectedDate != null) {
-      final date = _selectedDate!.toIso8601String().split('T').first;
+      final date = _selectedDate!
+          .toIso8601String()
+          .split('T')
+          .first;
       try {
         await workerViewModel.fetchWorkers(dni, date);
       } catch (e) {
@@ -36,10 +39,8 @@ class _ChargeScreenState extends State<ChargeScreen> {
       context: context,
       onCodeScanned: (String code) async {
         if (code.isNotEmpty) {
-          if (code.length == 8 && int.tryParse(code) != null) {
-            _dniController.text = code;
-            await _loadWorkers(workerViewModel);
-          }
+          _dniController.text = code;
+          await _loadWorkers(workerViewModel);
         }
       },
     );
@@ -56,6 +57,12 @@ class _ChargeScreenState extends State<ChargeScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
+        _dniController.text = "";
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final workerViewModel = Provider.of<WorkerViewModel>(
+              context, listen: false);
+          workerViewModel.clearWorkers();
+        });
       });
     }
   }
@@ -64,7 +71,8 @@ class _ChargeScreenState extends State<ChargeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final workerViewModel = Provider.of<WorkerViewModel>(context, listen: false);
+      final workerViewModel = Provider.of<WorkerViewModel>(
+          context, listen: false);
       workerViewModel.clearWorkers();
     });
   }
@@ -109,7 +117,9 @@ class _ChargeScreenState extends State<ChargeScreen> {
                     Text(
                       _selectedDate == null
                           ? "Seleccionar Fecha"
-                          : "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}",
+                          : "${_selectedDate!.year}-${_selectedDate!.month
+                          .toString().padLeft(2, '0')}-${_selectedDate!.day
+                          .toString().padLeft(2, '0')}",
                       style: GoogleFonts.raleway(fontSize: 14),
                     ),
                     const Icon(Icons.calendar_today, color: Colors.grey),
@@ -175,7 +185,8 @@ class _ChargeScreenState extends State<ChargeScreen> {
                     elevation: 2,
                     margin: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTile(
-                      leading: const Icon(Icons.person, size: 40, color: Colors.grey),
+                      leading: const Icon(
+                          Icons.person, size: 40, color: Colors.grey),
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -189,7 +200,8 @@ class _ChargeScreenState extends State<ChargeScreen> {
                           SizedBox(height: 4.0),
                           // Mostrar la Planilla y FechaCreacion
                           Text(
-                            'Planilla: ${worker['Planilla'] ?? 'No disponible'}',
+                            'Planilla: ${worker['Planilla'] ??
+                                'No disponible'}',
                             style: GoogleFonts.raleway(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -197,7 +209,8 @@ class _ChargeScreenState extends State<ChargeScreen> {
                             ),
                           ),
                           Text(
-                            'Fecha de Creación: ${worker['FechaCreacion'] ?? 'No disponible'}',
+                            'Fecha de Creación: ${worker['FechaCreacion'] ??
+                                'No disponible'}',
                             style: GoogleFonts.raleway(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,

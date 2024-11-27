@@ -5,7 +5,6 @@ import '../../widgets/navbar_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-
 class WorkerScreen extends StatefulWidget {
   const WorkerScreen({super.key});
 
@@ -32,10 +31,8 @@ class _WorkerScreenState extends State<WorkerScreen> {
       context: context,
       onCodeScanned: (String code) async {
         if (code.isNotEmpty) {
-          if (code.length == 8 && int.tryParse(code) != null) {
-            _dniController.text = code;  // Update the DNI controller with the scanned code
-            await _loadWorkers(workerViewModel);  // Load workers with the scanned DNI
-          }
+          _dniController.text = code;
+          await _loadWorkers(workerViewModel);
         }
       },
     );
@@ -45,7 +42,8 @@ class _WorkerScreenState extends State<WorkerScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final workerViewModel = Provider.of<WorkerViewModel>(context, listen: false);
+      final workerViewModel =
+          Provider.of<WorkerViewModel>(context, listen: false);
       workerViewModel.clearWorkers();
     });
   }
@@ -112,7 +110,8 @@ class _WorkerScreenState extends State<WorkerScreen> {
                     elevation: 2,
                     margin: const EdgeInsets.symmetric(vertical: 4.0),
                     child: ListTile(
-                      leading: const Icon(Icons.person, size: 40, color: Colors.grey),
+                      leading: const Icon(Icons.person,
+                          size: 40, color: Colors.grey),
                       title: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
