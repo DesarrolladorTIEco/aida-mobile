@@ -65,7 +65,7 @@ class _WorkerScreenState extends State<WorkerScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Reporte de Canasta entregas por Responsable",
+              "Reporte de Canasta entregada al trabajador",
               style: GoogleFonts.raleway(
                 fontSize: 16,
                 letterSpacing: 0.22,

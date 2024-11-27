@@ -1,6 +1,8 @@
+import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/navbar_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class StockScreen extends StatefulWidget {
   const StockScreen({super.key});
@@ -10,28 +12,18 @@ class StockScreen extends StatefulWidget {
 }
 
 class _StockScreenState extends State<StockScreen> {
-  final List<Map<String, String>> _people = [
-    {
-      "name": "Joys Navarro Adanaque",
-      "dni": "12345678",
-      "entregadas": "40",
-      "saldo": "35"
-    },
-    {
-      "name": "Jhon Soto Navarro",
-      "dni": "23456789",
-      "entregadas": "77",
-      "saldo": "115"
-    },
-    {
-      "name": "Jackson Alfaro Correa",
-      "dni": "34567890",
-      "entregadas": "124",
-      "saldo": "53"
-    },
-  ];
-
   DateTime? _selectedDate;
+
+  Future<void> _loadWorkers(WorkerViewModel workerViewModel) async {
+    if (_selectedDate != null) {
+      final date = _selectedDate!.toIso8601String().split('T').first;
+      try {
+        await workerViewModel.fetchStock(date);
+      } catch (e) {
+        print("Error al obtener los trabajadores: $e");
+      }
+    }
+  }
 
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -45,14 +37,29 @@ class _StockScreenState extends State<StockScreen> {
         _selectedDate = picked;
       });
     }
+    final workerViewModel =
+        Provider.of<WorkerViewModel>(context, listen: false);
+    await _loadWorkers(workerViewModel);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final workerViewModel =
+          Provider.of<WorkerViewModel>(context, listen: false);
+      workerViewModel.clearWorkers();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final workerViewModel = Provider.of<WorkerViewModel>(context);
+
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60.0),
-        child: const TopNavBarScreen(),
+      appBar: const PreferredSize(
+        preferredSize: Size.fromHeight(60.0),
+        child: TopNavBarScreen(),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -99,9 +106,9 @@ class _StockScreenState extends State<StockScreen> {
 
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.only(top: 0),
-                itemCount: _people.length,
+                itemCount: workerViewModel.workers.length,
                 itemBuilder: (context, index) {
+                  final worker = workerViewModel.workers[index];
                   return Card(
                     elevation: 2,
                     margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -112,37 +119,40 @@ class _StockScreenState extends State<StockScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _people[index]["name"] as String,
+                            worker['Responsable'] ?? 'Sin nombre',
                             style: GoogleFonts.raleway(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4.0),
+                          // Mostrar la Planilla y FechaCreacion
+
                           Text(
-                            "DNI: ${_people[index]["dni"]}",
+                            'Entregados: ${worker['Entregados'] ?? 'No disponible'}',
                             style: GoogleFonts.raleway(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
                               color: Colors.grey,
                             ),
                           ),
-                          const SizedBox(height: 8),
                           Text(
-                            "Entregadas: ${_people[index]["entregadas"]}",
+                            'Saldo: ${worker['Saldo'] ?? 'No disponible'}',
                             style: GoogleFonts.raleway(
                               fontSize: 12,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          Text(
-                            "Saldo: ${_people[index]["saldo"]}",
-                            style: GoogleFonts.raleway(
-                              fontSize: 12,
-                              color: Colors.black87,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey,
                             ),
                           ),
                         ],
+                      ),
+                      trailing: Text(
+                        'DNI: ${worker['Dni']}',
+                        style: GoogleFonts.raleway(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
+                        ),
                       ),
                     ),
                   );

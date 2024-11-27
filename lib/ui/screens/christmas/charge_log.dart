@@ -37,8 +37,8 @@ class _ChargeScreenState extends State<ChargeScreen> {
       onCodeScanned: (String code) async {
         if (code.isNotEmpty) {
           if (code.length == 8 && int.tryParse(code) != null) {
-            _dniController.text = code;  // Update the DNI controller with the scanned code
-            await _loadWorkers(workerViewModel);  // Load workers with the scanned DNI
+            _dniController.text = code;
+            await _loadWorkers(workerViewModel);
           }
         }
       },
@@ -94,7 +94,6 @@ class _ChargeScreenState extends State<ChargeScreen> {
             ),
             const SizedBox(height: 10),
 
-            // DatePicker as combobox
             GestureDetector(
               onTap: () => _selectDate(context),
               child: Container(
@@ -121,7 +120,6 @@ class _ChargeScreenState extends State<ChargeScreen> {
 
             const SizedBox(height: 20),
 
-            // TextField to scan or enter DNI
             TextField(
               controller: _dniController,
               decoration: InputDecoration(
