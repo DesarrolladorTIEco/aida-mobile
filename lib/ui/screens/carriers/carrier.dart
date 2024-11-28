@@ -28,6 +28,9 @@ class _CarrierScreenState extends State<CarrierScreen> {
   String? _selectedArea;
   bool _scanned = false;
   String? _initialScannedValue;
+  String? _initialScannedValueTransportista;
+  String? _initialScannedValueAsientos;
+  String? _initialScannedValueRuta;
 
   @override
   void initState() {
@@ -53,7 +56,11 @@ class _CarrierScreenState extends State<CarrierScreen> {
   }
 
   void _handlePlacaChange() {
-    if (_scanned && _initialScannedValue != _placaController.text) {
+    if (_scanned &&
+        (_initialScannedValue != _placaController.text ||
+            _initialScannedValueTransportista != _driverController.text ||
+            _initialScannedValueAsientos != _seatNumberController.text ||
+            _initialScannedValueRuta != _routeController.text)) {
       setState(() {
         _scanned = false; // Cambiar a RM
       });
@@ -173,6 +180,9 @@ class _CarrierScreenState extends State<CarrierScreen> {
           _seatNumberController.text = cantidadAsientos;
           _scanned = true;
           _initialScannedValue = placa;
+          _initialScannedValueTransportista = transportista;
+          _initialScannedValueRuta = ruta;
+          _initialScannedValueAsientos = cantidadAsientos;
         });
       },
     );
@@ -290,7 +300,6 @@ class _CarrierScreenState extends State<CarrierScreen> {
               ),
             ),
             const SizedBox(height: 50),
-
             _buildTextField(
               "Placa",
               _placaController,
@@ -300,16 +309,13 @@ class _CarrierScreenState extends State<CarrierScreen> {
               ),
             ),
             const SizedBox(height: 20),
-
             _buildTextField(
               "Conductor",
               _driverController,
             ),
             const SizedBox(height: 20),
-
             _buildTextField("Ruta", _routeController),
             const SizedBox(height: 20),
-
             _buildTextField(
               "Cantidad Asientos",
               _seatNumberController,
@@ -319,7 +325,6 @@ class _CarrierScreenState extends State<CarrierScreen> {
               ],
             ),
             const SizedBox(height: 50),
-
             _buildTextField(
               "Ocupantes",
               _occupantController,
