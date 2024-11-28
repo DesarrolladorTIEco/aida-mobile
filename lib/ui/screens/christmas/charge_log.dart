@@ -170,7 +170,7 @@ class _ChargeScreenState extends State<ChargeScreen> {
                   ),
                 ),
                 Text(
-                  "Saldo: ${workerViewModel.workers.length}",
+                  "Saldo: ${workerViewModel.workers.isNotEmpty ? workerViewModel.workers[0]['Saldo'] : '0'}",
                   style: GoogleFonts.raleway(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
