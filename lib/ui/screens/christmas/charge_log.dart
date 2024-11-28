@@ -158,8 +158,8 @@ class _ChargeScreenState extends State<ChargeScreen> {
             const SizedBox(height: 20),
 
             // Information about the delivered and remaining items
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Espacio uniforme alrededor
               children: [
                 Text(
                   "Entregados: ${workerViewModel.workers.length}",
@@ -169,7 +169,14 @@ class _ChargeScreenState extends State<ChargeScreen> {
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 8),
+                Text(
+                  "Saldo: ${workerViewModel.workers.length}",
+                  style: GoogleFonts.raleway(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
               ],
             ),
 

@@ -57,6 +57,9 @@ class _BottomNavBarScreenState extends State<BottomNavBarScreen> {
 
     // Navegación basada en el índice seleccionado
     switch (index) {
+      case 0:
+        Navigator.pushNamed(context, '/welcome');
+        break;
       case 1:
         Navigator.pushNamed(context, '/menu');
         break;

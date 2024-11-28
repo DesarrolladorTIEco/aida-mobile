@@ -126,8 +126,6 @@ class _StockScreenState extends State<StockScreen> {
                             ),
                           ),
                           SizedBox(height: 4.0),
-                          // Mostrar la Planilla y FechaCreacion
-
                           Text(
                             'Entregados: ${worker['Entregados'] ?? 'No disponible'}',
                             style: GoogleFonts.raleway(
