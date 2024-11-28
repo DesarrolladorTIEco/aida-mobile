@@ -163,13 +163,16 @@ class _CarrierScreenState extends State<CarrierScreen> {
   }
 
   void _scanQRCode(BuildContext context) {
-    QRScanner.scanQRCode(
+    QRScannerCarrier.scanQRCode(
       context: context,
-      onCodeScanned: (String code) {
+      onDataExtracted: (placa, transportista, ruta, cantidadAsientos) {
         setState(() {
-          _placaController.text = code;
+          _placaController.text = placa;
+          _driverController.text = transportista;
+          _routeController.text = ruta;
+          _seatNumberController.text = cantidadAsientos;
           _scanned = true;
-          _initialScannedValue = code;
+          _initialScannedValue = placa;
         });
       },
     );
@@ -286,9 +289,8 @@ class _CarrierScreenState extends State<CarrierScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            _buildTextField("Ruta", _routeController),
-            const SizedBox(height: 20),
+            const SizedBox(height: 50),
+
             _buildTextField(
               "Placa",
               _placaController,
@@ -298,23 +300,29 @@ class _CarrierScreenState extends State<CarrierScreen> {
               ),
             ),
             const SizedBox(height: 20),
+
             _buildTextField(
               "Conductor",
               _driverController,
             ),
             const SizedBox(height: 20),
+
+            _buildTextField("Ruta", _routeController),
+            const SizedBox(height: 20),
+
             _buildTextField(
-              "Ocupantes",
-              _occupantController,
+              "Cantidad Asientos",
+              _seatNumberController,
               keyboardType: TextInputType.number,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 50),
+
             _buildTextField(
-              "Cantidad Asientos",
-              _seatNumberController,
+              "Ocupantes",
+              _occupantController,
               keyboardType: TextInputType.number,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
