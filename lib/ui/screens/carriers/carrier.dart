@@ -18,7 +18,6 @@ class CarrierScreen extends StatefulWidget {
 }
 
 class _CarrierScreenState extends State<CarrierScreen> {
-  final TextEditingController _dniController = TextEditingController();
   final TextEditingController _placaController = TextEditingController();
   final TextEditingController _occupantController = TextEditingController();
   final TextEditingController _driverController = TextEditingController();
@@ -26,6 +25,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
   final TextEditingController _seatNumberController = TextEditingController();
 
   String? _selectedGate;
+  String? _selectedArea;
   bool _scanned = false;
   String? _initialScannedValue;
 
@@ -33,13 +33,18 @@ class _CarrierScreenState extends State<CarrierScreen> {
   void initState() {
     super.initState();
     _placaController.addListener(_handlePlacaChange);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final carrierViewModel =
+          Provider.of<CarrierViewModel>(context, listen: false);
+      carrierViewModel.fetchAreas();
+    });
   }
 
   @override
   void dispose() {
     _placaController.removeListener(_handlePlacaChange);
     _placaController.dispose();
-    _dniController.dispose();
     _occupantController.dispose();
     _driverController.dispose();
     _routeController.dispose();
@@ -67,10 +72,12 @@ class _CarrierScreenState extends State<CarrierScreen> {
     }
 
     final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
-    final carrierViewModel = Provider.of<CarrierViewModel>(context, listen: false);
+    final carrierViewModel =
+        Provider.of<CarrierViewModel>(context, listen: false);
 
     final now = DateTime.now();
-    final String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+    final String formattedDate =
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
 
     final String type = _scanned ? "RA" : "RM";
 
@@ -81,7 +88,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
       CarrierModel? response = await carrierViewModel.insert(
         _placaController.text,
         int.parse(_occupantController.text),
-        _dniController.text,
+        _selectedArea ?? '',
         _driverController.text,
         _routeController.text,
         _selectedGate ?? '',
@@ -129,7 +136,7 @@ class _CarrierScreenState extends State<CarrierScreen> {
 
   bool _validateFields() {
     if (_placaController.text.isEmpty ||
-        _dniController.text.isEmpty ||
+        _selectedArea == null ||
         _driverController.text.isEmpty ||
         _routeController.text.isEmpty ||
         _selectedGate == null ||
@@ -149,7 +156,6 @@ class _CarrierScreenState extends State<CarrierScreen> {
   void _clearFields() {
     _placaController.clear();
     _occupantController.clear();
-    _dniController.clear();
     _driverController.clear();
     _routeController.clear();
     _seatNumberController.clear();
@@ -169,9 +175,11 @@ class _CarrierScreenState extends State<CarrierScreen> {
     );
   }
 
-
   Widget _buildTextField(String label, TextEditingController controller,
-      {Widget? suffixIcon, TextInputType? keyboardType, List<TextInputFormatter>? inputFormatters, int? maxLength}) {
+      {Widget? suffixIcon,
+      TextInputType? keyboardType,
+      List<TextInputFormatter>? inputFormatters,
+      int? maxLength}) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
@@ -187,7 +195,8 @@ class _CarrierScreenState extends State<CarrierScreen> {
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.green.shade600, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
         suffixIcon: suffixIcon,
       ),
     );
@@ -243,7 +252,37 @@ class _CarrierScreenState extends State<CarrierScreen> {
                 ),
                 border: const OutlineInputBorder(),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.green.shade600, width: 2),
+                  borderSide:
+                      BorderSide(color: Colors.green.shade600, width: 2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            DropdownButtonFormField<String>(
+              value: _selectedArea,
+              hint: const Text('Seleccionar Área'),
+              onChanged: (value) {
+                setState(() {
+                  _selectedArea = value;
+                });
+              },
+              items: carrierViewModel.areas
+                  .map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                labelText: 'Área',
+                labelStyle: GoogleFonts.raleway(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                border: const OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: Colors.green.shade600, width: 2),
                 ),
               ),
             ),
@@ -257,16 +296,6 @@ class _CarrierScreenState extends State<CarrierScreen> {
                 icon: const Icon(Icons.qr_code_scanner, color: Colors.black54),
                 onPressed: () => _scanQRCode(context),
               ),
-            ),
-            const SizedBox(height: 20),
-            _buildTextField(
-              "DNI",
-              _dniController,
-              maxLength: 8,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
             ),
             const SizedBox(height: 20),
             _buildTextField(
@@ -296,9 +325,12 @@ class _CarrierScreenState extends State<CarrierScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 12.0),
                 child: ElevatedButton.icon(
-                  onPressed: carrierViewModel.isLoading ? null : () => _sendData(context),
+                  onPressed: carrierViewModel.isLoading
+                      ? null
+                      : () => _sendData(context),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50, vertical: 15),
                     backgroundColor: Colors.red.shade600,
                     foregroundColor: Colors.white,
                   ),
@@ -306,15 +338,17 @@ class _CarrierScreenState extends State<CarrierScreen> {
                   label: Text(
                     "Registrar Transportista",
                     style: GoogleFonts.raleway(
-                      color: Colors.white,  // Puedes cambiar el color si lo deseas
-                      fontSize: 16,          // Ajusta el tamaño del texto si es necesario
-                      fontWeight: FontWeight.bold,  // Puedes ajustar el peso de la fuente
+                      color: Colors.white,
+                      // Puedes cambiar el color si lo deseas
+                      fontSize: 16,
+                      // Ajusta el tamaño del texto si es necesario
+                      fontWeight: FontWeight
+                          .bold, // Puedes ajustar el peso de la fuente
                     ),
                   ),
                 ),
               ),
             ),
-
           ],
         ),
       ),

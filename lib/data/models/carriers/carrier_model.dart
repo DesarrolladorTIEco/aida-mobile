@@ -1,7 +1,7 @@
 class CarrierModel {
   final String licensePlateNumber;
   final num occupantNumber;
-  final String dniDriver;
+  final String area;
   final String driver;
   final String route;
   final String gate;
@@ -11,7 +11,7 @@ class CarrierModel {
   final num seatNumber;
 
   CarrierModel(
-    this.dniDriver,
+    this.area,
     this.driver,
     this.route,
     this.gate,{
@@ -25,7 +25,7 @@ class CarrierModel {
 
   factory CarrierModel.fromJson(Map<String, dynamic> json) {
     return CarrierModel(
-      json['MbptDniDriver'] ?? '', // dniDriver
+      json['MbptArea'] ?? '', // dniDriver
       json['MbptDriver'] ?? '', // driver
       json['MbptRoute'] ?? '', // route
       json['MbptGate'] ?? '', // gate
@@ -44,7 +44,7 @@ class CarrierModel {
     return {
       'licensePlateNumber': licensePlateNumber,
       'occupantNumber': occupantNumber,
-      'dniDriver': dniDriver,
+      'area': area,
       'driver': driver,
       'route': route,
       'gate': gate,
@@ -57,6 +57,6 @@ class CarrierModel {
 
   @override
   String toString() {
-    return 'CarrierModel{licensePlateNumber: $licensePlateNumber, occupantNumber: $occupantNumber, dniDriver: $dniDriver, driver: $driver, route: $route, gate: $gate, type: $type, qrDateReader: $qrDateReader, user: $user, seatNumber : $seatNumber}';
+    return 'CarrierModel{licensePlateNumber: $licensePlateNumber, occupantNumber: $occupantNumber, area: $area, driver: $driver, route: $route, gate: $gate, type: $type, qrDateReader: $qrDateReader, user: $user, seatNumber : $seatNumber}';
   }
 }
