@@ -99,7 +99,81 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
               ],
             ),
           ),
-          const Expanded(child: Center(child: Text('Contenido de la página'))),
+          const SizedBox(width: 12),
+
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20), // Margen superior
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // Acción del botón contenedor
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      backgroundColor: Colors.green.shade600, // Color del botón
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8), // Borde redondeado mínimo
+                      ),
+                      minimumSize: const Size(125, 65),
+                      maximumSize: const Size(125, 65),
+                    ),
+                    child: const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add, size: 16, color: Colors.white),
+                        SizedBox(height: 4), // Espacio entre el icono y el texto
+                        Text(
+                          'CONTENEDOR',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12), // Espacio entre botones
+                  ElevatedButton(
+                    onPressed: () {
+                      // Acción del botón sync
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      backgroundColor: Colors.grey, // Color del botón
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8), // Borde redondeado mínimo
+                      ),
+                      minimumSize: const Size(115, 65),
+                      maximumSize: const Size(115, 65),
+                    ),
+                    child: const Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.sync, size: 16, color: Colors.white),
+                        SizedBox(height: 4), // Espacio entre el icono y el texto
+                        Text(
+                          'SYNC',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+
+
         ],
       ),
     );
