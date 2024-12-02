@@ -69,19 +69,26 @@ class _WelcomeSecuriticsState extends State<WelcomeSecuriticPage> {
                 ),
                 itemCount: cultive.length,
                 itemBuilder: (context, index) {
-                  final zone = cultive[index];
-                  final zoneName = zone['Cultivo'] ?? 'Sin nombre';
+                  final x = cultive[index];
+                  final cultiveName = x['Cultivo'] ?? 'Sin nombre';
 
                   // Asignar íconos según el nombre de la zona
                   final iconsMap = {
                   };
 
-                  final zoneIcon =
-                      iconsMap[zoneName] ?? Icons.apartment;
+                  final icon =
+                      iconsMap[cultiveName] ?? Icons.apartment;
 
                   return GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/welcome-sec');
+                      final selectedCultive = x['Cultivo'] ?? '';
+
+                      final arguments = {
+                        'cultive': selectedCultive,
+                        'zone': zoneName,
+                      };
+
+                      Navigator.pushNamed(context, '/home-sec', arguments: arguments);
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(
@@ -93,13 +100,13 @@ class _WelcomeSecuriticsState extends State<WelcomeSecuriticPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              zoneIcon,
+                              icon,
                               size: 40,
                               color: Colors.green.shade600,
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              zoneName,
+                              cultiveName,
                               textAlign: TextAlign.center,
                               style: GoogleFonts.raleway(
                                 fontSize: 14,

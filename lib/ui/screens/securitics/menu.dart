@@ -22,6 +22,7 @@ class _MenuSecuriticsState extends State<MenuSecuriticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     final securiticsViewModel = Provider.of<SecuriticsViewModel>(context);
     final zones = securiticsViewModel.registerZone;
 

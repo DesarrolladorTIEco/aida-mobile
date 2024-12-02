@@ -1,3 +1,4 @@
+import 'package:aida/ui/screens/securitics/home.dart';
 import 'package:aida/ui/screens/securitics/menu.dart';
 import 'package:aida/ui/screens/securitics/welcome.dart';
 import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => SecuriticsViewModel())
       ],
       child: MaterialApp(
-        title: 'Mi Aplicación',
+        title: 'AIDA+',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
@@ -54,7 +55,8 @@ class MyApp extends StatelessWidget {
 
           //securitics
           '/menu-sec' :(context) => const MenuSecuriticsScreen(),
-          '/welcome-sec' :(context) => const WelcomeSecuriticPage()
+          '/welcome-sec' :(context) => const WelcomeSecuriticPage(),
+          '/home-sec' : (context) => const HomeSecuriticPage()
         },
       ),
     );
