@@ -67,34 +67,35 @@ class WelcomePage extends StatelessWidget {
                 itemCount: modules.length, // Cantidad de módulos dinámicos
                 itemBuilder: (context, index) {
                   final module = modules[index];
-                  final moduleName = module['Modulo'] ?? 'Sin nombre'; // Obtiene el nombre del módulo
+                  final moduleName = module['Modulo'] ?? 'Sin nombre';
 
-                  // Asignar íconos según el nombre del módulo
                   final iconsMap = {
-                    'Inventario': Icons.archive,
-                    'Seguridad': Icons.security,
+                    'Seguridad': Icons.health_and_safety,
                     'Entrega de Canastas': Icons.card_giftcard,
-                    'Control de Ingreso y salida de Carros': Icons.directions_car,
+                    'Control de Ingreso y salida de Carros':
+                        Icons.directions_car,
                     'Transporte de Personal': Icons.directions_bus,
                     'Asistencia': Icons.assignment,
                     'Tareo': Icons.group,
                   };
 
-                  final moduleIcon = iconsMap[moduleName] ?? Icons.help; // Icono por defecto si no se encuentra
+                  final moduleIcon = iconsMap[moduleName] ?? Icons.help;
 
                   return GestureDetector(
                     onTap: () {
-                      // Navegar según el nombre del módulo
                       if (moduleName == 'Entrega de Canastas') {
                         Navigator.pushNamed(context, '/menu');
                       } else if (moduleName == 'Transporte de Personal') {
                         Navigator.pushNamed(context, '/carrier');
-                      } else if (moduleName == 'Control de Ingreso y salida de Carros') {
+                      } else if (moduleName ==
+                          'Control de Ingreso y salida de Carros') {
                         Navigator.pushNamed(context, '/carControl');
                       } else if (moduleName == 'Asistencia') {
                         Navigator.pushNamed(context, '/attendance');
                       } else if (moduleName == 'Tareo') {
                         Navigator.pushNamed(context, '/workHours');
+                      } else if (moduleName == 'Seguridad') {
+                        Navigator.pushNamed(context, '/menu-sec');
                       }
                     },
                     child: Card(
@@ -138,7 +139,8 @@ class WelcomePage extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/login');
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                   backgroundColor: Colors.red.shade600,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

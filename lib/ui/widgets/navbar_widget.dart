@@ -9,28 +9,25 @@ class TopNavBarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.green,
-      actions: [
-        // Aquí estamos usando un Row para distribuir los íconos
+      actions: const [
         Expanded(
           child: Row(
-            children: const [
-              const Padding(
+            children: [
+              Padding(
                 padding: EdgeInsets.only(
                     right:
                         20), // Asegura que haya espacio en el extremo derecho
               ),
-              // Los íconos a la izquierda (pero con espacio entre ellos)
             ],
           ),
         ),
-        // Los íconos que permanecen en su lugar
-        const Padding(
+        Padding(
           padding: EdgeInsets.only(right: 20),
           // Asegura que haya espacio en el extremo derecho
           child: Icon(Icons.notifications),
         ),
-        const SizedBox(width: 20),
-        const Padding(
+        SizedBox(width: 20),
+        Padding(
           padding: EdgeInsets.only(right: 20),
           child: Icon(Icons.more_vert),
         ),

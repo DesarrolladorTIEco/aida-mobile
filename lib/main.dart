@@ -1,5 +1,8 @@
+import 'package:aida/ui/screens/securitics/menu.dart';
+import 'package:aida/ui/screens/securitics/welcome.dart';
 import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
 import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
+import 'package:aida/viewmodel/securitics/securitics_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodel/auth_viewmodel.dart';
@@ -25,8 +28,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
-        ChangeNotifierProvider(create: (context) => CarrierViewModel()), // Agrega el CarrierViewModel aquí
-        ChangeNotifierProvider(create: (context) => WorkerViewModel()), // Agrega el CarrierViewModel aquí
+        ChangeNotifierProvider(create: (context) => CarrierViewModel()), 
+        ChangeNotifierProvider(create: (context) => WorkerViewModel()), 
+        ChangeNotifierProvider(create: (context) => SecuriticsViewModel())
       ],
       child: MaterialApp(
         title: 'Mi Aplicación',
@@ -47,6 +51,10 @@ class MyApp extends StatelessWidget {
 
           //carrier
           '/carrier': (context) => const CarrierScreen(),
+
+          //securitics
+          '/menu-sec' :(context) => const MenuSecuriticsScreen(),
+          '/welcome-sec' :(context) => const WelcomeSecuriticPage()
         },
       ),
     );
