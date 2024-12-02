@@ -1,3 +1,4 @@
+import 'package:aida/ui/screens/securitics/NewContainer.dart';
 import 'package:aida/ui/screens/securitics/home.dart';
 import 'package:aida/ui/screens/securitics/menu.dart';
 import 'package:aida/ui/screens/securitics/welcome.dart';
@@ -56,7 +57,8 @@ class MyApp extends StatelessWidget {
           //securitics
           '/menu-sec' :(context) => const MenuSecuriticsScreen(),
           '/welcome-sec' :(context) => const WelcomeSecuriticPage(),
-          '/home-sec' : (context) => const HomeSecuriticPage()
+          '/home-sec' : (context) => const HomeSecuriticPage(),
+          '/new-container' : (context) => const NewContainerPage()
         },
       ),
     );

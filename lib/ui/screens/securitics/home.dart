@@ -109,16 +109,21 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      // Acción del botón contenedor
+                      final arguments = {
+                        'cultive': cultive,
+                        'zone': zoneName,
+                      };
+
+                      Navigator.pushNamed(context, '/new-container', arguments: arguments);
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      backgroundColor: Colors.green.shade600, // Color del botón
+                      backgroundColor: Colors.green.shade600,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Borde redondeado mínimo
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      minimumSize: const Size(125, 65),
-                      maximumSize: const Size(125, 65),
+                      minimumSize: const Size(110, 60),
+                      maximumSize: const Size(110, 60),
                     ),
                     child: const Column(
                       mainAxisSize: MainAxisSize.min,
@@ -129,7 +134,7 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                           'CONTENEDOR',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -137,7 +142,7 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 12), // Espacio entre botones
+                  const SizedBox(width: 8), // Espacio entre botones
                   ElevatedButton(
                     onPressed: () {
                       // Acción del botón sync
@@ -148,8 +153,8 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8), // Borde redondeado mínimo
                       ),
-                      minimumSize: const Size(115, 65),
-                      maximumSize: const Size(115, 65),
+                      minimumSize: const Size(100, 60),
+                      maximumSize: const Size(100, 60),
                     ),
                     child: const Column(
                       mainAxisSize: MainAxisSize.min,
@@ -160,7 +165,7 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                           'SYNC',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -172,8 +177,6 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
               ),
             ),
           )
-
-
         ],
       ),
     );
