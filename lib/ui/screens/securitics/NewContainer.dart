@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-
 class NewContainerPage extends StatefulWidget {
   const NewContainerPage({Key? key}) : super(key: key);
 
@@ -16,8 +15,7 @@ class NewContainerPage extends StatefulWidget {
 class _NewContainerState extends State<NewContainerPage> {
   final TextEditingController _lineaNegocio = TextEditingController();
   final TextEditingController _today = TextEditingController();
-
-
+  final TextEditingController _newContainer = TextEditingController();
 
   String zoneName = '';
   String cultive = '';
@@ -127,7 +125,8 @@ class _NewContainerState extends State<NewContainerPage> {
                       letterSpacing: 0.51,
                     ),
                   ),
-                  const SizedBox(height: 10), // Espacio entre el título y el primer TextField
+                  const SizedBox(height: 10),
+                  // Espacio entre el título y el primer TextField
 
                   // Primer TextField
                   SizedBox(
@@ -180,7 +179,6 @@ class _NewContainerState extends State<NewContainerPage> {
                       keyboardType: TextInputType.number,
                     ),
                   ),
-
 
                   // Segundo TextField
                   SizedBox(
@@ -238,33 +236,82 @@ class _NewContainerState extends State<NewContainerPage> {
                   SizedBox(
                     width: 400,
                     child: TextField(
-                      controller: _today, // Controlador añadido aquí
-                      readOnly: true,
+                      controller: _newContainer, // Controlador para escribir el nombre del contenedor
                       decoration: InputDecoration(
                         labelStyle: GoogleFonts.raleway(
-                            fontSize: 14, fontWeight: FontWeight.w600),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                         prefixIcon: IconButton(
-                          icon: const Icon(Icons.error_outline),
+                          icon: const Icon(Icons.fire_truck_outlined),
                           onPressed: () => print("test"),
+                          color: Colors.red.shade800,
                         ),
                         prefixIconConstraints: const BoxConstraints(
                           minWidth: 40,
                           minHeight: 40,
                         ),
                         border: const OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 15.0, horizontal: 12.0),
-
+                        contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 12.0),
+                        hintText: "Nombre Contenedor", // Añadido hintText para guía de entrada
+                        hintStyle: GoogleFonts.raleway(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          color: Colors.grey,
+                        ),
                       ),
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.text,
+                      onChanged: (value) {
+                        print("Nombre del Contenedor: $value"); // Para verificar si captura el valor
+                      },
                     ),
                   ),
 
+
+                  const SizedBox(height: 20),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      final arguments = {
+                        'cultive': cultive,
+                        'zone': zoneName,
+                      };
+
+                      Navigator.pushNamed(context, '/new-container', arguments: arguments);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      backgroundColor: Colors.orange.shade800,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      minimumSize: const Size(400, 60),
+                      maximumSize: const Size(400, 60),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center, // Centra el contenido
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.add, size: 25, color: Colors.white),
+                        const SizedBox(width: 8), // Espacio entre el icono y el texto
+                        Text(
+                          'AGREGAR CONTENEDOR',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.raleway(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                 ],
               ),
+
             ),
           )
-
         ],
       ),
     );
