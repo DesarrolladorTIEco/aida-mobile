@@ -17,6 +17,7 @@ class _StockScreenState extends State<StockScreen> {
   Future<void> _loadWorkers(WorkerViewModel workerViewModel) async {
     if (_selectedDate != null) {
       final date = _selectedDate!.toIso8601String().split('T').first;
+      print(date);
       try {
         await workerViewModel.fetchStock(date);
       } catch (e) {
@@ -38,7 +39,7 @@ class _StockScreenState extends State<StockScreen> {
       });
     }
     final workerViewModel =
-        Provider.of<WorkerViewModel>(context, listen: false);
+    Provider.of<WorkerViewModel>(context, listen: false);
     await _loadWorkers(workerViewModel);
   }
 
@@ -47,14 +48,25 @@ class _StockScreenState extends State<StockScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final workerViewModel =
-          Provider.of<WorkerViewModel>(context, listen: false);
+      Provider.of<WorkerViewModel>(context, listen: false);
       workerViewModel.clearWorkers();
     });
+  }
+
+  /// Nueva función para calcular la suma total de 'Entregados'
+  int _calculateTotalEntregados(List<Map<String, dynamic>> workers) {
+    return workers.fold<int>(
+      0,
+          (sum, worker) => sum + (int.tryParse(worker['Entregados']?.toString() ?? '0') ?? 0),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final workerViewModel = Provider.of<WorkerViewModel>(context);
+
+    // Calcular la suma total de "Entregados"
+    final totalEntregados = _calculateTotalEntregados(workerViewModel.workers);
 
     return Scaffold(
       appBar: const PreferredSize(
@@ -76,8 +88,6 @@ class _StockScreenState extends State<StockScreen> {
               ),
             ),
             const SizedBox(height: 10),
-
-            // DatePicker como combobox
             GestureDetector(
               onTap: () => _selectDate(context),
               child: Container(
@@ -101,9 +111,20 @@ class _StockScreenState extends State<StockScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
-
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Entregados: $totalEntregados",
+                  style: GoogleFonts.raleway(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: workerViewModel.workers.length,
@@ -125,7 +146,7 @@ class _StockScreenState extends State<StockScreen> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          SizedBox(height: 4.0),
+                          const SizedBox(height: 4.0),
                           Text(
                             'Entregados: ${worker['Entregados'] ?? 'No disponible'}',
                             style: GoogleFonts.raleway(
