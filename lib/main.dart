@@ -1,3 +1,4 @@
+import 'package:aida/ui/screens/christmas/charge_max_date.dart';
 import 'package:aida/ui/screens/securitics/NewContainer.dart';
 import 'package:aida/ui/screens/securitics/home.dart';
 import 'package:aida/ui/screens/securitics/menu.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
           '/menu': (context) => const MenuScreen(),
           '/xmas-menu': (context) => const XMasMenu(),
           '/charge-xmas': (context) => const ChargeScreen(),
+          '/charge-xmas-date': (context) => const ChargeDateScreen(),
           '/worker-xmas': (context) => const WorkerScreen(),
           '/stock-xmas': (context) => const StockScreen(),
 

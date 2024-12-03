@@ -67,6 +67,40 @@ class _XMasMenuState extends State<XMasMenu> {
                   ),
                 ),
 
+
+                //BOTON AÑADIDO POST PRUEBAS
+                Container(
+                  height: 85, // Altura del botón
+                  width: MediaQuery.of(context).size.width * 0.92, // 92% ancho
+                  margin: const EdgeInsets.only(bottom: 8.0), // Espacio entre botones
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/charge-xmas-date');
+
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      foregroundColor: Colors.black54,
+                      backgroundColor: Colors.white70, // Color del texto
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero, // Sin borde redondeado
+                      ),
+                      elevation: 4, // Elevación para sombra
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Reporte Responsables por Rango de Fechas",
+                        style: GoogleFonts.raleway(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+
                 // Segundo botón: Reporte por Trabajador
                 Container(
                   height: 85, // Altura del botón
@@ -82,7 +116,7 @@ class _XMasMenuState extends State<XMasMenu> {
                       foregroundColor: Colors.black54,
                       backgroundColor: Colors.white70, // Color del texto
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero, // Sin borde redondeado
+                        borderRadius: BorderRadius.zero,
                       ),
                       elevation: 4, // Elevación para sombra
                     ),

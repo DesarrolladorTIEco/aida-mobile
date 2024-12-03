@@ -89,6 +89,35 @@ class WorkerViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> fetchWorkersByRange(String userDni, String startDate, String endDate) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      Map<String, dynamic> data = {
+        "dni": userDni,
+        "startdate": startDate,
+        "enddate": endDate,
+      };
+
+      final response = await _workerService.get_worker_deliver_dni_byrange(data);
+      print('Respuesta de la API: $response');
+
+      if (response is List && response.isNotEmpty) {
+        _workers = List<Map<String, dynamic>>.from(response);
+      } else {
+        _workers = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      errorMessage = 'Error al obtener los trabajadores: ${e.toString()}';
+      print('Error: $errorMessage');
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> fetchWorkerDni(String userDni) async {
     isLoading = true;
     notifyListeners();

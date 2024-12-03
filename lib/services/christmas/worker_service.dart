@@ -58,6 +58,31 @@ class WorkerService {
     }
   }
 
+
+  Future<List<Map<String, dynamic>>> get_worker_deliver_dni_byrange(Map<String, dynamic> data) async {
+    final String url = '${_apiService.baseUrl}mobile/get-worker-deliver-byrange';
+
+    final response = await http.post(
+      Uri.parse(url),
+      body: jsonEncode(data),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      if (responseBody is List) {
+        return responseBody.map((e) => e as Map<String, dynamic>).toList();
+      } else if (responseBody is Map<String, dynamic>) {
+        return [responseBody];
+      } else {
+        throw Exception('La respuesta no es válida.');
+      }
+    } else {
+      throw Exception('Error en la solicitud: ${response.statusCode}');
+    }
+  }
+
+
   Future<List<Map<String, dynamic>>> get_worker_dni(Map<String, dynamic> data) async {
     final String url = '${_apiService.baseUrl}mobile/get-worker-dni';
 
