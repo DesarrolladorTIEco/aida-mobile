@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../../viewmodel/securitics/securitics_viewmodel.dart';
+import '../../../viewmodel/securitics/ecosac_viewmodel.dart';
 
 class WelcomeSecuriticPage extends StatefulWidget {
   const WelcomeSecuriticPage({Key? key}) : super(key: key);

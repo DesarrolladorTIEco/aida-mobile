@@ -5,7 +5,7 @@ import 'package:aida/ui/screens/securitics/menu.dart';
 import 'package:aida/ui/screens/securitics/welcome.dart';
 import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
 import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
-import 'package:aida/viewmodel/securitics/securitics_viewmodel.dart';
+import 'package:aida/viewmodel/securitics/ecosac_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodel/auth_viewmodel.dart';
