@@ -5,6 +5,7 @@ import 'package:aida/ui/screens/securitics/menu.dart';
 import 'package:aida/ui/screens/securitics/welcome.dart';
 import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
 import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
+import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
 import 'package:aida/viewmodel/securitics/ecosac_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
         ChangeNotifierProvider(create: (context) => CarrierViewModel()), 
         ChangeNotifierProvider(create: (context) => WorkerViewModel()), 
-        ChangeNotifierProvider(create: (context) => SecuriticsViewModel())
+        ChangeNotifierProvider(create: (context) => SecuriticsViewModel()),
+        ChangeNotifierProvider(create: (context) => ContainerViewModel())
       ],
       child: MaterialApp(
         title: 'AIDA+',

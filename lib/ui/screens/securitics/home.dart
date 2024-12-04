@@ -1,4 +1,5 @@
 import 'package:aida/viewmodel/auth_viewmodel.dart';
+import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
@@ -12,12 +13,38 @@ class HomeSecuriticPage extends StatefulWidget {
 }
 
 class _HomeSecuriticsState extends State<HomeSecuriticPage> {
+  final TextEditingController _search = TextEditingController();
+
   String zoneName = '';
   String cultive = '';
+
+  Future<void> _loadContainers(ContainerViewModel containerViewModel) async
+  {
+    if(zoneName.isNotEmpty && cultive.isNotEmpty) {
+      try {
+        await containerViewModel.fetchContainer(cultive, zoneName);
+      } catch (e) {
+        print("Error: error al obtener los contenedores: $e");
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final containerViewModel =
+      Provider.of<ContainerViewModel>(context, listen: false);
+      containerViewModel.clearContainer();
+      _loadContainers(containerViewModel);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+    final containerViewModel = Provider.of<ContainerViewModel>(context);
 
     if (arguments != null) {
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
@@ -176,7 +203,93 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                 ],
               ),
             ),
-          )
+          ),
+
+          const SizedBox(height: 12),
+
+          SizedBox(
+            width: 400,
+            child: TextField(
+              controller: _search,
+              decoration: InputDecoration(
+                labelStyle: GoogleFonts.raleway(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+
+                prefixIconConstraints: const BoxConstraints(
+                  minWidth: 40,
+                  minHeight: 40,
+                ),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 12.0),
+                hintText: "Busqueda avanzada...", // Añadido hintText para guía de entrada
+                hintStyle: GoogleFonts.raleway(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: Colors.grey,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.red, width: 2.0),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              keyboardType: TextInputType.text,
+              onChanged: (value) {
+                print("Nombre del Contenedor: $value"); // Para verificar si captura el valor
+              },
+            ),
+          ),
+
+
+          const SizedBox(height: 12),
+
+
+          Expanded(
+            child: ListView.builder(
+              itemCount: containerViewModel.containers.length,
+              itemBuilder: (context, index) {
+                final container = containerViewModel.containers[index];
+                return  Card(
+                  elevation: 1,
+                  margin: EdgeInsets.symmetric(vertical: 4.0),
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.fire_truck_outlined,
+                      size: 25,
+                      color: Colors.red,
+                    ),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          container['Contenedor'] ?? 'Sin Nombre',
+                          style:  GoogleFonts.raleway(
+                            fontSize: 18,
+                            letterSpacing: 0.65,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 0.2),
+                        Text(
+                          'Linea de Negocio: ${container["Cultivo"] ?? "Sin Nombre"}',
+                          style:  GoogleFonts.raleway(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios, // Icono que quieres mostrar
+                      size: 20,
+                      color: Colors.grey,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );
