@@ -227,7 +227,9 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                   const SizedBox(width: 8), // Espacio entre botones
                   ElevatedButton(
                     onPressed: () {
-                      // Acción del botón sync
+                      containerViewModel.isLoading
+                          ? null
+                          : () => _loadContainers(context as ContainerViewModel);
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -306,9 +308,10 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
               itemCount: filteredContainers.length,
               itemBuilder: (context, index) {
                 final container = containerViewModel.containers[index];
+
                 return Card(
                   elevation: 1,
-                  margin: EdgeInsets.symmetric(vertical: 4.0),
+                  margin: const EdgeInsets.symmetric(vertical: 4.0),
                   child: ListTile(
                     leading: const Icon(
                       Icons.fire_truck_outlined,
@@ -336,16 +339,29 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                         ),
                       ],
                     ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios, // Icono que quieres mostrar
-                      size: 20,
-                      color: Colors.grey,
+                    trailing: InkWell(
+                      onTap: () {
+                        print("container ${container}");
+                        Navigator.pushNamed(
+                          context,
+                          '/menu-container',
+                          arguments: {
+                            'container': container['Contenedor'], // Puedes pasar información relevante
+                          },
+                        );
+                      },
+                      child: const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 20,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                 );
               },
             ),
           ),
+
         ],
       ),
     );

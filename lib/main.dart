@@ -1,5 +1,6 @@
 import 'package:aida/ui/screens/christmas/charge_max_date.dart';
-import 'package:aida/ui/screens/securitics/NewContainer.dart';
+import 'package:aida/ui/screens/securitics/container_menu.dart';
+import 'package:aida/ui/screens/securitics/new_container.dart';
 import 'package:aida/ui/screens/securitics/home.dart';
 import 'package:aida/ui/screens/securitics/menu.dart';
 import 'package:aida/ui/screens/securitics/welcome.dart';
@@ -62,7 +63,8 @@ class MyApp extends StatelessWidget {
           '/menu-sec' :(context) => const MenuSecuriticsScreen(),
           '/welcome-sec' :(context) => const WelcomeSecuriticPage(),
           '/home-sec' : (context) => const HomeSecuriticPage(),
-          '/new-container' : (context) => const NewContainerPage()
+          '/new-container' : (context) => const NewContainerPage(),
+          '/menu-container' : (context) => const ContainerMenuPage()
         },
       ),
     );
