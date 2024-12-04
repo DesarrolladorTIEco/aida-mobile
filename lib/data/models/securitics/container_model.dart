@@ -8,25 +8,26 @@ class ContainerModel {
   ContainerModel(this.name, this.cultive, this.zone, this.date, this.user);
 
   factory ContainerModel.fromJson(Map<String, dynamic> json) {
-    return ContainerModel (
-        json['MbCntNameContainer'] ?? '',
-        json['MbCntCultive'] ?? '',
-        json['MbCntZone'] ?? '',
-        json['SecDateCreate'] ?? '',
-        json['UsrCreate'] ?? 0
+    return ContainerModel(
+      json['MbCntNameContainer'] ?? '',
+      json['MbCntCultive'] ?? '',
+      json['MbCntZone'] ?? '',
+      json['SecDateCreate'] ?? '',
+      num.tryParse(json['UsrCreate'].toString()) ??
+          0, // Asegúrate de convertir correctamente
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'MbCntNameContainer' : name,
-      'MbCntCultive' : cultive,
-      'MbCntZone' : zone,
-      'SecDateCreate' : date,
-      'UsrCreate' : user,
+      'MbCntNameContainer': name,
+      'MbCntCultive': cultive,
+      'MbCntZone': zone,
+      'SecDateCreate': date,
+      'UsrCreate': user,
     };
   }
-  
+
   @override
   String toString() {
     return 'ContainerModel{'

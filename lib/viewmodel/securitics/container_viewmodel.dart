@@ -30,34 +30,24 @@ class ContainerViewModel extends ChangeNotifier {
         "SecDateCreate" : date,
         "UsrCreate" : user,
       };
-      
+
       final response = await _containerService.insert(data);
-      
-      if(response != null) {
-        if(response['original']['success'] == true){
-          final container = ContainerModel.fromJson(response['original']['container']);
-          notifyListeners();
-          return container;
-        } else {
-          errorMessage =
-          "Hubo un error: ${response['original']['message'] ?? 'Error desconocido'}";
-          notifyListeners();
-          return null;
-        }
-      }else {
-        errorMessage = "No se recibió respuesta del servidor.";
+
+      if(response['original']['success'] == true) {
+        final container = ContainerModel.fromJson(response['original']['container']);
         notifyListeners();
-        return null;
+        return container;
+      } else {
+        errorMessage = response['original']['error'] ?? 'Error desconocido';
+        print("Error en la respuesta: $errorMessage");
       }
-    } catch (e) {
-      errorMessage = 'Hubo un error: ${e.toString()}';
-      print("Error: ${e.toString()}");
-      notifyListeners();
-      return null;
+        } catch (e) {
+      errorMessage = 'Error inesperado: $e';
     } finally {
       isLoading = false;
       notifyListeners();
     }
+    return null;
   }
 
   Future<void> fetchContainer(String cultive, String zone) async {

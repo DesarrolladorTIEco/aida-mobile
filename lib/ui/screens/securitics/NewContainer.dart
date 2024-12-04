@@ -1,5 +1,8 @@
+import 'package:aida/data/models/securitics/container_model.dart';
 import 'package:aida/viewmodel/auth_viewmodel.dart';
+import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,10 +23,103 @@ class _NewContainerState extends State<NewContainerPage> {
   String zoneName = '';
   String cultive = '';
 
+  Future<void> _sendData(BuildContext context) async {
+    if (!_validateFields()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Por favor, completa todos los campos obligatorios."),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
+    final int parsedUserID =
+        int.tryParse(userID.trim()) ?? 0; // Usa tryParse para evitar errores
+
+    final containerViewModel =
+        Provider.of<ContainerViewModel>(context, listen: false);
+
+    final now = DateTime.now();
+    final String formattedDate =
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+
+    containerViewModel.isLoading = true;
+    containerViewModel.notifyListeners();
+
+    try {
+      ContainerModel? response = await containerViewModel.insert(
+          _newContainer.text, cultive, zoneName, formattedDate, parsedUserID);
+
+      if (response != null) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Éxito"),
+                content: const Text("Registro insertado exitosamente."),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      final arguments = {
+                        'cultive': cultive,
+                        'zone': zoneName,
+                      };
+
+                      Navigator.of(context).pop();
+                      Navigator.pushReplacementNamed(context, '/home-sec', arguments: arguments); // Redirige a /home-sec
+                    },
+                    child: const Text("Aceptar"),
+                  ),
+                ],
+              );
+            });
+        _clearFields();
+      } else {
+        throw Exception(containerViewModel.errorMessage);
+      }
+    } catch (e) {
+      print("Error en _sendData: $e"); // Depura cualquier error aquí
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      containerViewModel.isLoading = false;
+      containerViewModel.notifyListeners();
+    }
+  }
+
+  void _clearFields() {
+    _newContainer.clear();
+  }
+
+  bool _validateFields() {
+    if (cultive.isEmpty || zoneName.isEmpty || _newContainer.text.isEmpty) {
+      Fluttertoast.showToast(
+        msg: "¡Debe completar todos los campos!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+      return false;
+    } else if( _newContainer.text.length > 11) {
+      Fluttertoast.showToast(
+        msg: "El contenedor no debe tener más de 11 carácteres",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+      );
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
+    final containerViewModel = Provider.of<ContainerViewModel>(context);
     _today.text = formattedDate;
 
     final arguments =
@@ -236,7 +332,8 @@ class _NewContainerState extends State<NewContainerPage> {
                   SizedBox(
                     width: 400,
                     child: TextField(
-                      controller: _newContainer, // Controlador para escribir el nombre del contenedor
+                      controller: _newContainer,
+                      // Controlador para escribir el nombre del contenedor
                       decoration: InputDecoration(
                         labelStyle: GoogleFonts.raleway(
                           fontSize: 14,
@@ -252,8 +349,10 @@ class _NewContainerState extends State<NewContainerPage> {
                           minHeight: 40,
                         ),
                         border: const OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 12.0),
-                        hintText: "Nombre Contenedor", // Añadido hintText para guía de entrada
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 12.0),
+                        hintText: "Nombre Contenedor",
+                        // Añadido hintText para guía de entrada
                         hintStyle: GoogleFonts.raleway(
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
@@ -262,25 +361,21 @@ class _NewContainerState extends State<NewContainerPage> {
                       ),
                       keyboardType: TextInputType.text,
                       onChanged: (value) {
-                        print("Nombre del Contenedor: $value"); // Para verificar si captura el valor
+                        print(
+                            "Nombre del Contenedor: $value"); // Para verificar si captura el valor
                       },
                     ),
                   ),
 
-
                   const SizedBox(height: 20),
 
                   ElevatedButton(
-                    onPressed: () {
-                      final arguments = {
-                        'cultive': cultive,
-                        'zone': zoneName,
-                      };
-
-                      Navigator.pushNamed(context, '/new-container', arguments: arguments);
-                    },
+                    onPressed: containerViewModel.isLoading
+                        ? null
+                        : () => _sendData(context),
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
                       backgroundColor: Colors.orange.shade800,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -289,11 +384,14 @@ class _NewContainerState extends State<NewContainerPage> {
                       maximumSize: const Size(400, 60),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center, // Centra el contenido
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      // Centra el contenido
                       mainAxisSize: MainAxisSize.min,
+
                       children: [
                         const Icon(Icons.add, size: 25, color: Colors.white),
-                        const SizedBox(width: 8), // Espacio entre el icono y el texto
+                        const SizedBox(width: 8),
+                        // Espacio entre el icono y el texto
                         Text(
                           'AGREGAR CONTENEDOR',
                           textAlign: TextAlign.center,
@@ -309,7 +407,6 @@ class _NewContainerState extends State<NewContainerPage> {
                   const SizedBox(height: 20),
                 ],
               ),
-
             ),
           )
         ],
