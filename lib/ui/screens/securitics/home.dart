@@ -18,11 +18,15 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
   String zoneName = '';
   String cultive = '';
 
-  Future<void> _loadContainers(ContainerViewModel containerViewModel) async
-  {
-    if(zoneName.isNotEmpty && cultive.isNotEmpty) {
+  List<Map<String, dynamic>> filteredContainers = [];
+
+  Future<void> _loadContainers(ContainerViewModel containerViewModel) async {
+    if (zoneName.isNotEmpty && cultive.isNotEmpty) {
       try {
         await containerViewModel.fetchContainer(cultive, zoneName);
+        setState(() {
+          filteredContainers = containerViewModel.containers;
+        });
       } catch (e) {
         print("Error: error al obtener los contenedores: $e");
       }
@@ -38,11 +42,60 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
       containerViewModel.clearContainer();
       _loadContainers(containerViewModel);
     });
+
+    _search.addListener(_filterContainers);
   }
+
+  void _filterContainers() {
+    final containerViewModel =
+    Provider.of<ContainerViewModel>(context, listen: false);
+    final query = _search.text.trim().toLowerCase();
+
+    setState(() {
+      filteredContainers = containerViewModel.containers.where((container) {
+        final containerName =
+        (container['Contenedor'] ?? 'Sin Nombre').toLowerCase().trim();
+
+        if (containerName == query) {
+          return true;
+        }
+
+        final normalizedQuery = _normalizeString(query);
+        final normalizedContainerName = _normalizeString(containerName);
+
+        return normalizedContainerName.contains(normalizedQuery);
+      }).toList();
+
+      filteredContainers.sort((a, b) {
+        final containerA = (a['Contenedor'] ?? '').toLowerCase().trim();
+        final containerB = (b['Contenedor'] ?? '').toLowerCase().trim();
+
+        if (containerA == query) return -1;
+        if (containerB == query) return 1;
+        return containerA.compareTo(containerB);
+      });
+    });
+  }
+
+// Normaliza una cadena eliminando acentos y caracteres especiales
+  String _normalizeString(String input) {
+    return input
+        .replaceAll(RegExp(r'[áàäâ]'), 'a')
+        .replaceAll(RegExp(r'[éèëê]'), 'e')
+        .replaceAll(RegExp(r'[íìïî]'), 'i')
+        .replaceAll(RegExp(r'[óòöô]'), 'o')
+        .replaceAll(RegExp(r'[úùüû]'), 'u')
+        .replaceAll(RegExp(r'[ñ]'), 'n')
+        .replaceAll(RegExp(r'[ç]'), 'c')
+        .replaceAll(RegExp(r'[^a-zA-Z0-9 ]'), '')
+        .trim();
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    final arguments = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     final containerViewModel = Provider.of<ContainerViewModel>(context);
 
@@ -127,7 +180,6 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
             ),
           ),
           const SizedBox(width: 12),
-
           Center(
             child: Padding(
               padding: const EdgeInsets.only(top: 20), // Margen superior
@@ -141,10 +193,12 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                         'zone': zoneName,
                       };
 
-                      Navigator.pushNamed(context, '/new-container', arguments: arguments);
+                      Navigator.pushNamed(context, '/new-container',
+                          arguments: arguments);
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
                       backgroundColor: Colors.green.shade600,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -156,7 +210,8 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.add, size: 16, color: Colors.white),
-                        SizedBox(height: 4), // Espacio entre el icono y el texto
+                        SizedBox(height: 4),
+                        // Espacio entre el icono y el texto
                         Text(
                           'CONTENEDOR',
                           textAlign: TextAlign.center,
@@ -175,10 +230,13 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                       // Acción del botón sync
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                      backgroundColor: Colors.grey, // Color del botón
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 10),
+                      backgroundColor: Colors.grey,
+                      // Color del botón
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8), // Borde redondeado mínimo
+                        borderRadius:
+                            BorderRadius.circular(8), // Borde redondeado mínimo
                       ),
                       minimumSize: const Size(100, 60),
                       maximumSize: const Size(100, 60),
@@ -187,7 +245,8 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(Icons.sync, size: 16, color: Colors.white),
-                        SizedBox(height: 4), // Espacio entre el icono y el texto
+                        SizedBox(height: 4),
+                        // Espacio entre el icono y el texto
                         Text(
                           'SYNC',
                           textAlign: TextAlign.center,
@@ -204,9 +263,7 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
               ),
             ),
           ),
-
           const SizedBox(height: 12),
-
           SizedBox(
             width: 400,
             child: TextField(
@@ -222,8 +279,10 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                   minHeight: 40,
                 ),
                 border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 12.0),
-                hintText: "Busqueda avanzada...", // Añadido hintText para guía de entrada
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 15.0, horizontal: 12.0),
+                hintText: "Busqueda avanzada...",
+                // Añadido hintText para guía de entrada
                 hintStyle: GoogleFonts.raleway(
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
@@ -236,21 +295,18 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
               ),
               keyboardType: TextInputType.text,
               onChanged: (value) {
-                print("Nombre del Contenedor: $value"); // Para verificar si captura el valor
+                print(
+                    "Nombre del Contenedor: $value"); // Para verificar si captura el valor
               },
             ),
           ),
-
-
           const SizedBox(height: 12),
-
-
           Expanded(
             child: ListView.builder(
-              itemCount: containerViewModel.containers.length,
+              itemCount: filteredContainers.length,
               itemBuilder: (context, index) {
                 final container = containerViewModel.containers[index];
-                return  Card(
+                return Card(
                   elevation: 1,
                   margin: EdgeInsets.symmetric(vertical: 4.0),
                   child: ListTile(
@@ -264,7 +320,7 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                       children: [
                         Text(
                           container['Contenedor'] ?? 'Sin Nombre',
-                          style:  GoogleFonts.raleway(
+                          style: GoogleFonts.raleway(
                             fontSize: 18,
                             letterSpacing: 0.65,
                             fontWeight: FontWeight.w600,
@@ -273,7 +329,7 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                         const SizedBox(height: 0.2),
                         Text(
                           'Linea de Negocio: ${container["Cultivo"] ?? "Sin Nombre"}',
-                          style:  GoogleFonts.raleway(
+                          style: GoogleFonts.raleway(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),

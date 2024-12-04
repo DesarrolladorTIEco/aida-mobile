@@ -26,4 +26,19 @@ class ContainerService {
       throw Exception('Error en la solicitud: ${response.statusCode}');
     }
   }
+
+  Future<Map<String, dynamic>> insert(Map<String, dynamic> data) async {
+    final String url = '${_apiService.baseUrl}securitic/add-container';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Error ${response.statusCode}: ${response.reasonPhrase}');
+    }
+  }
 }
