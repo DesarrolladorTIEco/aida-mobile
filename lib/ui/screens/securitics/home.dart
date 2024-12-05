@@ -341,13 +341,16 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
                     ),
                     trailing: InkWell(
                       onTap: () {
-                        print("container ${container}");
+
+                        final arguments = {
+                          'container': container['Contenedor'],
+                          'url': container['url'],
+                        };
+
                         Navigator.pushNamed(
                           context,
                           '/menu-container',
-                          arguments: {
-                            'container': container['Contenedor'], // Puedes pasar información relevante
-                          },
+                          arguments: arguments
                         );
                       },
                       child: const Icon(

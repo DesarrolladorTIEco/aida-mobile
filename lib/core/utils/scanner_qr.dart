@@ -59,11 +59,9 @@ class QRScannerCarrier {
                     String ruta = extractedData[2].trim();
                     String cantidadAsientos = extractedData[3].trim();
 
-                    // Llamamos al callback con los datos extraídos
                     onDataExtracted(placa, transportista, ruta, cantidadAsientos);
                     Navigator.pop(context); // Cierra el diálogo
                   } else {
-                    // Si no tiene 4 partes, no es un formato válido
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('QR no válido. El formato esperado es incorrecto.'),

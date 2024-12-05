@@ -52,8 +52,10 @@ class _NewContainerState extends State<NewContainerPage> {
     final String month = DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
     final String day = now.day.toString();
 
+    final String container = _newContainer.text;
+
     final String path =
-        '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\$formattedCultive\\$year\\$month\\$day';
+        '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\$formattedCultive\\$year\\$month\\$day\\$container';
 
     containerViewModel.isLoading = true;
     containerViewModel.notifyListeners();

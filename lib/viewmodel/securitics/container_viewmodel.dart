@@ -36,6 +36,7 @@ class ContainerViewModel extends ChangeNotifier {
 
       if(response['original']['success'] == true) {
         final container = ContainerModel.fromJson(response['original']['container']);
+
         notifyListeners();
         return container;
       } else {

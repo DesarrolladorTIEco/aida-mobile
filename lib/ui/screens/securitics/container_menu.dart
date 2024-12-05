@@ -2,8 +2,8 @@ import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:image_picker/image_picker.dart'; // Importar ImagePicker
-import 'package:aida/core/utils/camera_container.dart'; // Importar CameraContainer
+import 'package:image_picker/image_picker.dart';
+import 'package:aida/core/utils/camera_container.dart';
 
 class ContainerMenuPage extends StatefulWidget {
   const ContainerMenuPage({Key? key}) : super(key: key);
@@ -15,6 +15,7 @@ class ContainerMenuPage extends StatefulWidget {
 class _ContainerMenuState extends State<ContainerMenuPage> {
   final CameraContainer _cameraContainer = CameraContainer(); // Instancia de CameraContainer
   String container = '';
+  String url = '';
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class _ContainerMenuState extends State<ContainerMenuPage> {
 
     if (arguments != null) {
       container = (arguments['container'] ?? 'Desconocido').toString();
+      url = (arguments['url'] ?? 'Desconocido').toString();
     }
 
     return Scaffold(
@@ -97,7 +99,7 @@ class _ContainerMenuState extends State<ContainerMenuPage> {
                 children: [
                   ElevatedButton(
                     onPressed: () async {
-                      const String path = '\\\\10.10.100.26\\Seguridad_Proyecto\\agropiura\\conserva\\2024\\dec\\5\\OMAR';
+                      String path = url;
                       final XFile? image = await _cameraContainer.openCamera(context, path);
 
                     },
