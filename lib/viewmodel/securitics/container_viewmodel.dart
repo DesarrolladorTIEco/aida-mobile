@@ -44,7 +44,7 @@ class ContainerViewModel extends ChangeNotifier {
         print("Error en la respuesta: $errorMessage");
       }
         } catch (e) {
-      errorMessage = 'Error inesperado: $e';
+      errorMessage = '$e';
     } finally {
       isLoading = false;
       notifyListeners();

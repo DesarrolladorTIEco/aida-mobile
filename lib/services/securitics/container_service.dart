@@ -37,8 +37,11 @@ class ContainerService {
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
-    } else {
-      throw Exception('Error ${response.statusCode}: ${response.reasonPhrase}');
+    } else{
+      var responseData = json.decode(response.body);
+      var message = responseData['message'];
+
+      throw message;
     }
   }
 }
