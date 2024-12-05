@@ -4,8 +4,9 @@ class ContainerModel {
   final String zone;
   final String date;
   final num user;
+  final String directory;
 
-  ContainerModel(this.name, this.cultive, this.zone, this.date, this.user);
+  ContainerModel(this.name, this.cultive, this.zone, this.date, this.user, this.directory);
 
   factory ContainerModel.fromJson(Map<String, dynamic> json) {
     return ContainerModel(
@@ -13,8 +14,8 @@ class ContainerModel {
       json['MbCntCultive'] ?? '',
       json['MbCntZone'] ?? '',
       json['SecDateCreate'] ?? '',
-      num.tryParse(json['UsrCreate'].toString()) ??
-          0, // Asegúrate de convertir correctamente
+      num.tryParse(json['UsrCreate'].toString()) ?? 0,
+      json['MbCntLinkDirectory'] ?? '',
     );
   }
 
@@ -25,12 +26,14 @@ class ContainerModel {
       'MbCntZone': zone,
       'SecDateCreate': date,
       'UsrCreate': user,
+      'MbCntLinkDirectory' : directory
     };
   }
 
   @override
   String toString() {
     return 'ContainerModel{'
-        'MbCntNameContainer: $name,MbCntCultive: $cultive,MbCntZone: $zone,       SecDateCreate: $date,UsrCreate: $user}';
+        'MbCntNameContainer: $name,MbCntCultive: $cultive,MbCntZone: $zone, '
+        'SecDateCreate: $date,UsrCreate: $user, MbCntLinkDirectory: $directory}';
   }
 }

@@ -2,6 +2,7 @@ import 'package:aida/data/models/securitics/container_model.dart';
 import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
@@ -36,22 +37,35 @@ class _NewContainerState extends State<NewContainerPage> {
 
     final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
     final int parsedUserID =
-        int.tryParse(userID.trim()) ?? 0; // Usa tryParse para evitar errores
+        int.tryParse(userID.trim()) ?? 0;
 
     final containerViewModel =
         Provider.of<ContainerViewModel>(context, listen: false);
 
     final now = DateTime.now();
-    final String formattedDate =
-        DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+    final String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+
+    final String formattedZoneName = zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedCultive = cultive.toLowerCase();
+
+    final String year = now.year.toString();
+    final String month = DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+    final String day = now.day.toString();
+
+    final String path =
+        '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\$formattedCultive\\$year\\$month\\$day';
 
     containerViewModel.isLoading = true;
     containerViewModel.notifyListeners();
 
     try {
       ContainerModel? response = await containerViewModel.insert(
-          _newContainer.text, cultive, zoneName, formattedDate, parsedUserID);
-
+          _newContainer.text,
+          cultive,
+          zoneName,
+          formattedDate,
+          parsedUserID,
+          path);
       if (response != null) {
         showDialog(
             context: context,
@@ -68,7 +82,8 @@ class _NewContainerState extends State<NewContainerPage> {
                       };
 
                       Navigator.of(context).pop();
-                      Navigator.pushReplacementNamed(context, '/home-sec', arguments: arguments); // Redirige a /home-sec
+                      Navigator.pushReplacementNamed(context, '/home-sec',
+                          arguments: arguments); // Redirige a /home-sec
                     },
                     child: const Text("Aceptar"),
                   ),
@@ -105,7 +120,7 @@ class _NewContainerState extends State<NewContainerPage> {
         gravity: ToastGravity.CENTER,
       );
       return false;
-    } else if( _newContainer.text.length > 11) {
+    } else if (_newContainer.text.length > 11) {
       Fluttertoast.showToast(
         msg: "El contenedor no debe tener más de 11 carácteres",
         toastLength: Toast.LENGTH_SHORT,

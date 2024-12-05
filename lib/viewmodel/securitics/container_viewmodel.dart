@@ -18,7 +18,7 @@ class ContainerViewModel extends ChangeNotifier {
   }
 
   Future<ContainerModel?> insert(
-      String name, String cultive, String zone, String date, num user) async {
+      String name, String cultive, String zone, String date, num user, String directory) async {
     isLoading = true;
     notifyListeners();
 
@@ -29,6 +29,7 @@ class ContainerViewModel extends ChangeNotifier {
         "MbCntZone" : zone,
         "SecDateCreate" : date,
         "UsrCreate" : user,
+        "MbCntLinkDirectory" : directory
       };
 
       final response = await _containerService.insert(data);

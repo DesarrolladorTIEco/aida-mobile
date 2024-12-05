@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+
 import 'package:aida/ui/screens/christmas/charge_max_date.dart';
 import 'package:aida/ui/screens/securitics/container_menu.dart';
 import 'package:aida/ui/screens/securitics/new_container.dart';
@@ -8,20 +12,18 @@ import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
 import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
 import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
 import 'package:aida/viewmodel/securitics/ecosac_viewmodel.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'viewmodel/auth_viewmodel.dart';
-import 'ui/screens/login.dart';
-import 'ui/screens/welcome.dart';
-import 'ui/screens/carriers/carrier.dart';
-import 'ui/screens/christmas/menu.dart';
-import 'ui/screens/christmas/stock_log.dart';
-import 'ui/screens/christmas/charge_log.dart';
-import 'ui/screens/christmas/worker_log.dart';
-import 'ui/screens/christmas/xmas_log.dart';
+import 'package:aida/viewmodel/auth_viewmodel.dart';
+import 'package:aida/ui/screens/login.dart';
+import 'package:aida/ui/screens/welcome.dart';
+import 'package:aida/ui/screens/carriers/carrier.dart';
+import 'package:aida/ui/screens/christmas/menu.dart';
+import 'package:aida/ui/screens/christmas/stock_log.dart';
+import 'package:aida/ui/screens/christmas/charge_log.dart';
+import 'package:aida/ui/screens/christmas/worker_log.dart';
+import 'package:aida/ui/screens/christmas/xmas_log.dart';
 
-
-void main() {
+void main() async {
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -33,8 +35,8 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AuthViewModel()),
-        ChangeNotifierProvider(create: (context) => CarrierViewModel()), 
-        ChangeNotifierProvider(create: (context) => WorkerViewModel()), 
+        ChangeNotifierProvider(create: (context) => CarrierViewModel()),
+        ChangeNotifierProvider(create: (context) => WorkerViewModel()),
         ChangeNotifierProvider(create: (context) => SecuriticsViewModel()),
         ChangeNotifierProvider(create: (context) => ContainerViewModel())
       ],
