@@ -1,3 +1,4 @@
+import 'package:aida/ui/screens/securitics/container_gallery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
@@ -66,7 +67,9 @@ class MyApp extends StatelessWidget {
           '/welcome-sec' :(context) => const WelcomeSecuriticPage(),
           '/home-sec' : (context) => const HomeSecuriticPage(),
           '/new-container' : (context) => const NewContainerPage(),
-          '/menu-container' : (context) => const ContainerMenuPage()
+          '/menu-container' : (context) => const ContainerMenuPage(),
+          '/gallery-container' : (context) => const ImageGalleryPage()
+
         },
       ),
     );

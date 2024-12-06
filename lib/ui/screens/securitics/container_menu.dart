@@ -133,9 +133,14 @@ class _ContainerMenuState extends State<ContainerMenuPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 16), // Espacio entre botones
+                  const SizedBox(height: 16),
+
                   ElevatedButton(
-                    onPressed: containerViewModel.isLoading ? null : () {},
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/gallery-container',
+                          arguments: {'url': url});
+                    },
+
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       backgroundColor: Colors.grey,

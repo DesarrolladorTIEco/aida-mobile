@@ -49,6 +49,7 @@ class CameraContainer {
 
   Future<void> _uploadImageToServer(BuildContext context, File imageFile, String path, String filename) async {
     final String url = '${_apiService.baseUrl}securitic/pic-upload';
+    print("test");
     try {
       final request = http.MultipartRequest('POST', Uri.parse(url))
         ..fields['path'] = path
