@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
-
 import 'dart:math';
-
-
 import 'package:provider/provider.dart';
 
 class CameraContainer {
@@ -38,7 +35,6 @@ class CameraContainer {
       }
       return image;
     } catch (e) {
-      print("Error al abrir la cámara: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error al abrir la cámara')),
       );
@@ -46,11 +42,43 @@ class CameraContainer {
     }
   }
 
-
   Future<void> _uploadImageToServer(BuildContext context, File imageFile, String path, String filename) async {
     final String url = '${_apiService.baseUrl}securitic/pic-upload';
-    print("test");
+
     try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.redAccent),
+                  ),
+                  SizedBox(height: 15),
+                  Text(
+                    "Subiendo imagen...",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
       final request = http.MultipartRequest('POST', Uri.parse(url))
         ..fields['path'] = path
         ..fields['filename'] = filename
@@ -58,17 +86,21 @@ class CameraContainer {
 
       final response = await request.send();
 
+      Navigator.of(context).pop();
+
+      final responseString = await response.stream.bytesToString();
+
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Imagen subida exitosamente')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al subir la imagen')),
+          SnackBar(content: Text('Error al subir la imagen: $responseString')),
         );
       }
     } catch (e) {
-      print("Error al subir la imagen: $e");
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error al subir la imagen')),
       );
