@@ -12,7 +12,7 @@ import 'package:aida/ui/screens/securitics/zone.dart';
 import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
 import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
 import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
-import 'package:aida/viewmodel/securitics/ecosac_viewmodel.dart';
+import 'package:aida/viewmodel/securitics/seguritic_viewmodel.dart';
 import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:aida/ui/screens/login.dart';
 import 'package:aida/ui/screens/welcome.dart';

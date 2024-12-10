@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../../viewmodel/securitics/ecosac_viewmodel.dart';
+import '../../../viewmodel/securitics/seguritic_viewmodel.dart';
 
 class ZonePage extends StatefulWidget {
   const ZonePage({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../../viewmodel/securitics/ecosac_viewmodel.dart';
+import '../../../viewmodel/securitics/seguritic_viewmodel.dart';
 
 class MenuSecuriticsScreen extends StatefulWidget {
   const MenuSecuriticsScreen({Key? key}) : super(key: key);
@@ -79,7 +79,7 @@ class _MenuSecuriticsState extends State<MenuSecuriticsScreen> {
                             return GestureDetector(
                               onTap: () {
                                 final selectedZoneName = zone['Zona'] ?? 'Sin nombre';
-                                Navigator.pushNamed(context, '/welcome-sec', arguments: selectedZoneName,);
+                                Navigator.pushNamed(context, '/zone-sec', arguments: selectedZoneName,);
                               },
                               child: Card(
                                 shape: RoundedRectangleBorder(

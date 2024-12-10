@@ -1,4 +1,4 @@
-import 'package:aida/services/securitics/ecosac_service.dart';
+import 'package:aida/services/securitics/securitic_service.dart';
 import 'package:flutter/material.dart';
 
 class SecuriticsViewModel extends ChangeNotifier {
