@@ -21,7 +21,7 @@ class CameraContainer {
   Future<XFile?> openCamera(BuildContext context, String path) async {
     try {
       final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
-      final fullName = authViewModel.fullName ?? 'Usuario';
+      final fullName = (authViewModel.fullName ?? 'Usuario').replaceAll(' ', '_');
 
       final XFile? image = await _picker.pickImage(source: ImageSource.camera);
       if (image != null) {

@@ -1,14 +1,14 @@
-import 'package:aida/ui/screens/securitics/container_gallery.dart';
+import 'package:aida/ui/screens/securitics/gallery_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'package:aida/ui/screens/christmas/charge_max_date.dart';
-import 'package:aida/ui/screens/securitics/container_menu.dart';
+import 'package:aida/ui/screens/securitics/menu_container.dart';
 import 'package:aida/ui/screens/securitics/new_container.dart';
-import 'package:aida/ui/screens/securitics/home.dart';
-import 'package:aida/ui/screens/securitics/menu.dart';
-import 'package:aida/ui/screens/securitics/welcome.dart';
+import 'package:aida/ui/screens/securitics/booking_home.dart';
+import 'package:aida/ui/screens/securitics/menu_planta_despacho.dart';
+import 'package:aida/ui/screens/securitics/zone.dart';
 import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
 import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
 import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
 
           //securitics
           '/menu-sec' :(context) => const MenuSecuriticsScreen(),
-          '/welcome-sec' :(context) => const WelcomeSecuriticPage(),
+          '/zone-sec' :(context) => const ZonePage(),
           '/home-sec' : (context) => const HomeSecuriticPage(),
           '/new-container' : (context) => const NewContainerPage(),
           '/menu-container' : (context) => const ContainerMenuPage(),

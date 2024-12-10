@@ -298,7 +298,7 @@ class _HomeSecuriticsState extends State<HomeSecuriticPage> {
               keyboardType: TextInputType.text,
               onChanged: (value) {
                 print(
-                    "Nombre del Contenedor: $value"); // Para verificar si captura el valor
+                    "Nombre del Contenedor: $value");
               },
             ),
           ),

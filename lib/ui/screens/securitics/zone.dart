@@ -3,15 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../viewmodel/securitics/ecosac_viewmodel.dart';
 
-class WelcomeSecuriticPage extends StatefulWidget {
-  const WelcomeSecuriticPage({Key? key}) : super(key: key);
+class ZonePage extends StatefulWidget {
+  const ZonePage({Key? key}) : super(key: key);
 
   @override
-  State<WelcomeSecuriticPage> createState() => _WelcomeSecuriticsState();
+  State<ZonePage> createState() => _ZonePageState();
 }
 
-class _WelcomeSecuriticsState extends State<WelcomeSecuriticPage> {
-  String zoneName = ''; // Variable para almacenar el nombre de la zona
+class _ZonePageState extends State<ZonePage> {
+  String zoneName = '';
 
   @override
   void initState() {
@@ -72,9 +72,7 @@ class _WelcomeSecuriticsState extends State<WelcomeSecuriticPage> {
                   final x = cultive[index];
                   final cultiveName = x['Cultivo'] ?? 'Sin nombre';
 
-                  // Asignar íconos según el nombre de la zona
-                  final iconsMap = {
-                  };
+                  final iconsMap = {};
 
                   final icon =
                       iconsMap[cultiveName] ?? Icons.apartment;

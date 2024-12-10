@@ -31,7 +31,6 @@ class _ImageGalleryPageState extends State<ImageGalleryPage> {
     });
   }
 
-  // Método para cargar las imágenes desde la API
   Future<void> _loadImagesFromAPI() async {
     final url = Uri.parse('${_apiService.baseUrl}securitic/get-images');
 
