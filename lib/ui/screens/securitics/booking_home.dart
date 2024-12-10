@@ -211,7 +211,6 @@ class _BookingHomeState extends State<BookingHomePage> {
                       children: [
                         Icon(Icons.add, size: 16, color: Colors.white),
                         SizedBox(height: 4),
-                        // Espacio entre el icono y el texto
                         Text(
                           'BOOKING',
                           textAlign: TextAlign.center,
