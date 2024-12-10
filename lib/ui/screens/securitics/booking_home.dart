@@ -5,14 +5,14 @@ import '../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeSecuriticPage extends StatefulWidget {
-  const HomeSecuriticPage({Key? key}) : super(key: key);
+class BookingHomePage extends StatefulWidget {
+  const BookingHomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomeSecuriticPage> createState() => _HomeSecuriticsState();
+  State<BookingHomePage> createState() => _BookingHomeState();
 }
 
-class _HomeSecuriticsState extends State<HomeSecuriticPage> {
+class _BookingHomeState extends State<BookingHomePage> {
   final TextEditingController _search = TextEditingController();
 
   String zoneName = '';

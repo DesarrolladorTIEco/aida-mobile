@@ -84,8 +84,8 @@ class _NewContainerState extends State<NewContainerPage> {
                       };
 
                       Navigator.of(context).pop();
-                      Navigator.pushReplacementNamed(context, '/home-sec',
-                          arguments: arguments); // Redirige a /home-sec
+                      Navigator.pushReplacementNamed(context, '/booking-home',
+                          arguments: arguments);
                     },
                     child: const Text("Aceptar"),
                   ),

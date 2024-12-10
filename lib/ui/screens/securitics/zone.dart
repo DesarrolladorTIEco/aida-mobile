@@ -86,7 +86,7 @@ class _ZonePageState extends State<ZonePage> {
                         'zone': zoneName,
                       };
 
-                      Navigator.pushNamed(context, '/home-sec', arguments: arguments);
+                      Navigator.pushNamed(context, '/booking-home', arguments: arguments);
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(
