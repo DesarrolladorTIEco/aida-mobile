@@ -1,11 +1,13 @@
 import 'package:aida/ui/screens/securitics/gallery_container.dart';
+import 'package:aida/ui/screens/securitics/new_container.dart';
+import 'package:aida/viewmodel/securitics/booking_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'package:aida/ui/screens/christmas/charge_max_date.dart';
 import 'package:aida/ui/screens/securitics/menu_container.dart';
-import 'package:aida/ui/screens/securitics/new_container.dart';
+import 'package:aida/ui/screens/securitics/new_booking.dart';
 import 'package:aida/ui/screens/securitics/booking_home.dart';
 import 'package:aida/ui/screens/securitics/menu_planta_despacho.dart';
 import 'package:aida/ui/screens/securitics/zone.dart';
@@ -39,7 +41,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CarrierViewModel()),
         ChangeNotifierProvider(create: (context) => WorkerViewModel()),
         ChangeNotifierProvider(create: (context) => SecuriticsViewModel()),
-        ChangeNotifierProvider(create: (context) => ContainerViewModel())
+        ChangeNotifierProvider(create: (context) => ContainerViewModel()),
+        ChangeNotifierProvider(create: (context) => BookingViewModel())
       ],
       child: MaterialApp(
         title: 'AIDA+',
@@ -66,6 +69,7 @@ class MyApp extends StatelessWidget {
           '/menu-sec' :(context) => const MenuSecuriticsScreen(),
           '/zone-sec' :(context) => const ZonePage(),
           '/booking-home' : (context) => const BookingHomePage(),
+          '/new-booking' : (context) => const NewBookingPage(),
           '/new-container' : (context) => const NewContainerPage(),
           '/menu-container' : (context) => const ContainerMenuPage(),
           '/gallery-container' : (context) => const ImageGalleryPage()

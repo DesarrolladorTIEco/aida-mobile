@@ -1,25 +1,24 @@
-import 'package:aida/data/models/securitics/container_model.dart';
+import 'package:aida/data/models/securitics/booking_model.dart';
 import 'package:aida/viewmodel/auth_viewmodel.dart';
-import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
+import 'package:aida/viewmodel/securitics/booking_viewmodel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import '../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class NewContainerPage extends StatefulWidget {
-  const NewContainerPage({Key? key}) : super(key: key);
+class NewBookingPage extends StatefulWidget {
+  const NewBookingPage({Key? key}) : super(key: key);
 
   @override
-  State<NewContainerPage> createState() => _NewContainerState();
+  State<NewBookingPage> createState() => _NewBookingState();
 }
 
-class _NewContainerState extends State<NewContainerPage> {
+class _NewBookingState extends State<NewBookingPage> {
   final TextEditingController _lineaNegocio = TextEditingController();
   final TextEditingController _today = TextEditingController();
-  final TextEditingController _newContainer = TextEditingController();
+  final TextEditingController _newBooking = TextEditingController();
 
   String zoneName = '';
   String cultive = '';
@@ -39,35 +38,24 @@ class _NewContainerState extends State<NewContainerPage> {
     final int parsedUserID =
         int.tryParse(userID.trim()) ?? 0;
 
-    final containerViewModel =
-    Provider.of<ContainerViewModel>(context, listen: false);
+    final bookingViewModel =
+        Provider.of<BookingViewModel>(context, listen: false);
 
     final now = DateTime.now();
     final String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
 
-    final String formattedZoneName = zoneName.toLowerCase().replaceAll(' ', '_');
-    final String formattedCultive = cultive.toLowerCase();
 
-    final String year = now.year.toString();
-    final String month = DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
-    final String day = now.day.toString();
-
-    final String container = _newContainer.text;
-
-    final String path =
-        '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\$formattedCultive\\$year\\$month\\$day\\$container';
-
-    containerViewModel.isLoading = true;
-    containerViewModel.notifyListeners();
+    bookingViewModel.isLoading = true;
+    bookingViewModel.notifyListeners();
 
     try {
-      ContainerModel? response = await containerViewModel.insert(
-          _newContainer.text,
+      BookingModel? response = await bookingViewModel.insert(
+          _newBooking.text,
           cultive,
           zoneName,
           formattedDate,
-          parsedUserID,
-          path);
+          parsedUserID
+      );
       if (response != null) {
         showDialog(
             context: context,
@@ -94,7 +82,7 @@ class _NewContainerState extends State<NewContainerPage> {
             });
         _clearFields();
       } else {
-        throw Exception(containerViewModel.errorMessage);
+        throw Exception(bookingViewModel.errorMessage);
       }
     } catch (e) {
       print("Error en _sendData: $e"); // Depura cualquier error aquí
@@ -105,24 +93,24 @@ class _NewContainerState extends State<NewContainerPage> {
         ),
       );
     } finally {
-      containerViewModel.isLoading = false;
-      containerViewModel.notifyListeners();
+      bookingViewModel.isLoading = false;
+      bookingViewModel.notifyListeners();
     }
   }
 
   void _clearFields() {
-    _newContainer.clear();
+    _newBooking.clear();
   }
 
   bool _validateFields() {
-    if (cultive.isEmpty || zoneName.isEmpty || _newContainer.text.isEmpty) {
+    if (cultive.isEmpty || zoneName.isEmpty || _newBooking.text.isEmpty) {
       Fluttertoast.showToast(
         msg: "¡Debe completar todos los campos!",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
       return false;
-    } else if (_newContainer.text.length > 11) {
+    } else if (_newBooking.text.length > 11) {
       Fluttertoast.showToast(
         msg: "El contenedor no debe tener más de 11 carácteres",
         toastLength: Toast.LENGTH_SHORT,
@@ -136,11 +124,11 @@ class _NewContainerState extends State<NewContainerPage> {
   Widget build(BuildContext context) {
     String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
 
-    final containerViewModel = Provider.of<ContainerViewModel>(context);
+    final bookingViewModel = Provider.of<BookingViewModel>(context);
     _today.text = formattedDate;
 
     final arguments =
-    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     if (arguments != null) {
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
@@ -230,7 +218,7 @@ class _NewContainerState extends State<NewContainerPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Información del Contenedor",
+                    "Información del Booking",
                     style: GoogleFonts.raleway(
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
@@ -349,7 +337,7 @@ class _NewContainerState extends State<NewContainerPage> {
                   SizedBox(
                     width: 400,
                     child: TextField(
-                      controller: _newContainer,
+                      controller: _newBooking,
                       // Controlador para escribir el nombre del contenedor
                       decoration: InputDecoration(
                         labelStyle: GoogleFonts.raleway(
@@ -387,7 +375,7 @@ class _NewContainerState extends State<NewContainerPage> {
                   const SizedBox(height: 20),
 
                   ElevatedButton(
-                    onPressed: containerViewModel.isLoading
+                    onPressed: bookingViewModel.isLoading
                         ? null
                         : () => _sendData(context),
                     style: ElevatedButton.styleFrom(
@@ -410,7 +398,7 @@ class _NewContainerState extends State<NewContainerPage> {
                         const SizedBox(width: 8),
                         // Espacio entre el icono y el texto
                         Text(
-                          'AGREGAR CONTENEDOR',
+                          'AGREGAR BOOKING',
                           textAlign: TextAlign.center,
                           style: GoogleFonts.raleway(
                             fontSize: 18,

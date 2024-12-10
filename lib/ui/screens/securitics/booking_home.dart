@@ -1,5 +1,5 @@
 import 'package:aida/viewmodel/auth_viewmodel.dart';
-import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
+import 'package:aida/viewmodel/securitics/booking_viewmodel.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
@@ -18,17 +18,17 @@ class _BookingHomeState extends State<BookingHomePage> {
   String zoneName = '';
   String cultive = '';
 
-  List<Map<String, dynamic>> filteredContainers = [];
+  List<Map<String, dynamic>> filteredBookings = [];
 
-  Future<void> _loadContainers(ContainerViewModel containerViewModel) async {
+  Future<void> _loadBooking(BookingViewModel bookingViewModel) async {
     if (zoneName.isNotEmpty && cultive.isNotEmpty) {
       try {
-        await containerViewModel.fetchContainer(cultive, zoneName);
+        await bookingViewModel.fetchBooking(cultive, zoneName);
         setState(() {
-          filteredContainers = containerViewModel.containers;
+          filteredBookings = bookingViewModel.bookings;
         });
       } catch (e) {
-        print("Error: error al obtener los contenedores: $e");
+        print("Error: error al obtener los bookings: $e");
       }
     }
   }
@@ -37,42 +37,42 @@ class _BookingHomeState extends State<BookingHomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final containerViewModel =
-      Provider.of<ContainerViewModel>(context, listen: false);
-      containerViewModel.clearContainer();
-      _loadContainers(containerViewModel);
+      final bookingViewModel =
+      Provider.of<BookingViewModel>(context, listen: false);
+      bookingViewModel.clearBooking();
+      _loadBooking(bookingViewModel);
     });
 
-    _search.addListener(_filterContainers);
+    _search.addListener(_filterBookings);
   }
 
-  void _filterContainers() {
-    final containerViewModel =
-    Provider.of<ContainerViewModel>(context, listen: false);
+  void _filterBookings() {
+    final bookingViewModel =
+    Provider.of<BookingViewModel>(context, listen: false);
     final query = _search.text.trim().toLowerCase();
 
     setState(() {
-      filteredContainers = containerViewModel.containers.where((container) {
-        final containerName =
-        (container['Contenedor'] ?? 'Sin Nombre').toLowerCase().trim();
+      filteredBookings = bookingViewModel.bookings.where((booking) {
+        final bookingName =
+        (booking['Booking'] ?? 'Sin Nombre').toLowerCase().trim();
 
-        if (containerName == query) {
+        if (bookingName == query) {
           return true;
         }
 
         final normalizedQuery = _normalizeString(query);
-        final normalizedContainerName = _normalizeString(containerName);
+        final normalizedBookingName = _normalizeString(bookingName);
 
-        return normalizedContainerName.contains(normalizedQuery);
+        return normalizedBookingName.contains(normalizedQuery);
       }).toList();
 
-      filteredContainers.sort((a, b) {
-        final containerA = (a['Contenedor'] ?? '').toLowerCase().trim();
-        final containerB = (b['Contenedor'] ?? '').toLowerCase().trim();
+      filteredBookings.sort((a, b) {
+        final bookingA = (a['Booking'] ?? '').toLowerCase().trim();
+        final bookingB = (b['Booking'] ?? '').toLowerCase().trim();
 
-        if (containerA == query) return -1;
-        if (containerB == query) return 1;
-        return containerA.compareTo(containerB);
+        if (bookingA == query) return -1;
+        if (bookingB == query) return 1;
+        return bookingA.compareTo(bookingB);
       });
     });
   }
@@ -97,7 +97,7 @@ class _BookingHomeState extends State<BookingHomePage> {
     final arguments =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
-    final containerViewModel = Provider.of<ContainerViewModel>(context);
+    final bookingViewModel = Provider.of<BookingViewModel>(context);
 
     if (arguments != null) {
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
@@ -193,7 +193,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                         'zone': zoneName,
                       };
 
-                      Navigator.pushNamed(context, '/new-container',
+                      Navigator.pushNamed(context, '/new-booking',
                           arguments: arguments);
                     },
                     style: ElevatedButton.styleFrom(
@@ -213,7 +213,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                         SizedBox(height: 4),
                         // Espacio entre el icono y el texto
                         Text(
-                          'CONTENEDOR',
+                          'BOOKING',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
@@ -227,9 +227,9 @@ class _BookingHomeState extends State<BookingHomePage> {
                   const SizedBox(width: 8), // Espacio entre botones
                   ElevatedButton(
                     onPressed: () {
-                      containerViewModel.isLoading
+                      bookingViewModel.isLoading
                           ? null
-                          : () => _loadContainers(context as ContainerViewModel);
+                          : () => _loadBooking(context as BookingViewModel);
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -305,9 +305,9 @@ class _BookingHomeState extends State<BookingHomePage> {
           const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
-              itemCount: filteredContainers.length,
+              itemCount: filteredBookings.length,
               itemBuilder: (context, index) {
-                final container = containerViewModel.containers[index];
+                final container = bookingViewModel.bookings[index];
 
                 return Card(
                   elevation: 1,

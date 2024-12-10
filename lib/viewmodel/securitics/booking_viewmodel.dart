@@ -10,7 +10,7 @@ class BookingViewModel extends ChangeNotifier {
 
   List<Map<String, dynamic>> _bookings = [];
 
-  List<Map<String, dynamic>> get bookins => _bookings;
+  List<Map<String, dynamic>> get bookings => _bookings;
 
   void clearBooking() {
     _bookings.clear();
@@ -18,7 +18,7 @@ class BookingViewModel extends ChangeNotifier {
   }
 
   Future<BookingModel?> insert(String name, String cultive, String zone,
-      num isSp, num isExp, String date, num user) async {
+      String date, num user) async {
     isLoading = true;
     notifyListeners();
 
@@ -27,8 +27,6 @@ class BookingViewModel extends ChangeNotifier {
         'MbBkName': name,
         'MbBkCultive': cultive,
         'MbBkZone': zone,
-        'MbBkIsSP': isSp,
-        'MbBkIsExp': isExp,
         'SecDateCreate': date,
         'UsrCreate': user,
       };
