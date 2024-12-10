@@ -70,7 +70,7 @@ class WelcomePage extends StatelessWidget {
                   final moduleName = module['Modulo'] ?? 'Sin nombre';
 
                   final iconsMap = {
-                    'Seguridad': Icons.health_and_safety,
+                    'Seguridad Patrimonial': Icons.health_and_safety,
                     'Entrega de Canastas': Icons.card_giftcard,
                     'Control de Ingreso y salida de Carros':
                         Icons.directions_car,
@@ -94,7 +94,7 @@ class WelcomePage extends StatelessWidget {
                         Navigator.pushNamed(context, '/attendance');
                       } else if (moduleName == 'Tareo') {
                         Navigator.pushNamed(context, '/workHours');
-                      } else if (moduleName == 'Seguridad') {
+                      } else if (moduleName == 'Seguridad Patrimonial') {
                         Navigator.pushNamed(context, '/menu-sec');
                       }
                     },

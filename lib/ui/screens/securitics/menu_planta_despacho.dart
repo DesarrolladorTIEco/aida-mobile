@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../../viewmodel/securitics/seguritic_viewmodel.dart';
+import '../../../viewmodel/securitics/securitic_viewmodel.dart';
 
 class MenuSecuriticsScreen extends StatefulWidget {
   const MenuSecuriticsScreen({Key? key}) : super(key: key);

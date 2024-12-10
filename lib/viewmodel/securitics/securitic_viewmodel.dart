@@ -11,7 +11,7 @@ class SecuriticsViewModel extends ChangeNotifier {
   List<Map<String, dynamic>> registerZone = [];
 
   Future<void> fetchCultives() async {
-    isLoading = true; // Mostrar indicador de carga
+    isLoading = true;
     notifyListeners();
 
     try {
@@ -20,13 +20,13 @@ class SecuriticsViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error al obtener módulos: $e');
     }finally {
-      isLoading = false; // Ocultar indicador de carga
+      isLoading = false;
       notifyListeners();
     }
   }
 
   Future<void> fetchRegisterZones() async {
-    isLoading = true; // Mostrar indicador de carga
+    isLoading = true;
     notifyListeners();
 
     try {
@@ -35,7 +35,7 @@ class SecuriticsViewModel extends ChangeNotifier {
     } catch (e) {
       errorMessage = 'Error al obtener zonas: $e';
     } finally {
-      isLoading = false; // Ocultar indicador de carga
+      isLoading = false;
       notifyListeners();
     }
   }
