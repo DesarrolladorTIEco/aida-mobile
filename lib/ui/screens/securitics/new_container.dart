@@ -83,9 +83,8 @@ class _NewContainerState extends State<NewContainerPage> {
                         'zone': zoneName,
                       };
 
-                      Navigator.of(context).pop();
-                      Navigator.pushReplacementNamed(context, '/booking-home',
-                          arguments: arguments);
+                      Navigator.popUntil(context, ModalRoute.withName('/container-home'));
+                      Navigator.of(context).pop(true);
                     },
                     child: const Text("Aceptar"),
                   ),

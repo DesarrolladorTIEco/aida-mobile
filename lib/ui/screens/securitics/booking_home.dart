@@ -38,7 +38,7 @@ class _BookingHomeState extends State<BookingHomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bookingViewModel =
-      Provider.of<BookingViewModel>(context, listen: false);
+          Provider.of<BookingViewModel>(context, listen: false);
       bookingViewModel.clearBooking();
       _loadBooking(bookingViewModel);
     });
@@ -46,15 +46,16 @@ class _BookingHomeState extends State<BookingHomePage> {
     _search.addListener(_filterBookings);
   }
 
+
   void _filterBookings() {
     final bookingViewModel =
-    Provider.of<BookingViewModel>(context, listen: false);
+        Provider.of<BookingViewModel>(context, listen: false);
     final query = _search.text.trim().toLowerCase();
 
     setState(() {
       filteredBookings = bookingViewModel.bookings.where((booking) {
         final bookingName =
-        (booking['Booking'] ?? 'Sin Nombre').toLowerCase().trim();
+            (booking['Booking'] ?? 'Sin Nombre').toLowerCase().trim();
 
         if (bookingName == query) {
           return true;
@@ -90,7 +91,6 @@ class _BookingHomeState extends State<BookingHomePage> {
         .replaceAll(RegExp(r'[^a-zA-Z0-9 ]'), '')
         .trim();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -226,9 +226,10 @@ class _BookingHomeState extends State<BookingHomePage> {
                   const SizedBox(width: 8), // Espacio entre botones
                   ElevatedButton(
                     onPressed: () {
-                      bookingViewModel.isLoading
-                          ? null
-                          : () => _loadBooking(context as BookingViewModel);
+                      if (!bookingViewModel.isLoading) {
+                        _loadBooking(
+                            bookingViewModel);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -296,8 +297,7 @@ class _BookingHomeState extends State<BookingHomePage> {
               ),
               keyboardType: TextInputType.text,
               onChanged: (value) {
-                print(
-                    "Nombre del Contenedor: $value");
+                print("Nombre del Contenedor: $value");
               },
             ),
           ),
@@ -340,17 +340,13 @@ class _BookingHomeState extends State<BookingHomePage> {
                     ),
                     trailing: InkWell(
                       onTap: () {
-
                         final arguments = {
                           'cultive': cultive,
                           'zone': zoneName,
                         };
 
-                        Navigator.pushNamed(
-                          context,
-                          '/container-home',
-                          arguments: arguments
-                        );
+                        Navigator.pushNamed(context, '/container-home',
+                            arguments: arguments);
                       },
                       child: const Icon(
                         Icons.arrow_forward_ios,
@@ -363,7 +359,6 @@ class _BookingHomeState extends State<BookingHomePage> {
               },
             ),
           ),
-
         ],
       ),
     );

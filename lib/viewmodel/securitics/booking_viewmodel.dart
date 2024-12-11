@@ -64,6 +64,7 @@ class BookingViewModel extends ChangeNotifier {
 
       if (!response.isEmpty) {
         _bookings = List<Map<String, dynamic>>.from(response);
+        notifyListeners();
       } else {
         _bookings = [];
       }

@@ -71,9 +71,8 @@ class _NewBookingState extends State<NewBookingPage> {
                         'zone': zoneName,
                       };
 
-                      Navigator.of(context).pop();
-                      Navigator.pushReplacementNamed(context, '/booking-home',
-                          arguments: arguments);
+                      Navigator.popUntil(context, ModalRoute.withName('/booking-home'));
+                      Navigator.of(context).pop(true);
                     },
                     child: const Text("Aceptar"),
                   ),

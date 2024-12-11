@@ -226,9 +226,10 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                   const SizedBox(width: 8), // Espacio entre botones
                   ElevatedButton(
                     onPressed: () {
-                      containerViewModel.isLoading
-                          ? null
-                          : () => _loadContainer(context as ContainerViewModel);
+                      if (!containerViewModel.isLoading) {
+                        _loadContainer(
+                            containerViewModel);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(

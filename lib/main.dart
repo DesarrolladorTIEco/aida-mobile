@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
           //securitics
           '/menu-sec' :(context) => const MenuSecuriticsScreen(),
           '/zone-sec' :(context) => const ZonePage(),
-          '/booking-home' : (context) => const BookingHomePage(),
+          '/booking-home' : (context) =>  const BookingHomePage(),
           '/container-home' : (context) => const ContainerHomePage(),
           '/new-booking' : (context) => const NewBookingPage(),
           '/new-container' : (context) => const NewContainerPage(),
