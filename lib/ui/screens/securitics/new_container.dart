@@ -23,6 +23,7 @@ class _NewContainerState extends State<NewContainerPage> {
 
   String zoneName = '';
   String cultive = '';
+  num bkId = 0;
 
   Future<void> _sendData(BuildContext context) async {
     if (!_validateFields()) {
@@ -67,7 +68,8 @@ class _NewContainerState extends State<NewContainerPage> {
           zoneName,
           formattedDate,
           parsedUserID,
-          path);
+          path,
+          bkId);
       if (response != null) {
         showDialog(
             context: context,
@@ -144,6 +146,10 @@ class _NewContainerState extends State<NewContainerPage> {
     if (arguments != null) {
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
       zoneName = (arguments['zone'] ?? 'Desconocido').toString();
+
+      // Convert bkId to num safely
+      var bkIdValue = arguments['bkId'];
+      bkId = (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
     }
 
     final authViewModel = Provider.of<AuthViewModel>(context);

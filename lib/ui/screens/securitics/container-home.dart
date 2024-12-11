@@ -17,6 +17,7 @@ class _ContainerHomeState extends State<ContainerHomePage> {
 
   String zoneName = '';
   String cultive = '';
+  num bkId = 0;
 
   List<Map<String, dynamic>> filteredContainers = [];
 
@@ -100,6 +101,10 @@ class _ContainerHomeState extends State<ContainerHomePage> {
     if (arguments != null) {
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
       zoneName = (arguments['zone'] ?? 'Desconocido').toString();
+
+      // Convert bkId to num safely
+      var bkIdValue = arguments['bkId'];
+      bkId = (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
     }
 
     final authViewModel = Provider.of<AuthViewModel>(context);
@@ -189,6 +194,7 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                       final arguments = {
                         'cultive': cultive,
                         'zone': zoneName,
+                        'bkId': bkId
                       };
 
                       Navigator.pushNamed(context, '/new-container',

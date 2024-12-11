@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class BookingHomePage extends StatefulWidget {
   const BookingHomePage({Key? key}) : super(key: key);
@@ -14,9 +15,12 @@ class BookingHomePage extends StatefulWidget {
 
 class _BookingHomeState extends State<BookingHomePage> {
   final TextEditingController _search = TextEditingController();
+  final TextEditingController _date = TextEditingController();
 
   String zoneName = '';
   String cultive = '';
+
+  String selectedOption = 'BOOKING'; // Inicialmente seleccionamos 'BOOKING'
 
   List<Map<String, dynamic>> filteredBookings = [];
 
@@ -38,7 +42,7 @@ class _BookingHomeState extends State<BookingHomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bookingViewModel =
-          Provider.of<BookingViewModel>(context, listen: false);
+      Provider.of<BookingViewModel>(context, listen: false);
       _loadBooking(bookingViewModel);
     });
 
@@ -47,13 +51,13 @@ class _BookingHomeState extends State<BookingHomePage> {
 
   void _filterBookings() {
     final bookingViewModel =
-        Provider.of<BookingViewModel>(context, listen: false);
+    Provider.of<BookingViewModel>(context, listen: false);
     final query = _search.text.trim().toLowerCase();
 
     setState(() {
       filteredBookings = bookingViewModel.bookings.where((booking) {
         final bookingName =
-            (booking['Booking'] ?? 'Sin Nombre').toLowerCase().trim();
+        (booking['Booking'] ?? 'Sin Nombre').toLowerCase().trim();
 
         if (bookingName == query) {
           return true;
@@ -93,7 +97,10 @@ class _BookingHomeState extends State<BookingHomePage> {
   @override
   Widget build(BuildContext context) {
     final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    ModalRoute
+        .of(context)
+        ?.settings
+        .arguments as Map<String, dynamic>?;
 
     final bookingViewModel = Provider.of<BookingViewModel>(context);
 
@@ -163,7 +170,8 @@ class _BookingHomeState extends State<BookingHomePage> {
                         ),
                       ),
                       Text(
-                        "${zoneName.toUpperCase()} [ ${cultive.toUpperCase()} ]",
+                        "${zoneName.toUpperCase()} [ ${cultive
+                            .toUpperCase()} ]",
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
@@ -177,7 +185,61 @@ class _BookingHomeState extends State<BookingHomePage> {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(height: 12),
+
+
+          SizedBox(
+            width: 400,
+            child: TextField(
+              controller: _date,
+              decoration: InputDecoration(
+                labelStyle: GoogleFonts.raleway(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                prefixIcon: const Icon(
+                  Icons.calendar_today, // Calendar icon
+                  color: Colors.grey, // You can customize the color
+                ),
+                prefixIconConstraints: const BoxConstraints(
+                  minWidth: 40,
+                  minHeight: 40,
+                ),
+                border: const OutlineInputBorder(),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 15.0,
+                  horizontal: 12.0,
+                ),
+                hintText: "Seleccione una fecha...",
+                hintStyle: GoogleFonts.raleway(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15,
+                  color: Colors.grey,
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.red, width: 2.0),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              keyboardType: TextInputType.none,
+              onTap: () async {
+                // Show the date picker when the text field is tapped
+                DateTime? selectedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2101),
+                );
+
+                if (selectedDate != null) {
+                  // Format and set the selected date in the text field
+                  _date.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+                }
+              },
+            ),
+          ),
+
+
           Center(
             child: Padding(
               padding: const EdgeInsets.only(top: 20), // Margen superior
@@ -235,7 +297,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                       // Color del botón
                       shape: RoundedRectangleBorder(
                         borderRadius:
-                            BorderRadius.circular(8), // Borde redondeado mínimo
+                        BorderRadius.circular(8), // Borde redondeado mínimo
                       ),
                       minimumSize: const Size(100, 60),
                       maximumSize: const Size(100, 60),
@@ -299,57 +361,235 @@ class _BookingHomeState extends State<BookingHomePage> {
             ),
           ),
           const SizedBox(height: 12),
+
+          Container(
+            padding: const EdgeInsets.symmetric(
+                vertical: 8.0, horizontal: 16.0),
+            child: Row(
+              children: [
+                // Opción BOOKING
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedOption = 'BOOKING';
+                      });
+                      print('BOOKING seleccionado');
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: selectedOption == 'BOOKING'
+                            ? Colors.red // Fondo rojo si está seleccionado
+                            : Colors.transparent,
+                        // Fondo transparente si no está seleccionado
+                        borderRadius: BorderRadius.circular(
+                            4.0), // Opcional: redondea esquinas
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Center(
+                        child: Text(
+                          'BOOKING',
+                          style: GoogleFonts.raleway(
+                            fontSize: 14,
+                            fontWeight: selectedOption == 'BOOKING'
+                                ? FontWeight.bold
+                                : FontWeight.w600,
+                            color: selectedOption == 'BOOKING'
+                                ? Colors
+                                .white // Texto blanco si está seleccionado
+                                : Colors
+                                .grey[700], // Texto gris si no está seleccionado
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                // Opción BOOKING TERMINADO
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedOption = 'BOOKING TERMINADO';
+                      });
+                      print('BOOKING TERMINADO seleccionado');
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: selectedOption == 'BOOKING TERMINADO'
+                            ? Colors.red // Fondo rojo si está seleccionado
+                            : Colors.transparent,
+                        // Fondo transparente si no está seleccionado
+                        borderRadius: BorderRadius.circular(
+                            4.0), // Opcional: redondea esquinas
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Center(
+                        child: Text(
+                          'BOOKING TERMINADO',
+                          style: GoogleFonts.raleway(
+                            fontSize: 14,
+                            fontWeight: selectedOption == 'BOOKING TERMINADO'
+                                ? FontWeight.bold
+                                : FontWeight.w600,
+                            color: selectedOption == 'BOOKING TERMINADO'
+                                ? Colors
+                                .white // Texto blanco si está seleccionado
+                                : Colors
+                                .grey[700], // Texto gris si no está seleccionado
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1.0, thickness: 1.0), // Línea divisora
+          const SizedBox(height: 6),
+
+
           Expanded(
             child: ListView.builder(
               itemCount: filteredBookings.length,
               itemBuilder: (context, index) {
                 final booking = bookingViewModel.bookings[index];
-
                 return Card(
-                    elevation: 1,
-                    margin: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: InkWell(
-                      onTap: () {
-                        final arguments = {
-                          'cultive': cultive,
-                          'zone': zoneName,
-                        };
+                  elevation: 1,
+                  margin: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: InkWell(
+                    onTap: () {
+                      final arguments = {
+                        'cultive': cultive,
+                        'zone': zoneName,
+                        'bkId': booking["bkId"],
+                      };
 
-                        Navigator.pushNamed(context, '/container-home',
-                            arguments: arguments);
-                      },
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.fire_truck_outlined,
-                          size: 25,
-                          color: Colors.red,
-                        ),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              booking['Booking'] ?? 'Sin Nombre',
-                              style: GoogleFonts.raleway(
-                                fontSize: 18,
-                                letterSpacing: 0.65,
-                                fontWeight: FontWeight.w600,
-                              ),
+                      Navigator.pushNamed(context, '/container-home',
+                          arguments: arguments);
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Icon and text column
+                        Expanded(
+                          flex: 3,
+                          child: ListTile(
+                            leading: const Icon(
+                              Icons.fire_truck_outlined,
+                              size: 25,
+                              color: Colors.red,
                             ),
-                            const SizedBox(height: 0.2),
-                            Text(
-                              'Linea de Negocio: ${booking["Cultivo"] ?? "Sin Nombre"}',
-                              style: GoogleFonts.raleway(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  booking['Booking'] ?? 'Sin Nombre',
+                                  style: GoogleFonts.raleway(
+                                    fontSize: 18,
+                                    letterSpacing: 0.65,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 4.0),
+                                Text(
+                                  'Linea de Negocio: ${booking["Cultivo"] ??
+                                      "Sin Nombre"}',
+                                  style: GoogleFonts.raleway(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ));
+                        // Circles and labels column
+                        // Circles and labels column
+                        Expanded(
+                          flex: 1,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 12.0),
+                                    // Mueve todo el contenido hacia abajo
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'S.P',
+                                          style: GoogleFonts.raleway(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4.0),
+                                        // Espacio entre texto y círculo
+                                        Container(
+                                          width: 16,
+                                          height: 16,
+                                          decoration: BoxDecoration(
+                                            color: booking['IsSeguridadPatrimonial'] ==
+                                                1
+                                                ? Colors.green // Verde si es 1
+                                                : Colors.red, // Rojo si es 0
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 8.0),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 12.0),
+                                    // Mueve todo el contenido hacia abajo
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          'EXP',
+                                          style: GoogleFonts.raleway(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4.0),
+                                        // Espacio entre texto y círculo
+                                        Container(
+                                          width: 16,
+                                          height: 16,
+                                          decoration: BoxDecoration(
+                                            color: booking['IsExpediciones'] ==
+                                                1
+                                                ? Colors.green // Verde si es 1
+                                                : Colors.red, // Rojo si es 0
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 12.0),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
               },
             ),
-          ),
+          )
         ],
       ),
     );
