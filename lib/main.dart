@@ -1,3 +1,4 @@
+import 'package:aida/ui/screens/securitics/container-home.dart';
 import 'package:aida/ui/screens/securitics/gallery_container.dart';
 import 'package:aida/ui/screens/securitics/new_container.dart';
 import 'package:aida/viewmodel/securitics/booking_viewmodel.dart';
@@ -69,6 +70,7 @@ class MyApp extends StatelessWidget {
           '/menu-sec' :(context) => const MenuSecuriticsScreen(),
           '/zone-sec' :(context) => const ZonePage(),
           '/booking-home' : (context) => const BookingHomePage(),
+          '/container-home' : (context) => const ContainerHomePage(),
           '/new-booking' : (context) => const NewBookingPage(),
           '/new-container' : (context) => const NewContainerPage(),
           '/menu-container' : (context) => const ContainerMenuPage(),

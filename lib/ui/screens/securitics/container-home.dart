@@ -5,14 +5,14 @@ import '../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class BookingHomePage extends StatefulWidget {
-  const BookingHomePage({Key? key}) : super(key: key);
+class ContainerHomePage extends StatefulWidget {
+  const ContainerHomePage({Key? key}) : super(key: key);
 
   @override
-  State<BookingHomePage> createState() => _BookingHomeState();
+  State<ContainerHomePage> createState() => _BookingHomeState();
 }
 
-class _BookingHomeState extends State<BookingHomePage> {
+class _BookingHomeState extends State<ContainerHomePage> {
   final TextEditingController _search = TextEditingController();
 
   String zoneName = '';
@@ -95,7 +95,7 @@ class _BookingHomeState extends State<BookingHomePage> {
   @override
   Widget build(BuildContext context) {
     final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     final bookingViewModel = Provider.of<BookingViewModel>(context);
 
@@ -193,7 +193,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                         'zone': zoneName,
                       };
 
-                      Navigator.pushNamed(context, '/new-booking',
+                      Navigator.pushNamed(context, '/new-container',
                           arguments: arguments);
                     },
                     style: ElevatedButton.styleFrom(
@@ -212,7 +212,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                         Icon(Icons.add, size: 16, color: Colors.white),
                         SizedBox(height: 4),
                         Text(
-                          'BOOKING',
+                          'CONTENEDOR',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12,
@@ -237,7 +237,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                       // Color del botón
                       shape: RoundedRectangleBorder(
                         borderRadius:
-                            BorderRadius.circular(8), // Borde redondeado mínimo
+                        BorderRadius.circular(8), // Borde redondeado mínimo
                       ),
                       minimumSize: const Size(100, 60),
                       maximumSize: const Size(100, 60),
@@ -342,14 +342,14 @@ class _BookingHomeState extends State<BookingHomePage> {
                       onTap: () {
 
                         final arguments = {
-                          'cultive': cultive,
-                          'zone': zoneName,
+                          'booking': booking['Contenedor'],
+                          'url': booking['url'],
                         };
 
                         Navigator.pushNamed(
-                          context,
-                          '/container-home',
-                          arguments: arguments
+                            context,
+                            '/menu-container',
+                            arguments: arguments
                         );
                       },
                       child: const Icon(

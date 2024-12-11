@@ -62,7 +62,7 @@ class BookingViewModel extends ChangeNotifier {
       final response = await _bookingService.get_booking(data);
       print('Respuesta de la API: $response');
 
-      if (response.isEmpty) {
+      if (!response.isEmpty) {
         _bookings = List<Map<String, dynamic>>.from(response);
       } else {
         _bookings = [];

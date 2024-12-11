@@ -110,9 +110,9 @@ class _NewBookingState extends State<NewBookingPage> {
         gravity: ToastGravity.CENTER,
       );
       return false;
-    } else if (_newBooking.text.length > 11) {
+    } else if (_newBooking.text.length > 10) {
       Fluttertoast.showToast(
-        msg: "El contenedor no debe tener más de 11 carácteres",
+        msg: "El booking no debe tener más de 10 carácteres",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
       );
@@ -338,7 +338,7 @@ class _NewBookingState extends State<NewBookingPage> {
                     width: 400,
                     child: TextField(
                       controller: _newBooking,
-                      // Controlador para escribir el nombre del contenedor
+                      // Controlador para escribir el nombre del booking
                       decoration: InputDecoration(
                         labelStyle: GoogleFonts.raleway(
                           fontSize: 14,
@@ -356,7 +356,7 @@ class _NewBookingState extends State<NewBookingPage> {
                         border: const OutlineInputBorder(),
                         contentPadding: const EdgeInsets.symmetric(
                             vertical: 15.0, horizontal: 12.0),
-                        hintText: "Nombre Contenedor",
+                        hintText: "Nombre Booking",
                         // Añadido hintText para guía de entrada
                         hintStyle: GoogleFonts.raleway(
                           fontWeight: FontWeight.w600,
@@ -367,7 +367,7 @@ class _NewBookingState extends State<NewBookingPage> {
                       keyboardType: TextInputType.text,
                       onChanged: (value) {
                         print(
-                            "Nombre del Contenedor: $value"); // Para verificar si captura el valor
+                            "Nombre del Booking: $value"); // Para verificar si captura el valor
                       },
                     ),
                   ),
