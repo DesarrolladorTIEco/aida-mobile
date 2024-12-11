@@ -39,7 +39,6 @@ class _ContainerHomeState extends State<ContainerHomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final containerViewModel =
       Provider.of<ContainerViewModel>(context, listen: false);
-      containerViewModel.clearContainer();
       _loadContainer(containerViewModel);
     });
 

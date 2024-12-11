@@ -39,7 +39,6 @@ class _BookingHomeState extends State<BookingHomePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bookingViewModel =
           Provider.of<BookingViewModel>(context, listen: false);
-      bookingViewModel.clearBooking();
       _loadBooking(bookingViewModel);
     });
 
