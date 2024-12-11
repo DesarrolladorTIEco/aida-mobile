@@ -24,7 +24,7 @@ class _ContainerHomeState extends State<ContainerHomePage> {
   Future<void> _loadContainer(ContainerViewModel containerViewModel) async {
     if (zoneName.isNotEmpty && cultive.isNotEmpty) {
       try {
-        await containerViewModel.fetchContainer(cultive, zoneName);
+        await containerViewModel.fetchContainer(cultive, zoneName, bkId);
         setState(() {
           filteredContainers = containerViewModel.containers;
         });

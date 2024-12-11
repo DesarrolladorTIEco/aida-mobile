@@ -534,7 +534,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                                           height: 16,
                                           decoration: BoxDecoration(
                                             color: booking['IsSeguridadPatrimonial'] ==
-                                                1
+                                                "1"
                                                 ? Colors.green // Verde si es 1
                                                 : Colors.red, // Rojo si es 0
                                             shape: BoxShape.circle,
@@ -568,7 +568,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                                           height: 16,
                                           decoration: BoxDecoration(
                                             color: booking['IsExpediciones'] ==
-                                                1
+                                                "1"
                                                 ? Colors.green // Verde si es 1
                                                 : Colors.red, // Rojo si es 0
                                             shape: BoxShape.circle,

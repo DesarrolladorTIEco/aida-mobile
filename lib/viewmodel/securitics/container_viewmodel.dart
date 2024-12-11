@@ -54,12 +54,12 @@ class ContainerViewModel extends ChangeNotifier {
     return null;
   }
 
-  Future<void> fetchContainer(String cultive, String zone) async {
+  Future<void> fetchContainer(String cultive, String zone, num bkId) async {
     isLoading = true;
     notifyListeners();
 
     try {
-      Map<String, dynamic> data = {'MbCntCultive': cultive, 'MbCntZone': zone};
+      Map<String, dynamic> data = {'MbCntCultive': cultive, 'MbCntZone': zone, 'BkId': bkId};
 
       final response = await _containerService.get_container(data);
       print('Respuesta de la API: $response');
