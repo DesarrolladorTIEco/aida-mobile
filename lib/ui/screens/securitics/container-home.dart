@@ -1,5 +1,5 @@
 import 'package:aida/viewmodel/auth_viewmodel.dart';
-import 'package:aida/viewmodel/securitics/booking_viewmodel.dart';
+import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
 import 'package:flutter/material.dart';
 import '../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
@@ -9,26 +9,26 @@ class ContainerHomePage extends StatefulWidget {
   const ContainerHomePage({Key? key}) : super(key: key);
 
   @override
-  State<ContainerHomePage> createState() => _BookingHomeState();
+  State<ContainerHomePage> createState() => _ContainerHomeState();
 }
 
-class _BookingHomeState extends State<ContainerHomePage> {
+class _ContainerHomeState extends State<ContainerHomePage> {
   final TextEditingController _search = TextEditingController();
 
   String zoneName = '';
   String cultive = '';
 
-  List<Map<String, dynamic>> filteredBookings = [];
+  List<Map<String, dynamic>> filteredContainers = [];
 
-  Future<void> _loadBooking(BookingViewModel bookingViewModel) async {
+  Future<void> _loadContainer(ContainerViewModel containerViewModel) async {
     if (zoneName.isNotEmpty && cultive.isNotEmpty) {
       try {
-        await bookingViewModel.fetchBooking(cultive, zoneName);
+        await containerViewModel.fetchContainer(cultive, zoneName);
         setState(() {
-          filteredBookings = bookingViewModel.bookings;
+          filteredContainers = containerViewModel.containers;
         });
       } catch (e) {
-        print("Error: error al obtener los bookings: $e");
+        print("Error: error al obtener los contenedores: $e");
       }
     }
   }
@@ -37,42 +37,42 @@ class _BookingHomeState extends State<ContainerHomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final bookingViewModel =
-      Provider.of<BookingViewModel>(context, listen: false);
-      bookingViewModel.clearBooking();
-      _loadBooking(bookingViewModel);
+      final containerViewModel =
+      Provider.of<ContainerViewModel>(context, listen: false);
+      containerViewModel.clearContainer();
+      _loadContainer(containerViewModel);
     });
 
-    _search.addListener(_filterBookings);
+    _search.addListener(_filterContainers);
   }
 
-  void _filterBookings() {
-    final bookingViewModel =
-    Provider.of<BookingViewModel>(context, listen: false);
+  void _filterContainers() {
+    final containerViewModel =
+    Provider.of<ContainerViewModel>(context, listen: false);
     final query = _search.text.trim().toLowerCase();
 
     setState(() {
-      filteredBookings = bookingViewModel.bookings.where((booking) {
-        final bookingName =
-        (booking['Booking'] ?? 'Sin Nombre').toLowerCase().trim();
+      filteredContainers = containerViewModel.containers.where((container) {
+        final containerName =
+        (container['Contenedor'] ?? 'Sin Nombre').toLowerCase().trim();
 
-        if (bookingName == query) {
+        if (containerName == query) {
           return true;
         }
 
         final normalizedQuery = _normalizeString(query);
-        final normalizedBookingName = _normalizeString(bookingName);
+        final normalizedContainerName = _normalizeString(containerName);
 
-        return normalizedBookingName.contains(normalizedQuery);
+        return normalizedContainerName.contains(normalizedQuery);
       }).toList();
 
-      filteredBookings.sort((a, b) {
-        final bookingA = (a['Booking'] ?? '').toLowerCase().trim();
-        final bookingB = (b['Booking'] ?? '').toLowerCase().trim();
+      filteredContainers.sort((a, b) {
+        final containerA = (a['Contenedor'] ?? '').toLowerCase().trim();
+        final containerB = (b['Contenedor'] ?? '').toLowerCase().trim();
 
-        if (bookingA == query) return -1;
-        if (bookingB == query) return 1;
-        return bookingA.compareTo(bookingB);
+        if (containerA == query) return -1;
+        if (containerB == query) return 1;
+        return containerA.compareTo(containerB);
       });
     });
   }
@@ -97,7 +97,7 @@ class _BookingHomeState extends State<ContainerHomePage> {
     final arguments =
     ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
-    final bookingViewModel = Provider.of<BookingViewModel>(context);
+    final containerViewModel = Provider.of<ContainerViewModel>(context);
 
     if (arguments != null) {
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
@@ -226,9 +226,9 @@ class _BookingHomeState extends State<ContainerHomePage> {
                   const SizedBox(width: 8), // Espacio entre botones
                   ElevatedButton(
                     onPressed: () {
-                      bookingViewModel.isLoading
+                      containerViewModel.isLoading
                           ? null
-                          : () => _loadBooking(context as BookingViewModel);
+                          : () => _loadContainer(context as ContainerViewModel);
                     },
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -304,9 +304,9 @@ class _BookingHomeState extends State<ContainerHomePage> {
           const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
-              itemCount: filteredBookings.length,
+              itemCount: filteredContainers.length,
               itemBuilder: (context, index) {
-                final booking = bookingViewModel.bookings[index];
+                final container = containerViewModel.containers[index];
 
                 return Card(
                   elevation: 1,
@@ -321,7 +321,7 @@ class _BookingHomeState extends State<ContainerHomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          booking['Booking'] ?? 'Sin Nombre',
+                          container['Contenedor'] ?? 'Sin Nombre',
                           style: GoogleFonts.raleway(
                             fontSize: 18,
                             letterSpacing: 0.65,
@@ -330,7 +330,7 @@ class _BookingHomeState extends State<ContainerHomePage> {
                         ),
                         const SizedBox(height: 0.2),
                         Text(
-                          'Linea de Negocio: ${booking["Cultivo"] ?? "Sin Nombre"}',
+                          'Linea de Negocio: ${container["Cultivo"] ?? "Sin Nombre"}',
                           style: GoogleFonts.raleway(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -342,8 +342,8 @@ class _BookingHomeState extends State<ContainerHomePage> {
                       onTap: () {
 
                         final arguments = {
-                          'booking': booking['Contenedor'],
-                          'url': booking['url'],
+                          'container': container['Contenedor'],
+                          'url': container['url'],
                         };
 
                         Navigator.pushNamed(

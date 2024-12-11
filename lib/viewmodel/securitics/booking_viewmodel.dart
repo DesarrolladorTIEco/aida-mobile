@@ -24,7 +24,7 @@ class BookingViewModel extends ChangeNotifier {
 
     try {
       Map<String, dynamic> data = {
-        'MbBkName': name,
+        'MbBkName': 'N° $name',
         'MbBkCultive': cultive,
         'MbBkZone': zone,
         'SecDateCreate': date,
