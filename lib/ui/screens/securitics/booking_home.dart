@@ -45,7 +45,6 @@ class _BookingHomeState extends State<BookingHomePage> {
     _search.addListener(_filterBookings);
   }
 
-
   void _filterBookings() {
     final bookingViewModel =
         Provider.of<BookingViewModel>(context, listen: false);
@@ -226,8 +225,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                   ElevatedButton(
                     onPressed: () {
                       if (!bookingViewModel.isLoading) {
-                        _loadBooking(
-                            bookingViewModel);
+                        _loadBooking(bookingViewModel);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -308,36 +306,9 @@ class _BookingHomeState extends State<BookingHomePage> {
                 final booking = bookingViewModel.bookings[index];
 
                 return Card(
-                  elevation: 1,
-                  margin: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.fire_truck_outlined,
-                      size: 25,
-                      color: Colors.red,
-                    ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          booking['Booking'] ?? 'Sin Nombre',
-                          style: GoogleFonts.raleway(
-                            fontSize: 18,
-                            letterSpacing: 0.65,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 0.2),
-                        Text(
-                          'Linea de Negocio: ${booking["Cultivo"] ?? "Sin Nombre"}',
-                          style: GoogleFonts.raleway(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: InkWell(
+                    elevation: 1,
+                    margin: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: InkWell(
                       onTap: () {
                         final arguments = {
                           'cultive': cultive,
@@ -347,14 +318,35 @@ class _BookingHomeState extends State<BookingHomePage> {
                         Navigator.pushNamed(context, '/container-home',
                             arguments: arguments);
                       },
-                      child: const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20,
-                        color: Colors.grey,
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.fire_truck_outlined,
+                          size: 25,
+                          color: Colors.red,
+                        ),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              booking['Booking'] ?? 'Sin Nombre',
+                              style: GoogleFonts.raleway(
+                                fontSize: 18,
+                                letterSpacing: 0.65,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 0.2),
+                            Text(
+                              'Linea de Negocio: ${booking["Cultivo"] ?? "Sin Nombre"}',
+                              style: GoogleFonts.raleway(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                );
+                    ));
               },
             ),
           ),

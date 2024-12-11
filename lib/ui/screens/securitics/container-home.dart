@@ -38,7 +38,7 @@ class _ContainerHomeState extends State<ContainerHomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final containerViewModel =
-      Provider.of<ContainerViewModel>(context, listen: false);
+          Provider.of<ContainerViewModel>(context, listen: false);
       _loadContainer(containerViewModel);
     });
 
@@ -47,13 +47,13 @@ class _ContainerHomeState extends State<ContainerHomePage> {
 
   void _filterContainers() {
     final containerViewModel =
-    Provider.of<ContainerViewModel>(context, listen: false);
+        Provider.of<ContainerViewModel>(context, listen: false);
     final query = _search.text.trim().toLowerCase();
 
     setState(() {
       filteredContainers = containerViewModel.containers.where((container) {
         final containerName =
-        (container['Contenedor'] ?? 'Sin Nombre').toLowerCase().trim();
+            (container['Contenedor'] ?? 'Sin Nombre').toLowerCase().trim();
 
         if (containerName == query) {
           return true;
@@ -90,11 +90,10 @@ class _ContainerHomeState extends State<ContainerHomePage> {
         .trim();
   }
 
-
   @override
   Widget build(BuildContext context) {
     final arguments =
-    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     final containerViewModel = Provider.of<ContainerViewModel>(context);
 
@@ -226,8 +225,7 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                   ElevatedButton(
                     onPressed: () {
                       if (!containerViewModel.isLoading) {
-                        _loadContainer(
-                            containerViewModel);
+                        _loadContainer(containerViewModel);
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -237,7 +235,7 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                       // Color del botón
                       shape: RoundedRectangleBorder(
                         borderRadius:
-                        BorderRadius.circular(8), // Borde redondeado mínimo
+                            BorderRadius.circular(8), // Borde redondeado mínimo
                       ),
                       minimumSize: const Size(100, 60),
                       maximumSize: const Size(100, 60),
@@ -296,8 +294,7 @@ class _ContainerHomeState extends State<ContainerHomePage> {
               ),
               keyboardType: TextInputType.text,
               onChanged: (value) {
-                print(
-                    "Nombre del Contenedor: $value");
+                print("Nombre del Contenedor: $value");
               },
             ),
           ),
@@ -309,61 +306,50 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                 final container = containerViewModel.containers[index];
 
                 return Card(
-                  elevation: 1,
-                  margin: const EdgeInsets.symmetric(vertical: 4.0),
-                  child: ListTile(
-                    leading: const Icon(
-                      Icons.fire_truck_outlined,
-                      size: 25,
-                      color: Colors.red,
-                    ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          container['Contenedor'] ?? 'Sin Nombre',
-                          style: GoogleFonts.raleway(
-                            fontSize: 18,
-                            letterSpacing: 0.65,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 0.2),
-                        Text(
-                          'Linea de Negocio: ${container["Cultivo"] ?? "Sin Nombre"}',
-                          style: GoogleFonts.raleway(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                    trailing: InkWell(
+                    elevation: 1,
+                    margin: const EdgeInsets.symmetric(vertical: 4.0),
+                    child: InkWell(
                       onTap: () {
-
                         final arguments = {
-                          'container': container['Contenedor'],
-                          'url': container['url'],
+                          'cultive': cultive,
+                          'zone': zoneName,
                         };
 
-                        Navigator.pushNamed(
-                            context,
-                            '/menu-container',
-                            arguments: arguments
-                        );
+                        Navigator.pushNamed(context, '/container-home',
+                            arguments: arguments);
                       },
-                      child: const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20,
-                        color: Colors.grey,
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.fire_truck_outlined,
+                          size: 25,
+                          color: Colors.red,
+                        ),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              container['Contenedor'] ?? 'Sin Nombre',
+                              style: GoogleFonts.raleway(
+                                fontSize: 18,
+                                letterSpacing: 0.65,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 0.2),
+                            Text(
+                              'Linea de Negocio: ${container["Cultivo"] ?? "Sin Nombre"}',
+                              style: GoogleFonts.raleway(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ),
-                );
+                    ));
               },
             ),
           ),
-
         ],
       ),
     );
