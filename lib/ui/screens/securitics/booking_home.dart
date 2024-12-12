@@ -23,6 +23,8 @@ class _BookingHomeState extends State<BookingHomePage> {
   String selectedOption = 'BOOKING'; // Inicialmente seleccionamos 'BOOKING'
 
   List<Map<String, dynamic>> filteredBookings = [];
+  List<Map<String, dynamic>> allBookings = [];
+
 
   Future<void> _loadBooking(BookingViewModel bookingViewModel) async {
     if (zoneName.isNotEmpty && cultive.isNotEmpty) {
@@ -38,8 +40,10 @@ class _BookingHomeState extends State<BookingHomePage> {
         }
 
         setState(() {
-          filteredBookings = bookingViewModel.bookings;
+          allBookings = bookingViewModel.bookings;
+          filteredBookings = List.from(allBookings);
         });
+
       } catch (e) {
         print("Error: error al obtener los bookings: $e");
       }
@@ -57,53 +61,23 @@ class _BookingHomeState extends State<BookingHomePage> {
       _loadBooking(bookingViewModel);
     });
 
-    _search.addListener(_filterBookings);
   }
 
-  void _filterBookings() {
-    final bookingViewModel =
-        Provider.of<BookingViewModel>(context, listen: false);
-    final query = _search.text.trim().toLowerCase();
+  void _filterBookings(String query) {
+    final lowerQuery = query.toLowerCase();
 
     setState(() {
-      filteredBookings = bookingViewModel.bookings.where((booking) {
-        final bookingName =
-            (booking['Booking'] ?? 'Sin Nombre').toLowerCase().trim();
-
-        if (bookingName == query) {
-          return true;
-        }
-
-        final normalizedQuery = _normalizeString(query);
-        final normalizedBookingName = _normalizeString(bookingName);
-
-        return normalizedBookingName.contains(normalizedQuery);
-      }).toList();
-
-      filteredBookings.sort((a, b) {
-        final bookingA = (a['Booking'] ?? '').toLowerCase().trim();
-        final bookingB = (b['Booking'] ?? '').toLowerCase().trim();
-
-        if (bookingA == query) return -1;
-        if (bookingB == query) return 1;
-        return bookingA.compareTo(bookingB);
-      });
+      if (query.isEmpty) {
+        filteredBookings = List.from(allBookings);
+      } else {
+        filteredBookings = allBookings.where((booking) {
+          final bookingName = booking['Booking']?.toLowerCase() ?? '';
+          return bookingName.contains(lowerQuery);
+        }).toList();
+      }
     });
   }
 
-// Normaliza una cadena eliminando acentos y caracteres especiales
-  String _normalizeString(String input) {
-    return input
-        .replaceAll(RegExp(r'[áàäâ]'), 'a')
-        .replaceAll(RegExp(r'[éèëê]'), 'e')
-        .replaceAll(RegExp(r'[íìïî]'), 'i')
-        .replaceAll(RegExp(r'[óòöô]'), 'o')
-        .replaceAll(RegExp(r'[úùüû]'), 'u')
-        .replaceAll(RegExp(r'[ñ]'), 'n')
-        .replaceAll(RegExp(r'[ç]'), 'c')
-        .replaceAll(RegExp(r'[^a-zA-Z0-9 ]'), '')
-        .trim();
-  }
 
   Future<void> _onDateChanged() async {
     final bookingViewModel =
@@ -122,7 +96,8 @@ class _BookingHomeState extends State<BookingHomePage> {
         }
 
         setState(() {
-          filteredBookings = bookingViewModel.bookings;
+          allBookings = bookingViewModel.bookings;
+          filteredBookings = List.from(allBookings);
         });
       } catch (e) {
         print("Error: error al cargar datos tras cambiar la fecha: $e");
@@ -131,7 +106,6 @@ class _BookingHomeState extends State<BookingHomePage> {
       print("Zona o cultivo vacío: no se puede cargar datos.");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -276,6 +250,8 @@ class _BookingHomeState extends State<BookingHomePage> {
             ),
           ),
 
+
+
           Center(
             child: Padding(
               padding: const EdgeInsets.only(top: 20), // Margen superior
@@ -361,6 +337,8 @@ class _BookingHomeState extends State<BookingHomePage> {
             ),
           ),
           const SizedBox(height: 12),
+
+
           SizedBox(
             width: 400,
             child: TextField(
@@ -379,7 +357,6 @@ class _BookingHomeState extends State<BookingHomePage> {
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 15.0, horizontal: 12.0),
                 hintText: "Busqueda avanzada...",
-                // Añadido hintText para guía de entrada
                 hintStyle: GoogleFonts.raleway(
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
@@ -391,12 +368,16 @@ class _BookingHomeState extends State<BookingHomePage> {
                 ),
               ),
               keyboardType: TextInputType.text,
-              onChanged: (value) {
-                print("Nombre del Contenedor: $value");
-              },
+              onChanged: (value) => _filterBookings(value),
+
             ),
           ),
+
+
           const SizedBox(height: 12),
+
+
+
 
           Container(
             padding:
@@ -494,7 +475,7 @@ class _BookingHomeState extends State<BookingHomePage> {
             child: ListView.builder(
               itemCount: filteredBookings.length,
               itemBuilder: (context, index) {
-                final booking = bookingViewModel.bookings[index];
+                final booking = filteredBookings[index];
                 return Card(
                   elevation: 1,
                   margin: const EdgeInsets.symmetric(vertical: 4.0),
