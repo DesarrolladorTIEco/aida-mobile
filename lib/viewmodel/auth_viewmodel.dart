@@ -53,7 +53,7 @@ class AuthViewModel extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      errorMessage = 'Hubo un error: ${e.toString()}';
+      errorMessage = 'Hubo un error: No está conectado a internet. En caso estar conectado al WIFI o datos moviles y aun persiste el error, contactar al departamento de TI';
       notifyListeners();
       return null;
     } finally {

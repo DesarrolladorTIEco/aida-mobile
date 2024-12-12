@@ -111,11 +111,9 @@ class _BookingHomeState extends State<BookingHomePage> {
 
     if (zoneName.isNotEmpty && cultive.isNotEmpty) {
       try {
-        // Formatear la fecha a yyyy-MM-dd
         final parsedDate = DateFormat('dd/MM/yyyy').parse(_date.text);
         final formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
-        // Cargar los datos según la opción seleccionada
         if (selectedOption == 'BOOKING') {
           await bookingViewModel.fetchBooking(cultive, zoneName, formattedDate);
         } else if (selectedOption == 'BOOKING TERMINADO') {

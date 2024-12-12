@@ -1,5 +1,6 @@
 import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../widgets/navbar_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +17,7 @@ class _StockScreenState extends State<StockScreen> {
 
   Future<void> _loadWorkers(WorkerViewModel workerViewModel) async {
     if (_selectedDate != null) {
-      final date = _selectedDate!.toIso8601String().split('T').first;
-      print(date);
+      final date = DateFormat('yyyy-MM-dd').format(_selectedDate!);
       try {
         await workerViewModel.fetchStock(date);
       } catch (e) {
@@ -88,6 +88,8 @@ class _StockScreenState extends State<StockScreen> {
               ),
             ),
             const SizedBox(height: 10),
+
+
             GestureDetector(
               onTap: () => _selectDate(context),
               child: Container(
@@ -103,7 +105,7 @@ class _StockScreenState extends State<StockScreen> {
                     Text(
                       _selectedDate == null
                           ? "Seleccionar Fecha"
-                          : "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}",
+                          : DateFormat('dd/MM/yyyy').format(_selectedDate!),
                       style: GoogleFonts.raleway(fontSize: 14),
                     ),
                     const Icon(Icons.calendar_today, color: Colors.grey),
@@ -112,6 +114,10 @@ class _StockScreenState extends State<StockScreen> {
               ),
             ),
             const SizedBox(height: 20),
+
+
+
+
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [

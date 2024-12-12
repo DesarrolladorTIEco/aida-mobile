@@ -1,6 +1,7 @@
 import 'package:aida/core/utils/scanner_qr.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/navbar_widget.dart';
@@ -21,10 +22,7 @@ class _ChargeScreenState extends State<ChargeScreen> {
   Future<void> _loadWorkers(WorkerViewModel workerViewModel) async {
     final dni = _dniController.text.trim(); // Get entered DNI
     if (dni.isNotEmpty && dni.length == 8 && _selectedDate != null) {
-      final date = _selectedDate!
-          .toIso8601String()
-          .split('T')
-          .first;
+      final date = DateFormat('yyyy-MM-dd').format(_selectedDate!); // Formato para fetchWorkers
       try {
         await workerViewModel.fetchWorkers(dni, date);
       } catch (e) {
@@ -32,6 +30,7 @@ class _ChargeScreenState extends State<ChargeScreen> {
       }
     }
   }
+
 
   // Handle QR scan
   Future<void> _handleQrScan(WorkerViewModel workerViewModel) async {
@@ -47,22 +46,20 @@ class _ChargeScreenState extends State<ChargeScreen> {
   }
 
   // Handle date selection
-  void _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  Future<void> _selectDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: _selectedDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != _selectedDate) {
+
+    if (pickedDate != null) {
       setState(() {
-        _selectedDate = picked;
-        _dniController.text = "";
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final workerViewModel = Provider.of<WorkerViewModel>(
-              context, listen: false);
-          workerViewModel.clearWorkers();
-        });
+        _selectedDate = pickedDate;
+        _dniController.clear();
+        final workerViewModel = Provider.of<WorkerViewModel>(context, listen: false);
+        workerViewModel.clearWorkers();
       });
     }
   }
@@ -117,9 +114,7 @@ class _ChargeScreenState extends State<ChargeScreen> {
                     Text(
                       _selectedDate == null
                           ? "Seleccionar Fecha"
-                          : "${_selectedDate!.year}-${_selectedDate!.month
-                          .toString().padLeft(2, '0')}-${_selectedDate!.day
-                          .toString().padLeft(2, '0')}",
+                          : DateFormat('dd/MM/yyyy').format(_selectedDate!),
                       style: GoogleFonts.raleway(fontSize: 14),
                     ),
                     const Icon(Icons.calendar_today, color: Colors.grey),
@@ -127,6 +122,7 @@ class _ChargeScreenState extends State<ChargeScreen> {
                 ),
               ),
             ),
+
 
             const SizedBox(height: 20),
 

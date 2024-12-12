@@ -1,6 +1,7 @@
 import 'package:aida/core/utils/scanner_qr.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/navbar_widget.dart';
@@ -22,15 +23,9 @@ class _ChargeDateScreenState extends State<ChargeDateScreen> {
   Future<void> _loadWorkers(WorkerViewModel workerViewModel) async {
     final dni = _dniController.text.trim(); // Get entered DNI
     if (dni.isNotEmpty && dni.length == 8 && _startDate != null && _endDate != null) {
-      final startDate = _startDate!
-          .toIso8601String()
-          .split('T')
-          .first;
+      final startDate =DateFormat('yyyy-MM-dd').format(_startDate!);
+      final endDate =DateFormat('yyyy-MM-dd').format(_endDate!);
 
-      final endDate = _endDate!
-          .toIso8601String()
-          .split('T')
-          .first;
       try {
         await workerViewModel.fetchWorkersByRange(dni, startDate, endDate);
       } catch (e) {
@@ -135,10 +130,7 @@ class _ChargeDateScreenState extends State<ChargeDateScreen> {
                   children: [
                     Text(
                       _startDate == null
-                          ? "Seleccionar Fecha"
-                          : "${_startDate!.year}-${_startDate!.month
-                          .toString().padLeft(2, '0')}-${_startDate!.day
-                          .toString().padLeft(2, '0')}",
+                          ? "Seleccionar Fecha" : DateFormat('dd/MM/yyyy').format(_startDate!),
                       style: GoogleFonts.raleway(fontSize: 14),
                     ),
                     const Icon(Icons.calendar_today, color: Colors.grey),
@@ -149,6 +141,8 @@ class _ChargeDateScreenState extends State<ChargeDateScreen> {
             ),
 
             const SizedBox(height: 20),
+
+
             GestureDetector(
               onTap: () => _selectEndDate(context),
               child: Container(
@@ -163,10 +157,7 @@ class _ChargeDateScreenState extends State<ChargeDateScreen> {
                   children: [
                     Text(
                       _endDate == null
-                          ? "Seleccionar Fecha"
-                          : "${_endDate!.year}-${_endDate!.month
-                          .toString().padLeft(2, '0')}-${_endDate!.day
-                          .toString().padLeft(2, '0')}",
+                          ? "Seleccionar Fecha" : DateFormat('dd/MM/yyyy').format(_endDate!) ,
                       style: GoogleFonts.raleway(fontSize: 14),
                     ),
                     const Icon(Icons.calendar_today, color: Colors.grey),
@@ -175,8 +166,10 @@ class _ChargeDateScreenState extends State<ChargeDateScreen> {
 
               ),
             ),
-
             const SizedBox(height: 20),
+
+
+
 
             TextField(
               controller: _dniController,
