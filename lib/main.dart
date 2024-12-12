@@ -1,22 +1,24 @@
-import 'package:aida/ui/screens/securitics/container-home.dart';
-import 'package:aida/ui/screens/securitics/gallery_container.dart';
-import 'package:aida/ui/screens/securitics/new_container.dart';
-import 'package:aida/ui/screens/securitics/seguridad_patrimonial_content.dart';
-import 'package:aida/viewmodel/securitics/booking_viewmodel.dart';
+import 'package:aida/ui/screens/captures/container/container-home.dart';
+import 'package:aida/ui/screens/captures/gallery_container.dart';
+import 'package:aida/ui/screens/captures/container/new_container.dart';
+import 'package:aida/ui/screens/captures/seguridad_patrimonial_content.dart';
+import 'package:aida/viewmodel/captures/booking_viewmodel.dart';
+import 'package:aida/viewmodel/captures/container_viewmodel.dart';
+import 'package:aida/viewmodel/captures/securitic_viewmodel.dart';
+import 'package:aida/ui/screens/captures/booking/new_booking.dart';
+import 'package:aida/ui/screens/captures/booking/booking_home.dart';
+import 'package:aida/ui/screens/captures/menus/menu_planta_despacho.dart';
+import 'package:aida/ui/screens/captures/menus/zone.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'package:aida/ui/screens/christmas/charge_max_date.dart';
-import 'package:aida/ui/screens/securitics/menu_container.dart';
-import 'package:aida/ui/screens/securitics/new_booking.dart';
-import 'package:aida/ui/screens/securitics/booking_home.dart';
-import 'package:aida/ui/screens/securitics/menus/menu_planta_despacho.dart';
-import 'package:aida/ui/screens/securitics/menus/zone.dart';
+
 import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
 import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
-import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
-import 'package:aida/viewmodel/securitics/securitic_viewmodel.dart';
+
 import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:aida/ui/screens/login.dart';
 import 'package:aida/ui/screens/welcome.dart';
