@@ -1,4 +1,3 @@
-import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -20,13 +20,15 @@ class _ContainerHomeState extends State<ContainerHomePage> {
   num bkId = 0;
 
   List<Map<String, dynamic>> filteredContainers = [];
+  List<Map<String, dynamic>> allContainers = [];
 
   Future<void> _loadContainer(ContainerViewModel containerViewModel) async {
     if (zoneName.isNotEmpty && cultive.isNotEmpty) {
       try {
         await containerViewModel.fetchContainer(cultive, zoneName, bkId);
         setState(() {
-          filteredContainers = containerViewModel.containers;
+          allContainers = containerViewModel.containers;
+          filteredContainers = List.from(allContainers);
         });
       } catch (e) {
         print("Error: error al obtener los contenedores: $e");
@@ -43,53 +45,23 @@ class _ContainerHomeState extends State<ContainerHomePage> {
       _loadContainer(containerViewModel);
     });
 
-    _search.addListener(_filterContainers);
   }
 
-  void _filterContainers() {
-    final containerViewModel =
-        Provider.of<ContainerViewModel>(context, listen: false);
-    final query = _search.text.trim().toLowerCase();
+  void _filterContainer(String query) {
+    final lowerQuery = query.toLowerCase();
 
     setState(() {
-      filteredContainers = containerViewModel.containers.where((container) {
-        final containerName =
-            (container['Contenedor'] ?? 'Sin Nombre').toLowerCase().trim();
-
-        if (containerName == query) {
-          return true;
-        }
-
-        final normalizedQuery = _normalizeString(query);
-        final normalizedContainerName = _normalizeString(containerName);
-
-        return normalizedContainerName.contains(normalizedQuery);
-      }).toList();
-
-      filteredContainers.sort((a, b) {
-        final containerA = (a['Contenedor'] ?? '').toLowerCase().trim();
-        final containerB = (b['Contenedor'] ?? '').toLowerCase().trim();
-
-        if (containerA == query) return -1;
-        if (containerB == query) return 1;
-        return containerA.compareTo(containerB);
-      });
+      if (query.isEmpty) {
+        filteredContainers = List.from(allContainers);
+      } else {
+        filteredContainers = allContainers.where((container) {
+          final containerName = container['Contenedor']?.toLowerCase() ?? '';
+          return containerName.contains(lowerQuery);
+        }).toList();
+      }
     });
   }
 
-// Normaliza una cadena eliminando acentos y caracteres especiales
-  String _normalizeString(String input) {
-    return input
-        .replaceAll(RegExp(r'[áàäâ]'), 'a')
-        .replaceAll(RegExp(r'[éèëê]'), 'e')
-        .replaceAll(RegExp(r'[íìïî]'), 'i')
-        .replaceAll(RegExp(r'[óòöô]'), 'o')
-        .replaceAll(RegExp(r'[úùüû]'), 'u')
-        .replaceAll(RegExp(r'[ñ]'), 'n')
-        .replaceAll(RegExp(r'[ç]'), 'c')
-        .replaceAll(RegExp(r'[^a-zA-Z0-9 ]'), '')
-        .trim();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -287,7 +259,6 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 15.0, horizontal: 12.0),
                 hintText: "Busqueda avanzada...",
-                // Añadido hintText para guía de entrada
                 hintStyle: GoogleFonts.raleway(
                   fontWeight: FontWeight.w600,
                   fontSize: 15,
@@ -299,9 +270,7 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                 ),
               ),
               keyboardType: TextInputType.text,
-              onChanged: (value) {
-                print("Nombre del Contenedor: $value");
-              },
+              onChanged: (value) => _filterContainer(value),
             ),
           ),
           const SizedBox(height: 12),
@@ -317,11 +286,10 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                     child: InkWell(
                       onTap: () {
                         final arguments = {
-                          'cultive': cultive,
-                          'zone': zoneName,
+                          'container': container['Contenedor']
                         };
 
-                        Navigator.pushNamed(context, '/container-home',
+                        Navigator.pushNamed(context, '/seguridad-patrimonial-content',
                             arguments: arguments);
                       },
                       child: ListTile(

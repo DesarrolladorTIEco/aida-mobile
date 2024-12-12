@@ -1,6 +1,7 @@
 import 'package:aida/ui/screens/securitics/container-home.dart';
 import 'package:aida/ui/screens/securitics/gallery_container.dart';
 import 'package:aida/ui/screens/securitics/new_container.dart';
+import 'package:aida/ui/screens/securitics/seguridad_patrimonial_content.dart';
 import 'package:aida/viewmodel/securitics/booking_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -10,8 +11,8 @@ import 'package:aida/ui/screens/christmas/charge_max_date.dart';
 import 'package:aida/ui/screens/securitics/menu_container.dart';
 import 'package:aida/ui/screens/securitics/new_booking.dart';
 import 'package:aida/ui/screens/securitics/booking_home.dart';
-import 'package:aida/ui/screens/securitics/menu_planta_despacho.dart';
-import 'package:aida/ui/screens/securitics/zone.dart';
+import 'package:aida/ui/screens/securitics/menus/menu_planta_despacho.dart';
+import 'package:aida/ui/screens/securitics/menus/zone.dart';
 import 'package:aida/viewmodel/carriers/carrier_viewmodel.dart';
 import 'package:aida/viewmodel/christmas/worker_viewmodel.dart';
 import 'package:aida/viewmodel/securitics/container_viewmodel.dart';
@@ -73,7 +74,7 @@ class MyApp extends StatelessWidget {
           '/container-home' : (context) => const ContainerHomePage(),
           '/new-booking' : (context) => const NewBookingPage(),
           '/new-container' : (context) => const NewContainerPage(),
-          '/menu-container' : (context) => const ContainerMenuPage(),
+          '/seguridad-patrimonial-content' : (context) => const SeguridadPatrimonialContenidoMenu(),
           '/gallery-container' : (context) => const ImageGalleryPage()
 
         },
