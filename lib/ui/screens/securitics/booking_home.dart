@@ -27,7 +27,16 @@ class _BookingHomeState extends State<BookingHomePage> {
   Future<void> _loadBooking(BookingViewModel bookingViewModel) async {
     if (zoneName.isNotEmpty && cultive.isNotEmpty) {
       try {
-        await bookingViewModel.fetchBooking(cultive, zoneName);
+        final parsedDate = DateFormat('dd/MM/yyyy').parse(_date.text);
+        final formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+
+        if (selectedOption == 'BOOKING') {
+
+          await bookingViewModel.fetchBooking(cultive, zoneName, formattedDate);
+        } else if (selectedOption == 'BOOKING TERMINADO') {
+          await bookingViewModel.fetchBookingTerminado(cultive, zoneName, formattedDate);
+        }
+
         setState(() {
           filteredBookings = bookingViewModel.bookings;
         });
@@ -40,9 +49,11 @@ class _BookingHomeState extends State<BookingHomePage> {
   @override
   void initState() {
     super.initState();
+    _date.text = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bookingViewModel =
-      Provider.of<BookingViewModel>(context, listen: false);
+          Provider.of<BookingViewModel>(context, listen: false);
       _loadBooking(bookingViewModel);
     });
 
@@ -51,13 +62,13 @@ class _BookingHomeState extends State<BookingHomePage> {
 
   void _filterBookings() {
     final bookingViewModel =
-    Provider.of<BookingViewModel>(context, listen: false);
+        Provider.of<BookingViewModel>(context, listen: false);
     final query = _search.text.trim().toLowerCase();
 
     setState(() {
       filteredBookings = bookingViewModel.bookings.where((booking) {
         final bookingName =
-        (booking['Booking'] ?? 'Sin Nombre').toLowerCase().trim();
+            (booking['Booking'] ?? 'Sin Nombre').toLowerCase().trim();
 
         if (bookingName == query) {
           return true;
@@ -94,13 +105,40 @@ class _BookingHomeState extends State<BookingHomePage> {
         .trim();
   }
 
+  Future<void> _onDateChanged() async {
+    final bookingViewModel =
+    Provider.of<BookingViewModel>(context, listen: false);
+
+    if (zoneName.isNotEmpty && cultive.isNotEmpty) {
+      try {
+        // Formatear la fecha a yyyy-MM-dd
+        final parsedDate = DateFormat('dd/MM/yyyy').parse(_date.text);
+        final formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+
+        // Cargar los datos según la opción seleccionada
+        if (selectedOption == 'BOOKING') {
+          await bookingViewModel.fetchBooking(cultive, zoneName, formattedDate);
+        } else if (selectedOption == 'BOOKING TERMINADO') {
+          await bookingViewModel.fetchBookingTerminado(
+              cultive, zoneName, formattedDate);
+        }
+
+        setState(() {
+          filteredBookings = bookingViewModel.bookings;
+        });
+      } catch (e) {
+        print("Error: error al cargar datos tras cambiar la fecha: $e");
+      }
+    } else {
+      print("Zona o cultivo vacío: no se puede cargar datos.");
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final arguments =
-    ModalRoute
-        .of(context)
-        ?.settings
-        .arguments as Map<String, dynamic>?;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     final bookingViewModel = Provider.of<BookingViewModel>(context);
 
@@ -170,8 +208,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                         ),
                       ),
                       Text(
-                        "${zoneName.toUpperCase()} [ ${cultive
-                            .toUpperCase()} ]",
+                        "${zoneName.toUpperCase()} [ ${cultive.toUpperCase()} ]",
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
@@ -186,7 +223,6 @@ class _BookingHomeState extends State<BookingHomePage> {
             ),
           ),
           const SizedBox(height: 12),
-
 
           SizedBox(
             width: 400,
@@ -234,11 +270,13 @@ class _BookingHomeState extends State<BookingHomePage> {
                 if (selectedDate != null) {
                   // Format and set the selected date in the text field
                   _date.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+
+                  await _onDateChanged();
+
                 }
               },
             ),
           ),
-
 
           Center(
             child: Padding(
@@ -297,7 +335,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                       // Color del botón
                       shape: RoundedRectangleBorder(
                         borderRadius:
-                        BorderRadius.circular(8), // Borde redondeado mínimo
+                            BorderRadius.circular(8), // Borde redondeado mínimo
                       ),
                       minimumSize: const Size(100, 60),
                       maximumSize: const Size(100, 60),
@@ -363,8 +401,8 @@ class _BookingHomeState extends State<BookingHomePage> {
           const SizedBox(height: 12),
 
           Container(
-            padding: const EdgeInsets.symmetric(
-                vertical: 8.0, horizontal: 16.0),
+            padding:
+                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Row(
               children: [
                 // Opción BOOKING
@@ -375,12 +413,15 @@ class _BookingHomeState extends State<BookingHomePage> {
                         selectedOption = 'BOOKING';
                       });
                       print('BOOKING seleccionado');
+                      _loadBooking(
+                          bookingViewModel); // Carga los datos después de seleccionar
                     },
                     child: Container(
                       decoration: BoxDecoration(
                         color: selectedOption == 'BOOKING'
                             ? Colors.red // Fondo rojo si está seleccionado
                             : Colors.transparent,
+
                         // Fondo transparente si no está seleccionado
                         borderRadius: BorderRadius.circular(
                             4.0), // Opcional: redondea esquinas
@@ -396,9 +437,9 @@ class _BookingHomeState extends State<BookingHomePage> {
                                 : FontWeight.w600,
                             color: selectedOption == 'BOOKING'
                                 ? Colors
-                                .white // Texto blanco si está seleccionado
-                                : Colors
-                                .grey[700], // Texto gris si no está seleccionado
+                                    .white // Texto blanco si está seleccionado
+                                : Colors.grey[
+                                    700], // Texto gris si no está seleccionado
                           ),
                         ),
                       ),
@@ -413,6 +454,8 @@ class _BookingHomeState extends State<BookingHomePage> {
                         selectedOption = 'BOOKING TERMINADO';
                       });
                       print('BOOKING TERMINADO seleccionado');
+                      _loadBooking(
+                          bookingViewModel); // Carga los datos después de seleccionar
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -434,9 +477,9 @@ class _BookingHomeState extends State<BookingHomePage> {
                                 : FontWeight.w600,
                             color: selectedOption == 'BOOKING TERMINADO'
                                 ? Colors
-                                .white // Texto blanco si está seleccionado
-                                : Colors
-                                .grey[700], // Texto gris si no está seleccionado
+                                    .white // Texto blanco si está seleccionado
+                                : Colors.grey[
+                                    700], // Texto gris si no está seleccionado
                           ),
                         ),
                       ),
@@ -448,7 +491,6 @@ class _BookingHomeState extends State<BookingHomePage> {
           ),
           const Divider(height: 1.0, thickness: 1.0), // Línea divisora
           const SizedBox(height: 6),
-
 
           Expanded(
             child: ListView.builder(
@@ -494,8 +536,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                                 ),
                                 const SizedBox(height: 4.0),
                                 Text(
-                                  'Linea de Negocio: ${booking["Cultivo"] ??
-                                      "Sin Nombre"}',
+                                  'Linea de Negocio: ${booking["Cultivo"] ?? "Sin Nombre"}',
                                   style: GoogleFonts.raleway(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -533,8 +574,9 @@ class _BookingHomeState extends State<BookingHomePage> {
                                           width: 16,
                                           height: 16,
                                           decoration: BoxDecoration(
-                                            color: booking['IsSeguridadPatrimonial'] ==
-                                                "1"
+                                            color: booking[
+                                                        'IsSeguridadPatrimonial'] ==
+                                                    "1"
                                                 ? Colors.green // Verde si es 1
                                                 : Colors.red, // Rojo si es 0
                                             shape: BoxShape.circle,
@@ -568,7 +610,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                                           height: 16,
                                           decoration: BoxDecoration(
                                             color: booking['IsExpediciones'] ==
-                                                "1"
+                                                    "1"
                                                 ? Colors.green // Verde si es 1
                                                 : Colors.red, // Rojo si es 0
                                             shape: BoxShape.circle,

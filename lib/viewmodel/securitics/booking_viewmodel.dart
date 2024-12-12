@@ -49,7 +49,7 @@ class BookingViewModel extends ChangeNotifier {
     return null;
   }
 
-  Future<void> fetchBooking(String cultive, String zone) async {
+  Future<void> fetchBooking(String cultive, String zone, String date) async {
     isLoading = true;
     notifyListeners();
 
@@ -57,12 +57,41 @@ class BookingViewModel extends ChangeNotifier {
       Map<String, dynamic> data = {
         'MbBkCultive': cultive,
         'MbBkZone': zone,
+        'SecDateCreate': date
       };
 
       final response = await _bookingService.get_booking(data);
       print('Respuesta de la API: $response');
 
-      if (!response.isEmpty) {
+      if (response.isNotEmpty) {
+        _bookings = List<Map<String, dynamic>>.from(response);
+        notifyListeners();
+      } else {
+        _bookings = [];
+      }
+    } catch (e) {
+      errorMessage = 'Error al obtener los contenedores: ${e.toString()}';
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchBookingTerminado(String cultive, String zone, String date) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      Map<String, dynamic> data = {
+        'MbBkCultive': cultive,
+        'MbBkZone': zone,
+        'SecDateCreate': date
+      };
+
+      final response = await _bookingService.get_booking_terminado(data);
+      print('Respuesta de la API: $response');
+
+      if (response.isNotEmpty) {
         _bookings = List<Map<String, dynamic>>.from(response);
         notifyListeners();
       } else {
