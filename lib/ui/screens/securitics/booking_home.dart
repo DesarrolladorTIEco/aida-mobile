@@ -196,6 +196,8 @@ class _BookingHomeState extends State<BookingHomePage> {
           ),
           const SizedBox(height: 12),
 
+
+
           SizedBox(
             width: 400,
             child: TextField(
@@ -231,24 +233,24 @@ class _BookingHomeState extends State<BookingHomePage> {
               ),
               keyboardType: TextInputType.none,
               onTap: () async {
-                // Show the date picker when the text field is tapped
+                DateTime initialDate = DateFormat('dd/MM/yyyy').parse(_date.text.isEmpty ? DateFormat('dd/MM/yyyy').format(DateTime.now()) : _date.text);
+
                 DateTime? selectedDate = await showDatePicker(
                   context: context,
-                  initialDate: DateTime.now(),
+                  initialDate: initialDate,
                   firstDate: DateTime(2000),
                   lastDate: DateTime(2101),
                 );
 
                 if (selectedDate != null) {
-                  // Format and set the selected date in the text field
                   _date.text = DateFormat('dd/MM/yyyy').format(selectedDate);
 
                   await _onDateChanged();
-
                 }
               },
             ),
           ),
+
 
 
 
