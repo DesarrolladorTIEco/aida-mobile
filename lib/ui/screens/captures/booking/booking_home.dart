@@ -196,8 +196,6 @@ class _BookingHomeState extends State<BookingHomePage> {
           ),
           const SizedBox(height: 12),
 
-
-
           SizedBox(
             width: 400,
             child: TextField(

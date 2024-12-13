@@ -1,6 +1,8 @@
 import 'package:aida/ui/screens/captures/container/container-home.dart';
 import 'package:aida/ui/screens/captures/gallery_container.dart';
 import 'package:aida/ui/screens/captures/container/new_container.dart';
+import 'package:aida/ui/screens/captures/menus/seguridad_precintos.dart';
+import 'package:aida/ui/screens/captures/seguridad_inspeccion_externa.dart';
 import 'package:aida/ui/screens/captures/seguridad_patrimonial_content.dart';
 import 'package:aida/viewmodel/captures/booking_viewmodel.dart';
 import 'package:aida/viewmodel/captures/container_viewmodel.dart';
@@ -77,6 +79,8 @@ class MyApp extends StatelessWidget {
           '/new-booking' : (context) => const NewBookingPage(),
           '/new-container' : (context) => const NewContainerPage(),
           '/seguridad-patrimonial-content' : (context) => const SeguridadPatrimonialContenidoMenu(),
+          '/seguridad-inspeccion' : (context) => const SeguridadInspeccionExternaMenu(),
+          '/seguridad-precintos' : (context) => const SeguridadPrecintoMenu(),
           '/gallery-container' : (context) => const ImageGalleryPage()
 
         },

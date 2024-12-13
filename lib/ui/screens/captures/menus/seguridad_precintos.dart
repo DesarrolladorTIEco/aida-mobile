@@ -2,25 +2,42 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:aida/core/utils/camera_container.dart';
 
-class SeguridadPatrimonialContenidoMenu extends StatefulWidget {
-  const SeguridadPatrimonialContenidoMenu({Key? key}) : super(key: key);
+class SeguridadPrecintoMenu extends StatefulWidget {
+  const SeguridadPrecintoMenu({Key? key}) : super(key: key);
 
   @override
-  State<SeguridadPatrimonialContenidoMenu> createState() =>
-      _SeguridadPatrimonialMenuState();
+  State<SeguridadPrecintoMenu> createState() => _SeguridadPrecintoState();
 }
 
-class _SeguridadPatrimonialMenuState
-    extends State<SeguridadPatrimonialContenidoMenu> {
-  final CameraContainer _cameraContainer =
-      CameraContainer(); // Instancia de CameraContainer
+class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
+  final CameraContainer _cameraContainer = CameraContainer();
   String container = '';
   String url = '';
+
+  final titles = [
+    'Precinto Aduana',
+    'Precinto Linea 01',
+    'Precinto Senasa',
+    'Precinto Linea 02',
+    'Precinto Ecosac',
+    'Cinta Seguridad',
+    'Contenedor precintado',
+  ];
+
+  final List<String> checkableTitles = [
+    'Precinto Senasa',
+    'Precinto Linea 02',
+    'Precinto Ecosac',
+    'Cinta Seguridad',
+  ];
+
+  List<bool> isChecked = List.generate(8, (index) => false);
+  bool isListEnabled = false;
 
   @override
   Widget build(BuildContext context) {
     final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     if (arguments != null) {
       container = (arguments['container'] ?? 'Desconocido').toString();
@@ -32,7 +49,7 @@ class _SeguridadPatrimonialMenuState
         children: [
           Container(
             padding:
-                const EdgeInsets.only(top: 50, left: 12, right: 12, bottom: 20),
+            const EdgeInsets.only(top: 50, left: 12, right: 12, bottom: 20),
             decoration: BoxDecoration(
               color: Colors.red.shade800,
               boxShadow: const [
@@ -52,7 +69,7 @@ class _SeguridadPatrimonialMenuState
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'CONTENEDOR: ${container.toUpperCase()}',
+                        'PRECINTOS',
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -71,7 +88,7 @@ class _SeguridadPatrimonialMenuState
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            "seleccionar opción",
+                            "tomar fotos del contenedor",
                             style: GoogleFonts.raleway(
                               fontWeight: FontWeight.w500,
                               fontSize: 15,
@@ -87,10 +104,13 @@ class _SeguridadPatrimonialMenuState
               ],
             ),
           ),
+
           Expanded(
             child: ListView.builder(
-              itemCount: 2,
+              itemCount: 7, // Mostrando los 8 elementos
               itemBuilder: (context, index) {
+                bool isCheckbox = checkableTitles.contains(titles[index]);
+
                 return Card(
                   elevation: 1,
                   margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -99,20 +119,10 @@ class _SeguridadPatrimonialMenuState
                   ),
                   child: InkWell(
                     onTap: () {
-                      final arguments = {'container': container};
-
-                      // Determina la ruta a la que navegar según el texto
-                      if (index == 0) {
-                        Navigator.pushNamed(context, '/seguridad-inspeccion',
-                            arguments: arguments);
-                      } else if (index == 1) {
-                        Navigator.pushNamed(context, '/seguridad-precintos',
-                            arguments: arguments);
-                      }
+                      print("Item seleccionado: ${titles[index]}");
                     },
                     child: ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16.0),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -120,20 +130,51 @@ class _SeguridadPatrimonialMenuState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                index == 0 ? 'Inspección Externa' : 'Precintos',
+                                titles[index],
                                 style: GoogleFonts.raleway(
-                                  fontSize: 18,
+                                  fontSize: 16.8,
                                   letterSpacing: 0.65,
                                   fontWeight: FontWeight.w600,
+                                  color: isCheckbox && !isChecked[index]
+                                      ? Colors.grey // Texto desactivado
+                                      : Colors.black,
                                 ),
                               ),
                             ],
                           ),
-                          Icon(
-                            Icons.photo_library_outlined,
-                            size: 25,
-                            color: Colors.red.shade800,
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.photo_camera,
+                                size: 25,
+                                color: isCheckbox && !isChecked[index]
+                                    ? Colors.grey // Icono desactivado
+                                    : Colors.red.shade800,
+                              ),
+                              const SizedBox(width: 8),
+                              Icon(
+                                Icons.photo_library_outlined,
+                                size: 25,
+                                color: isCheckbox && !isChecked[index]
+                                    ? Colors.grey // Icono desactivado
+                                    : Colors.red.shade800,
+                              ),
+                              if (isCheckbox) ...[
+                                Checkbox(
+                                  value: isChecked[index],
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      isChecked[index] = value ?? false;
+                                    });
+                                  },
+                                  activeColor: Colors.red.shade800, // Color rojo cuando está activado
+                                  visualDensity: VisualDensity.compact,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
+                              ],
+                            ],
                           ),
+
                         ],
                       ),
                     ),

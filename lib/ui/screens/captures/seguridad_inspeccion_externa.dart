@@ -2,20 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:aida/core/utils/camera_container.dart';
 
-class SeguridadPatrimonialContenidoMenu extends StatefulWidget {
-  const SeguridadPatrimonialContenidoMenu({Key? key}) : super(key: key);
+class SeguridadInspeccionExternaMenu extends StatefulWidget {
+  const SeguridadInspeccionExternaMenu({Key? key}) : super(key: key);
 
   @override
-  State<SeguridadPatrimonialContenidoMenu> createState() =>
-      _SeguridadPatrimonialMenuState();
+  State<SeguridadInspeccionExternaMenu> createState() =>
+      _SeguridadInspeccionExternaState();
 }
 
-class _SeguridadPatrimonialMenuState
-    extends State<SeguridadPatrimonialContenidoMenu> {
+class _SeguridadInspeccionExternaState
+    extends State<SeguridadInspeccionExternaMenu> {
   final CameraContainer _cameraContainer =
       CameraContainer(); // Instancia de CameraContainer
   String container = '';
   String url = '';
+
+  final titles = [
+    'Interchange (EIR)',
+    'Panorámica',
+    'Parte Delantera Contenedor',
+    'Parte Posterior Contenedor',
+    'Placa Contenedor',
+    'Lado Derecho Contenedor',
+    'Lado Izquierdo Contenedor',
+    'Parches'
+  ];
+
+  List<bool> isChecked = List.generate(8, (index) => false);
+  bool isListEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +66,7 @@ class _SeguridadPatrimonialMenuState
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'CONTENEDOR: ${container.toUpperCase()}',
+                        'INSPECCIÓN EXTERNA',
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -71,7 +85,7 @@ class _SeguridadPatrimonialMenuState
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            "seleccionar opción",
+                            "tomar fotos del contenedor",
                             style: GoogleFonts.raleway(
                               fontWeight: FontWeight.w500,
                               fontSize: 15,
@@ -89,8 +103,10 @@ class _SeguridadPatrimonialMenuState
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: 2,
+              itemCount: 8, // Mostrando los 8 elementos
               itemBuilder: (context, index) {
+                bool isParches = titles[index] == 'Parches';
+
                 return Card(
                   elevation: 1,
                   margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -99,16 +115,7 @@ class _SeguridadPatrimonialMenuState
                   ),
                   child: InkWell(
                     onTap: () {
-                      final arguments = {'container': container};
-
-                      // Determina la ruta a la que navegar según el texto
-                      if (index == 0) {
-                        Navigator.pushNamed(context, '/seguridad-inspeccion',
-                            arguments: arguments);
-                      } else if (index == 1) {
-                        Navigator.pushNamed(context, '/seguridad-precintos',
-                            arguments: arguments);
-                      }
+                      print("Item seleccionado: ${titles[index]}");
                     },
                     child: ListTile(
                       contentPadding:
@@ -120,19 +127,57 @@ class _SeguridadPatrimonialMenuState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                index == 0 ? 'Inspección Externa' : 'Precintos',
+                                titles[index],
                                 style: GoogleFonts.raleway(
-                                  fontSize: 18,
+                                  fontSize: 16.8,
                                   letterSpacing: 0.65,
                                   fontWeight: FontWeight.w600,
+                                  color: isParches && !isChecked[index]
+                                      ? Colors.grey // Texto desactivado
+                                      : Colors.black,
                                 ),
                               ),
                             ],
                           ),
-                          Icon(
-                            Icons.photo_library_outlined,
-                            size: 25,
-                            color: Colors.red.shade800,
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.photo_camera,
+                                size: 25,
+                                color: isParches && !isChecked[index]
+                                    ? Colors.grey // Icono desactivado
+                                    : Colors.red.shade800,
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context, '/gallery-container');
+                                },
+                                child: Icon(
+                                  Icons.photo_library_outlined,
+                                  size: 25,
+                                  color: isParches && !isChecked[index]
+                                      ? Colors.grey // Icono desactivado
+                                      : Colors.red.shade800,
+                                ),
+                              ),
+                              if (isParches) ...[
+                                Checkbox(
+                                  value: isChecked[index],
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      isChecked[index] = value ?? false;
+                                    });
+                                  },
+                                  activeColor: Colors.red.shade800,
+                                  // Color rojo cuando está activado
+                                  visualDensity: VisualDensity.compact,
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
+                              ],
+                            ],
                           ),
                         ],
                       ),

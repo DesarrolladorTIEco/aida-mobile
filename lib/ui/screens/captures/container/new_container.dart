@@ -83,6 +83,7 @@ class _NewContainerState extends State<NewContainerPage> {
                       final arguments = {
                         'cultive': cultive,
                         'zone': zoneName,
+                        'bkId': bkId
                       };
 
                       Navigator.pushReplacementNamed(context, '/container-home',
