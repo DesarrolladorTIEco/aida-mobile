@@ -68,7 +68,6 @@ class _NewContainerState extends State<NewContainerPage> {
           zoneName,
           formattedDate,
           parsedUserID,
-          path,
           bkId);
       if (response != null) {
         showDialog(

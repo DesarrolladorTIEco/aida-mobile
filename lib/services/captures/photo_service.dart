@@ -5,7 +5,7 @@ import 'package:aida/services/service.dart';
 class PhotoService {
   final ApiService _apiService = ApiService();
 
-  Future<List<Map<String, dynamic>>> insert(Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> insert(Map<String, dynamic> data) async {
     final String url = '${_apiService.baseUrl}securitic/add-photo-capture';
 
     final response = await http.post(
@@ -15,6 +15,7 @@ class PhotoService {
     );
 
     if (response.statusCode == 200) {
+      print('Raw response body: ${response.body}');
       return json.decode(response.body);
     } else {
       var responseData = json.decode(response.body);

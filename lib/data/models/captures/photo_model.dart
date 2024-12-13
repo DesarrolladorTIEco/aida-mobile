@@ -4,11 +4,10 @@ class PhotoModel {
   final String typePicture;
   final String subTypePicture;
   final String url;
-  final String date;
   final num user;
 
   PhotoModel(this.bkId, this.cntId, this.typePicture, this.subTypePicture,
-      this.url, this.date, this.user);
+      this.url, this.user);
 
   factory PhotoModel.fromJson(Map<String, dynamic> json) {
     return PhotoModel(
@@ -17,7 +16,6 @@ class PhotoModel {
         json['MbPcTypePicture'] ?? '',
         json['MbPcSubTypePicture'] ?? '',
         json['MbPcLinkDirectory'] ?? '',
-        json['SecDateCreate'] ?? '',
         num.tryParse(json['UsrCreate'].toString()) ?? 0);
   }
 
@@ -28,8 +26,7 @@ class PhotoModel {
       'MbPcTypePicture': typePicture,
       'MbPcSubTypePicture': subTypePicture,
       'MbPcLinkDirectory': url,
-      'SecDateCreate': date,
-      'UsrCreate': date,
+      'UsrCreate': user,
     };
   }
 
@@ -41,7 +38,6 @@ class PhotoModel {
         'MbPcTypePicture: $typePicture,'
         'MbPcSubTypePicture: $subTypePicture,'
         'MbPcLinkDirectory: $url,'
-        'SecDateCreate: $date,'
-        'UsrCreate: $date,';
+        'UsrCreate: $user,';
   }
 }

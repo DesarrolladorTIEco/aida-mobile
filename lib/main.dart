@@ -1,11 +1,12 @@
 import 'package:aida/ui/screens/captures/container/container-home.dart';
 import 'package:aida/ui/screens/captures/gallery_container.dart';
 import 'package:aida/ui/screens/captures/container/new_container.dart';
-import 'package:aida/ui/screens/captures/menus/seguridad_precintos.dart';
+import 'package:aida/ui/screens/captures/seguridad_precintos.dart';
 import 'package:aida/ui/screens/captures/seguridad_inspeccion_externa.dart';
 import 'package:aida/ui/screens/captures/seguridad_patrimonial_content.dart';
 import 'package:aida/viewmodel/captures/booking_viewmodel.dart';
 import 'package:aida/viewmodel/captures/container_viewmodel.dart';
+import 'package:aida/viewmodel/captures/photo_viewmodel.dart';
 import 'package:aida/viewmodel/captures/securitic_viewmodel.dart';
 import 'package:aida/ui/screens/captures/booking/new_booking.dart';
 import 'package:aida/ui/screens/captures/booking/booking_home.dart';
@@ -48,7 +49,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => WorkerViewModel()),
         ChangeNotifierProvider(create: (context) => SecuriticsViewModel()),
         ChangeNotifierProvider(create: (context) => ContainerViewModel()),
-        ChangeNotifierProvider(create: (context) => BookingViewModel())
+        ChangeNotifierProvider(create: (context) => BookingViewModel()),
+        ChangeNotifierProvider(create: (context) => PhotoViewModel())
       ],
       child: MaterialApp(
         title: 'AIDA+',
