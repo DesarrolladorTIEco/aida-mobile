@@ -14,11 +14,15 @@ class SeguridadInspeccionExternaMenu extends StatefulWidget {
       _SeguridadInspeccionExternaState();
 }
 
-class _SeguridadInspeccionExternaState
-    extends State<SeguridadInspeccionExternaMenu> {
-  final CameraContainer _cameraContainer =
-  CameraContainer(); // Instancia de CameraContainer
+class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaMenu> {
+  final CameraContainer _cameraContainer =  CameraContainer();
+
+  //DECLARAMOS VARIABLES
   String container = '';
+  String title = 'INSPECCIÓN EXTERNA';
+  num bkId = 0;
+  num cntId = 0;
+
 
   final titles = [
     'Interchange (EIR)',
@@ -31,7 +35,7 @@ class _SeguridadInspeccionExternaState
     'Parches'
   ];
 
-  Future<void> _sendData(BuildContext context) async {
+  Future<void> _sendData(BuildContext context, String dynamicTitle) async {
     final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
     final int parsedUserID = int.tryParse(userID.trim()) ?? 0;
     final photoViewModel = Provider.of<PhotoViewModel>(context, listen: false);
@@ -39,12 +43,14 @@ class _SeguridadInspeccionExternaState
     photoViewModel.isLoading = true;
 
     String path =
-        r'\\10.10.100.26\Seguridad_Proyecto\medlog\conserva\2024\dec\13\N°111111\CONTNEIKS\inspeccion_externa\panorámica\';
+        r'\\10.10.100.26\Seguridad_Proyecto\medlog\conserva\2024\dec\13\N°111111\{$container}\inspeccion_externa\panorámica\';
 
     try {
-      await _cameraContainer.openCamera(context, path);
+
+      // await _cameraContainer.openCamera(context, path);
+      print(bkId);
       PhotoModel? response =
-      await photoViewModel.insert(1, 1, 'dd', 'dd', path, parsedUserID);
+      await photoViewModel.insert(bkId, cntId, title.toLowerCase(), dynamicTitle.toLowerCase(), path, parsedUserID);
 
     } catch (e) {
       print("Error en _sendData: $e"); // Depura cualquier error aquí
@@ -70,6 +76,12 @@ class _SeguridadInspeccionExternaState
 
     if (arguments != null) {
       container = (arguments['container'] ?? 'Desconocido').toString();
+
+      var bkIdValue = arguments['bkId'];
+      bkId = (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
+
+      var cntIdValue = arguments['cntId'];
+      cntId = (cntIdValue is String) ? num.tryParse(cntIdValue) ?? 0 : cntIdValue ?? 0;
     }
 
     return Scaffold(
@@ -97,7 +109,7 @@ class _SeguridadInspeccionExternaState
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'INSPECCIÓN EXTERNA',
+                        title,
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -170,8 +182,8 @@ class _SeguridadInspeccionExternaState
                           children: [
                             GestureDetector(
                               onTap: () async {
-                                await _sendData(context);
-
+                                String dynamicTitle = titles[index];
+                                await _sendData(context, dynamicTitle);
                               },
                               child: Icon(
                                 Icons.photo_camera,

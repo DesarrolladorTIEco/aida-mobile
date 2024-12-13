@@ -13,9 +13,11 @@ class SeguridadPatrimonialContenidoMenu extends StatefulWidget {
 class _SeguridadPatrimonialMenuState
     extends State<SeguridadPatrimonialContenidoMenu> {
   final CameraContainer _cameraContainer =
-      CameraContainer(); // Instancia de CameraContainer
+      CameraContainer();
   String container = '';
   String url = '';
+  num bkId = 0;
+  num cntId = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,12 @@ class _SeguridadPatrimonialMenuState
     if (arguments != null) {
       container = (arguments['container'] ?? 'Desconocido').toString();
       url = (arguments['url'] ?? 'Desconocido').toString();
+
+      var bkIdValue = arguments['bkId'];
+      bkId = (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
+
+      var cntIdValue = arguments['cntId'];
+      cntId = (cntIdValue is String) ? num.tryParse(cntIdValue) ?? 0 : cntIdValue ?? 0;
     }
 
     return Scaffold(
@@ -99,8 +107,9 @@ class _SeguridadPatrimonialMenuState
                   ),
                   child: InkWell(
                     onTap: () {
-                      final arguments = {'container': container};
+                      final arguments = {'container': container, 'bkId': bkId, 'cntId': cntId};
 
+                      print(arguments);
                       // Determina la ruta a la que navegar según el texto
                       if (index == 0) {
                         Navigator.pushNamed(context, '/seguridad-inspeccion',

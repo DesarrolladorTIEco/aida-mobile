@@ -286,8 +286,12 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                     child: InkWell(
                       onTap: () {
                         final arguments = {
-                          'container': container['Contenedor']
+                          'container': container['Contenedor'],
+                          'bkId': bkId,
+                          'cntId': container['CntId']
                         };
+
+                        print(arguments);
 
                         Navigator.pushNamed(context, '/seguridad-patrimonial-content',
                             arguments: arguments);
