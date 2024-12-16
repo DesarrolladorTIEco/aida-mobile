@@ -245,7 +245,7 @@ class _SeguridadInspeccionExternaState
                           children: [
                             GestureDetector(
                               onTap: isParches && !isChecked[index]
-                                  ? null // No hace nada si el checkbox no está marcado
+                                  ? null
                                   : () async {
                                 String dynamicTitle = titles[index];
                                 await _sendData(context, dynamicTitle);

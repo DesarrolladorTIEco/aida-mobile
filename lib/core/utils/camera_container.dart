@@ -95,6 +95,7 @@ class CameraContainer {
           const SnackBar(content: Text('Imagen subida exitosamente')),
         );
       } else {
+        print(responseString);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error al subir la imagen: $responseString')),
         );

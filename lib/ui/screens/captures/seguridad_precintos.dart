@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:aida/core/utils/camera_container.dart';
+import 'package:aida/viewmodel/auth_viewmodel.dart';
+import 'package:aida/viewmodel/captures/photo_viewmodel.dart';
+import 'package:aida/data/models/captures/photo_model.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SeguridadPrecintoMenu extends StatefulWidget {
   const SeguridadPrecintoMenu({Key? key}) : super(key: key);
@@ -12,7 +19,17 @@ class SeguridadPrecintoMenu extends StatefulWidget {
 class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
   final CameraContainer _cameraContainer = CameraContainer();
   String container = '';
+  String booking = '';
   String url = '';
+
+  String title = 'PRECINTOS';
+
+  String zoneName = '';
+  String cultive = '';
+  String path = '';
+
+  num bkId = 0;
+  num cntId = 0;
 
   final titles = [
     'Precinto Aduana',
@@ -31,6 +48,80 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
     'Cinta Seguridad',
   ];
 
+
+  Future<void> _getPath(BuildContext context, String dynamicTitle) async {
+    final now = DateTime.now();
+
+    final String formattedZoneName =
+    zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedCultive = cultive.toLowerCase();
+
+    final String year = now.year.toString();
+    final String month =
+    DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+    final String day = now.day.toString();
+
+    final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
+
+    final String titleFormatted = title.toLowerCase().replaceAll(' ', '_');
+    final String dynamicTitleFormatted =
+    dynamicTitle.toLowerCase().replaceAll(' ', '_');
+
+    setState(() {
+      path =
+      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
+    });
+  }
+
+  Future<void> _sendData(BuildContext context, String dynamicTitle) async {
+    final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
+    final int parsedUserID = int.tryParse(userID.trim()) ?? 0;
+    final photoViewModel = Provider.of<PhotoViewModel>(context, listen: false);
+
+    photoViewModel.isLoading = true;
+
+    final now = DateTime.now();
+    final String formattedZoneName = zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedCultive = cultive.toLowerCase();
+
+    final String year = now.year.toString();
+    final String month = DateFormat('MMM').format(now).toLowerCase();
+    final String day = now.day.toString();
+
+    final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
+
+    final String titleFormatted = title.toLowerCase().replaceAll(' ', '_');
+    final String dynamicTitleFormatted =
+    dynamicTitle.toLowerCase().replaceAll(' ', '_');
+
+    setState(() {
+      path =
+      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
+    });
+
+    print("formattedZoneName $formattedZoneName");
+    print("formattedCultive $formattedCultive");
+    print("bookingFormatted $bookingFormatted");
+
+    try {
+      PhotoModel? response = await photoViewModel.insert(bkId, cntId,
+          titleFormatted, dynamicTitleFormatted, path, parsedUserID);
+      await _cameraContainer.openCamera(context, path);
+
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      photoViewModel.isLoading = false;
+      photoViewModel.notifyListeners();
+    }
+  }
+
+
   List<bool> isChecked = List.generate(8, (index) => false);
   bool isListEnabled = false;
 
@@ -41,7 +132,20 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
 
     if (arguments != null) {
       container = (arguments['container'] ?? 'Desconocido').toString();
-      url = (arguments['url'] ?? 'Desconocido').toString();
+
+      cultive = (arguments['cultive'] ?? 'Desconocido').toString();
+      zoneName = (arguments['zone'] ?? 'Desconocido').toString();
+
+      booking = (arguments['booking'] ?? 'Desconocido').toString();
+
+      var bkIdValue = arguments['bkId'];
+      bkId =
+      (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
+
+      var cntIdValue = arguments['cntId'];
+      cntId = (cntIdValue is String)
+          ? num.tryParse(cntIdValue) ?? 0
+          : cntIdValue ?? 0;
     }
 
     return Scaffold(
@@ -69,7 +173,7 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'PRECINTOS',
+                        title,
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
@@ -107,7 +211,7 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
 
           Expanded(
             child: ListView.builder(
-              itemCount: 7, // Mostrando los 8 elementos
+              itemCount: titles.length, // Mostrando los 8 elementos
               itemBuilder: (context, index) {
                 bool isCheckbox = checkableTitles.contains(titles[index]);
 
@@ -118,9 +222,6 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
                     borderRadius: BorderRadius.zero,
                   ),
                   child: InkWell(
-                    onTap: () {
-                      print("Item seleccionado: ${titles[index]}");
-                    },
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       title: Row(
@@ -144,20 +245,46 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
                           ),
                           Row(
                             children: [
-                              Icon(
-                                Icons.photo_camera,
-                                size: 25,
-                                color: isCheckbox && !isChecked[index]
-                                    ? Colors.grey // Icono desactivado
-                                    : Colors.red.shade800,
+                              GestureDetector(
+                                onTap: isCheckbox && !isChecked[index]
+                                    ? null
+                                    : () async {
+                                  String dynamicTitle = titles[index];
+                                  await _sendData(context, dynamicTitle);
+                                },
+                                child: Icon(
+                                  Icons.photo_camera,
+                                  size: 25,
+                                  color: isCheckbox && !isChecked[index]
+                                      ? Colors.grey
+                                      : Colors.red.shade800,
+                                ),
                               ),
                               const SizedBox(width: 8),
-                              Icon(
-                                Icons.photo_library_outlined,
-                                size: 25,
-                                color: isCheckbox && !isChecked[index]
-                                    ? Colors.grey // Icono desactivado
-                                    : Colors.red.shade800,
+                              GestureDetector(
+                                onTap: isCheckbox && !isChecked[index]
+                                    ? null
+                                    : () async {
+                                  String dynamicTitle = titles[index];
+                                  await _getPath(context, dynamicTitle);
+
+                                  final arguments = {
+                                    'url': path,
+                                  };
+
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/gallery-container',
+                                    arguments: arguments,
+                                  );
+                                },
+                                child: Icon(
+                                  Icons.photo_library_outlined,
+                                  size: 25,
+                                  color: isCheckbox && !isChecked[index]
+                                      ? Colors.grey // Icono desactivado
+                                      : Colors.red.shade800,
+                                ),
                               ),
                               if (isCheckbox) ...[
                                 Checkbox(
