@@ -2,9 +2,13 @@ import 'package:aida/data/models/captures/photo_model.dart';
 import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:aida/viewmodel/captures/photo_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:aida/core/utils/camera_container.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import 'package:path/path.dart' as p;
 
 class SeguridadInspeccionExternaMenu extends StatefulWidget {
   const SeguridadInspeccionExternaMenu({Key? key}) : super(key: key);
@@ -14,19 +18,25 @@ class SeguridadInspeccionExternaMenu extends StatefulWidget {
       _SeguridadInspeccionExternaState();
 }
 
-class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaMenu> {
-  final CameraContainer _cameraContainer =  CameraContainer();
+class _SeguridadInspeccionExternaState
+    extends State<SeguridadInspeccionExternaMenu> {
+  final CameraContainer _cameraContainer = CameraContainer();
 
   //DECLARAMOS VARIABLES
   String container = '';
-  String title = 'INSPECCIÓN EXTERNA';
+  String booking = '';
+  String title = 'INSPECCION EXTERNA';
+
+  String zoneName = '';
+  String cultive = '';
+  String path = '';
+
   num bkId = 0;
   num cntId = 0;
 
-
   final titles = [
     'Interchange (EIR)',
-    'Panorámica',
+    'Panoramica',
     'Parte Delantera Contenedor',
     'Parte Posterior Contenedor',
     'Placa Contenedor',
@@ -35,6 +45,32 @@ class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaM
     'Parches'
   ];
 
+  Future<void> _getPath(BuildContext context, String dynamicTitle) async {
+    final now = DateTime.now();
+    final String formattedDate =
+    DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+
+    final String formattedZoneName =
+    zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedCultive = cultive.toLowerCase();
+
+    final String year = now.year.toString();
+    final String month =
+    DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+    final String day = now.day.toString();
+
+    final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
+
+    final String titleFormatted = title.toLowerCase().replaceAll(' ', '_');
+    final String dynamicTitleFormatted =
+    dynamicTitle.toLowerCase().replaceAll(' ', '_');
+
+    setState(() {
+      path =
+      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
+    });
+  }
+
   Future<void> _sendData(BuildContext context, String dynamicTitle) async {
     final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
     final int parsedUserID = int.tryParse(userID.trim()) ?? 0;
@@ -42,18 +78,38 @@ class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaM
 
     photoViewModel.isLoading = true;
 
-    String path =
-        r'\\10.10.100.26\Seguridad_Proyecto\medlog\conserva\2024\dec\13\N°111111\{$container}\inspeccion_externa\panorámica\';
+    final now = DateTime.now();
+    final String formattedDate =
+    DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+
+    final String formattedZoneName =
+    zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedCultive = cultive.toLowerCase();
+
+    final String year = now.year.toString();
+    final String month =
+    DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+    final String day = now.day.toString();
+
+    final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
+
+    final String titleFormatted = title.toLowerCase().replaceAll(' ', '_');
+    final String dynamicTitleFormatted =
+    dynamicTitle.toLowerCase().replaceAll(' ', '_');
+
+    setState(() {
+      path =
+      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
+    });
+
 
     try {
-
-      // await _cameraContainer.openCamera(context, path);
-      print(bkId);
-      PhotoModel? response =
-      await photoViewModel.insert(bkId, cntId, title.toLowerCase(), dynamicTitle.toLowerCase(), path, parsedUserID);
+      PhotoModel? response = await photoViewModel.insert(bkId, cntId,
+          titleFormatted, dynamicTitleFormatted, path, parsedUserID);
+      await _cameraContainer.openCamera(context, path);
 
     } catch (e) {
-      print("Error en _sendData: $e"); // Depura cualquier error aquí
+      print("Error al enviar las imagenes: $e"); // Depura cualquier error aquí
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error: ${e.toString()}"),
@@ -72,16 +128,24 @@ class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaM
   @override
   Widget build(BuildContext context) {
     final arguments =
-    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     if (arguments != null) {
       container = (arguments['container'] ?? 'Desconocido').toString();
 
+      cultive = (arguments['cultive'] ?? 'Desconocido').toString();
+      zoneName = (arguments['zone'] ?? 'Desconocido').toString();
+
+      booking = (arguments['booking'] ?? 'Desconocido').toString();
+
       var bkIdValue = arguments['bkId'];
-      bkId = (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
+      bkId =
+          (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
 
       var cntIdValue = arguments['cntId'];
-      cntId = (cntIdValue is String) ? num.tryParse(cntIdValue) ?? 0 : cntIdValue ?? 0;
+      cntId = (cntIdValue is String)
+          ? num.tryParse(cntIdValue) ?? 0
+          : cntIdValue ?? 0;
     }
 
     return Scaffold(
@@ -89,7 +153,7 @@ class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaM
         children: [
           Container(
             padding:
-            const EdgeInsets.only(top: 50, left: 12, right: 12, bottom: 20),
+                const EdgeInsets.only(top: 50, left: 12, right: 12, bottom: 20),
             decoration: BoxDecoration(
               color: Colors.red.shade800,
               boxShadow: const [
@@ -157,8 +221,7 @@ class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaM
                     borderRadius: BorderRadius.zero,
                   ),
                   child: ListTile(
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -181,7 +244,9 @@ class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaM
                         Row(
                           children: [
                             GestureDetector(
-                              onTap: () async {
+                              onTap: isParches && !isChecked[index]
+                                  ? null // No hace nada si el checkbox no está marcado
+                                  : () async {
                                 String dynamicTitle = titles[index];
                                 await _sendData(context, dynamicTitle);
                               },
@@ -195,9 +260,23 @@ class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaM
                             ),
                             const SizedBox(width: 8),
                             GestureDetector(
-                              onTap: () {
+                              onTap: isParches && !isChecked[index]
+                                  ? null // No hace nada si el checkbox no está marcado
+                                  : () async {
+                                String dynamicTitle = titles[index];
+                                await _getPath(context, dynamicTitle);
+
+                                print(path);
+
+                                final arguments = {
+                                  'url': path,
+                                };
+
                                 Navigator.pushNamed(
-                                    context, '/gallery-container');
+                                  context,
+                                  '/gallery-container',
+                                  arguments: arguments,
+                                );
                               },
                               child: Icon(
                                 Icons.photo_library_outlined,
@@ -217,8 +296,7 @@ class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaM
                                 },
                                 activeColor: Colors.red.shade800,
                                 visualDensity: VisualDensity.compact,
-                                materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
+                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                             ],
                           ],
@@ -227,6 +305,7 @@ class _SeguridadInspeccionExternaState extends State<SeguridadInspeccionExternaM
                     ),
                   ),
                 );
+
               },
             ),
           ),

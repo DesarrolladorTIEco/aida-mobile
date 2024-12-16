@@ -36,10 +36,9 @@ class PhotoViewModel extends ChangeNotifier {
       print('Response body: ${response}');
 
       if (response['success'] == true) {
-        print("daahh");
-
         final photo = PhotoModel.fromJson(response['photo_capture']);
         notifyListeners();
+
         return photo;
       } else {
         errorMessage = response['message'] ?? 'Error desconocido';

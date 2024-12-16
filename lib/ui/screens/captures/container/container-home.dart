@@ -15,6 +15,7 @@ class ContainerHomePage extends StatefulWidget {
 class _ContainerHomeState extends State<ContainerHomePage> {
   final TextEditingController _search = TextEditingController();
 
+  String booking = '';
   String zoneName = '';
   String cultive = '';
   num bkId = 0;
@@ -44,7 +45,6 @@ class _ContainerHomeState extends State<ContainerHomePage> {
           Provider.of<ContainerViewModel>(context, listen: false);
       _loadContainer(containerViewModel);
     });
-
   }
 
   void _filterContainer(String query) {
@@ -62,7 +62,6 @@ class _ContainerHomeState extends State<ContainerHomePage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     final arguments =
@@ -74,9 +73,12 @@ class _ContainerHomeState extends State<ContainerHomePage> {
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
       zoneName = (arguments['zone'] ?? 'Desconocido').toString();
 
+      booking = (arguments['booking'] ?? 'Desconocido').toString();
+
       // Convert bkId to num safely
       var bkIdValue = arguments['bkId'];
-      bkId = (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
+      bkId =
+          (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
     }
 
     final authViewModel = Provider.of<AuthViewModel>(context);
@@ -250,7 +252,6 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
-
                 prefixIconConstraints: const BoxConstraints(
                   minWidth: 40,
                   minHeight: 40,
@@ -288,12 +289,16 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                         final arguments = {
                           'container': container['Contenedor'],
                           'bkId': bkId,
-                          'cntId': container['CntId']
+                          'cultive': cultive,
+                          'zone': zoneName,
+                          'cntId': container['CntId'],
+                          'booking': booking
                         };
 
                         print(arguments);
 
-                        Navigator.pushNamed(context, '/seguridad-patrimonial-content',
+                        Navigator.pushNamed(
+                            context, '/seguridad-patrimonial-content',
                             arguments: arguments);
                       },
                       child: ListTile(

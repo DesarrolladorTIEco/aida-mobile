@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:aida/services/service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:photo_view/photo_view.dart';
 
 class ImageGalleryPage extends StatefulWidget {
   const ImageGalleryPage({super.key});
-
 
   @override
   _ImageGalleryPageState createState() => _ImageGalleryPageState();
@@ -45,9 +45,26 @@ class _ImageGalleryPageState extends State<ImageGalleryPage> {
         final jsonResponse = jsonDecode(response.body);
         final imageUrls = List<String>.from(jsonResponse['images']);
 
+
         setState(() {
-          _imagePaths = imageUrls;
+          _imagePaths = imageUrls.map((url) {
+            url = url.replaceAll(RegExp(r'/{2,}'), '/');
+            String oldPart = dotenv.get('OLD_PATH', fallback: 'Ruta no disponible');
+
+            if (url.contains(oldPart)) {
+              url = url.replaceAll(oldPart, '//');
+            }
+
+            if (url.startsWith('http://') || url.startsWith('https://')) {
+              return url;
+            } else if (url.startsWith('http:/') || url.startsWith('https:/')) {
+              return url.replaceFirst('http:/', 'http://').replaceFirst('https:/', 'https://');
+            } else {
+              return 'http://$url'; // Cambia a 'https://' si es necesario
+            }
+          }).toList();
         });
+
       } else {
         _showSnackBar('Error al obtener imágenes: ${response.body}');
       }
@@ -109,3 +126,4 @@ class _ImageGalleryPageState extends State<ImageGalleryPage> {
     );
   }
 }
+

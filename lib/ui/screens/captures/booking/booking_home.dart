@@ -260,6 +260,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
+
                       final arguments = {
                         'cultive': cultive,
                         'zone': zoneName,
@@ -485,6 +486,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                         'cultive': cultive,
                         'zone': zoneName,
                         'bkId': booking["bkId"],
+                        'booking': booking["Booking"],
                       };
 
                       Navigator.pushNamed(context, '/container-home',

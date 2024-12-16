@@ -12,10 +12,15 @@ class SeguridadPatrimonialContenidoMenu extends StatefulWidget {
 
 class _SeguridadPatrimonialMenuState
     extends State<SeguridadPatrimonialContenidoMenu> {
-  final CameraContainer _cameraContainer =
-      CameraContainer();
+  final CameraContainer _cameraContainer = CameraContainer();
   String container = '';
   String url = '';
+
+  String booking = '';
+
+  String zoneName = '';
+  String cultive = '';
+
   num bkId = 0;
   num cntId = 0;
 
@@ -25,14 +30,22 @@ class _SeguridadPatrimonialMenuState
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     if (arguments != null) {
+      cultive = (arguments['cultive'] ?? 'Desconocido').toString();
+      zoneName = (arguments['zone'] ?? 'Desconocido').toString();
+
+      booking = (arguments['booking'] ?? 'Desconocido').toString();
+
       container = (arguments['container'] ?? 'Desconocido').toString();
       url = (arguments['url'] ?? 'Desconocido').toString();
 
       var bkIdValue = arguments['bkId'];
-      bkId = (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
+      bkId =
+          (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
 
       var cntIdValue = arguments['cntId'];
-      cntId = (cntIdValue is String) ? num.tryParse(cntIdValue) ?? 0 : cntIdValue ?? 0;
+      cntId = (cntIdValue is String)
+          ? num.tryParse(cntIdValue) ?? 0
+          : cntIdValue ?? 0;
     }
 
     return Scaffold(
@@ -107,7 +120,14 @@ class _SeguridadPatrimonialMenuState
                   ),
                   child: InkWell(
                     onTap: () {
-                      final arguments = {'container': container, 'bkId': bkId, 'cntId': cntId};
+                      final arguments = {
+                        'container': container,
+                        'bkId': bkId,
+                        'cntId': cntId,
+                        'zone': zoneName,
+                        'cultive': cultive,
+                        'booking': booking
+                      };
 
                       print(arguments);
                       // Determina la ruta a la que navegar según el texto
