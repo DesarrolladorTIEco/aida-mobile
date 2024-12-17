@@ -1,5 +1,3 @@
-import 'package:aida/data/models/captures/booking_model.dart';
-import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,6 +19,7 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
   String container = '';
   String booking = '';
 
+  String title= '';
   String zoneName = '';
   String cultive = '';
 
@@ -28,13 +27,32 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
   num bkId = 0;
   num cntId = 0;
 
+  Future<void> _getPath(BuildContext context) async {
+    final now = DateTime.now();
+
+    final String formattedZoneName =
+    zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedCultive = cultive.toLowerCase();
+
+    final String year = now.year.toString();
+    final String month =
+    DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+    final String day = now.day.toString();
+
+    final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
+
+    final String titleFormatted = title.toLowerCase().replaceAll(' ', '_');
+
+    setState(() {
+      path =
+      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted';
+    });
+  }
+
   Future<void> _save(BuildContext context) async {
-    final userId = Provider.of<AuthViewModel>(context, listen:false).userID;
-    final int parseUserID = int.tryParse(userId.trim()) ?? 0;
     final bookingViewModel = Provider.of<BookingViewModel>(context, listen: false);
 
     final now = DateTime.now();
-    final String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
     final String formattedZoneName = zoneName.toLowerCase().replaceAll(' ', '_');
     final String formattedCultive = cultive.toLowerCase();
     final String year = now.year.toString();
@@ -52,11 +70,9 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
       bookingViewModel.isLoading = true;
       bookingViewModel.notifyListeners();
 
-      // String? response = await bookingViewModel.saveCaptures(35, 43, 1, '\\10.10.100.26\\Seguridad_Proyecto\\medlog\\conserva\\2024\\dec\\17\\isisis\\dikdid');
       String? response = await bookingViewModel.saveCaptures(35, 43, 1, path);
 
       if (response != null) {
-        // Mostrar el mensaje en un popup
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -66,7 +82,7 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
               actions: <Widget>[
                 TextButton(
                   onPressed: () {
-                    Navigator.of(context).pop(); // Cerrar el popup
+                    Navigator.of(context).pop();
                   },
                   child: Text("Cerrar"),
                 ),
@@ -86,7 +102,7 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
             actions: <Widget>[
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop(); // Cerrar el popup
+                  Navigator.of(context).pop();
                 },
                 child: Text("Cerrar"),
               ),
@@ -162,9 +178,9 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
                       Row(
                         children: [
                           const Icon(
-                            Icons.warning_amber_rounded, // Icono de advertencia
-                            color: Colors.white70, // Color del icono
-                            size: 20, // Tamaño del icono
+                            Icons.warning_amber_rounded,
+                            color: Colors.white70,
+                            size: 20
                           ),
                           const SizedBox(width: 5),
                           Text(
@@ -206,7 +222,6 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
                       };
 
                       print(arguments);
-                      // Determina la ruta a la que navegar según el texto
                       if (index == 0) {
                         Navigator.pushNamed(context, '/seguridad-inspeccion',
                             arguments: arguments);
@@ -234,11 +249,35 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
                               ),
                             ],
                           ),
-                          Icon(
-                            Icons.photo_library_outlined,
-                            size: 25,
-                            color: Colors.red.shade800,
+                          GestureDetector(
+                            onTap: () async {
+                              if (index == 0) {
+                                title = 'INSPECCIÓN EXTERNA';
+                              } else if (index == 1) {
+                                title = 'PRECINTOS';
+                              }
+
+                              await _getPath(context);
+
+                              print(path);
+
+                              final arguments = {
+                                'url': path,
+                              };
+
+                              Navigator.pushNamed(
+                                context,
+                                '/general-gallery',
+                                arguments: arguments,
+                              );
+                            },
+                            child: Icon(
+                              Icons.photo_library_outlined,
+                              size: 25,
+                              color: Colors.red.shade800,
+                            ),
                           ),
+
                         ],
                       ),
                     ),
