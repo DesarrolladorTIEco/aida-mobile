@@ -9,10 +9,8 @@ class BookingService {
   Future<List<Map<String, dynamic>>> get_booking(
       Map<String, dynamic> data) async {
     final String url = '${_apiService.baseUrl}securitic/get-booking';
-
     final response = await http.post(Uri.parse(url),
         body: jsonEncode(data), headers: {'Content-Type': 'application/json'});
-
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
       if (responseBody is List) {
@@ -58,7 +56,25 @@ class BookingService {
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
-    } else{
+    } else {
+      var responseData = json.decode(response.body);
+      var message = responseData['message'];
+
+      throw message;
+    }
+  }
+
+  Future<Map<String, dynamic>> updateSecuritic(Map<String, dynamic> data) async {
+    final String url = '${_apiService.baseUrl}securitic/update-booking-sp';
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(data),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
       var responseData = json.decode(response.body);
       var message = responseData['message'];
 

@@ -173,6 +173,23 @@ class _SeguridadPatrimonialMenuState
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          print("Botón GUARDAR presionado");
+        },
+        backgroundColor: Colors.red.shade800,
+        icon: const Icon(Icons.save, color: Colors.white),
+        label: Text(
+          "GUARDAR",
+          style: GoogleFonts.raleway(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            letterSpacing: 0.5,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
