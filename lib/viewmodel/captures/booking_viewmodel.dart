@@ -106,8 +106,7 @@ class BookingViewModel extends ChangeNotifier {
     return null;
   }
 
-  Future<BookingModel?> updateSecuritic(num bkId, num cntId, num user,
-      String link) async {
+  Future<String?> saveCaptures(num bkId, num cntId, num user, String link) async {
     isLoading = true;
     notifyListeners();
 
@@ -118,12 +117,22 @@ class BookingViewModel extends ChangeNotifier {
         'MbPcLinkDirectory': link,
         'MbCntId': cntId
       };
-    }catch (e) {
-      errorMessage = '$e';
+
+      final response = await _bookingService.saveCaptures(data);
+
+      if (response['original']['success'] == true) {
+        return response['original']['message'];
+      } else {
+        errorMessage = response['message'] ?? 'Error desconocido';
+        return errorMessage;
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+      return errorMessage;
     } finally {
       isLoading = false;
       notifyListeners();
     }
-    return null;
   }
+
 }

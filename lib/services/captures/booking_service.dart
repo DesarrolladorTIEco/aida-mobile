@@ -64,7 +64,7 @@ class BookingService {
     }
   }
 
-  Future<Map<String, dynamic>> updateSecuritic(Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> saveCaptures(Map<String, dynamic> data) async {
     final String url = '${_apiService.baseUrl}securitic/update-booking-sp';
     final response = await http.post(
       Uri.parse(url),
@@ -73,12 +73,14 @@ class BookingService {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      final responseData = json.decode(response.body);
+      return responseData;
     } else {
       var responseData = json.decode(response.body);
       var message = responseData['message'];
-
-      throw message;
+      throw message;  // Lanzamos una excepción con el mensaje de error
     }
   }
+
+
 }

@@ -5,6 +5,7 @@ class BookingModel {
   final String date;
   final num user;
 
+
   BookingModel(this.name, this.cultive, this.zone, this.date, this.user);
 
   factory BookingModel.fromJson(Map<String, dynamic> json) {

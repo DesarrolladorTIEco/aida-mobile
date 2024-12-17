@@ -8,7 +8,6 @@ import 'package:aida/core/utils/camera_container.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import 'package:path/path.dart' as p;
 
 class SeguridadInspeccionExternaMenu extends StatefulWidget {
   const SeguridadInspeccionExternaMenu({Key? key}) : super(key: key);
@@ -47,8 +46,7 @@ class _SeguridadInspeccionExternaState
 
   Future<void> _getPath(BuildContext context, String dynamicTitle) async {
     final now = DateTime.now();
-    final String formattedDate =
-    DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+    final String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
 
     final String formattedZoneName =
     zoneName.toLowerCase().replaceAll(' ', '_');

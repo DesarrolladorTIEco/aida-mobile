@@ -1,6 +1,12 @@
+import 'package:aida/data/models/captures/booking_model.dart';
+import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:aida/core/utils/camera_container.dart';
+import 'package:aida/viewmodel/captures/booking_viewmodel.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class SeguridadPatrimonialContenidoMenu extends StatefulWidget {
   const SeguridadPatrimonialContenidoMenu({Key? key}) : super(key: key);
@@ -10,19 +16,90 @@ class SeguridadPatrimonialContenidoMenu extends StatefulWidget {
       _SeguridadPatrimonialMenuState();
 }
 
-class _SeguridadPatrimonialMenuState
-    extends State<SeguridadPatrimonialContenidoMenu> {
+class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenidoMenu> {
   final CameraContainer _cameraContainer = CameraContainer();
   String container = '';
-  String url = '';
-
   String booking = '';
 
   String zoneName = '';
   String cultive = '';
 
+  String path = '';
   num bkId = 0;
   num cntId = 0;
+
+  Future<void> _save(BuildContext context) async {
+    final userId = Provider.of<AuthViewModel>(context, listen:false).userID;
+    final int parseUserID = int.tryParse(userId.trim()) ?? 0;
+    final bookingViewModel = Provider.of<BookingViewModel>(context, listen: false);
+
+    final now = DateTime.now();
+    final String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+    final String formattedZoneName = zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedCultive = cultive.toLowerCase();
+    final String year = now.year.toString();
+    final String month = DateFormat('MMM').format(now).toLowerCase();
+    final String day = now.day.toString();
+    final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
+
+    setState(() {
+      path = '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container'
+          .replaceAll('\\\\', '\\')
+          .trim();
+    });
+
+    try {
+      bookingViewModel.isLoading = true;
+      bookingViewModel.notifyListeners();
+
+      // String? response = await bookingViewModel.saveCaptures(35, 43, 1, '\\10.10.100.26\\Seguridad_Proyecto\\medlog\\conserva\\2024\\dec\\17\\isisis\\dikdid');
+      String? response = await bookingViewModel.saveCaptures(35, 43, 1, path);
+
+      if (response != null) {
+        // Mostrar el mensaje en un popup
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Alerta"),
+              content: Text(response),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Cerrar el popup
+                  },
+                  child: Text("Cerrar"),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      print("Error  $e");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Error"),
+            content: Text("Error: ${e.toString()}"),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Cerrar el popup
+                },
+                child: Text("Cerrar"),
+              ),
+            ],
+          );
+        },
+      );
+    } finally {
+      // Restablecer el estado de carga
+      bookingViewModel.isLoading = false;
+      bookingViewModel.notifyListeners();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +113,6 @@ class _SeguridadPatrimonialMenuState
       booking = (arguments['booking'] ?? 'Desconocido').toString();
 
       container = (arguments['container'] ?? 'Desconocido').toString();
-      url = (arguments['url'] ?? 'Desconocido').toString();
 
       var bkIdValue = arguments['bkId'];
       bkId =
@@ -174,8 +250,8 @@ class _SeguridadPatrimonialMenuState
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          print("Botón GUARDAR presionado");
+        onPressed: () async {
+          await _save(context);
         },
         backgroundColor: Colors.red.shade800,
         icon: const Icon(Icons.save, color: Colors.white),
