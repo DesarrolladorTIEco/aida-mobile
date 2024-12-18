@@ -1,6 +1,8 @@
 import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:aida/viewmodel/captures/container_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:intl/intl.dart';
 import '../../../widgets/navbar_widget_securitics.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,10 +20,34 @@ class _ContainerHomeState extends State<ContainerHomePage> {
   String booking = '';
   String zoneName = '';
   String cultive = '';
+  String utilPath = '';
+  String cntpath = '';
   num bkId = 0;
 
   List<Map<String, dynamic>> filteredContainers = [];
   List<Map<String, dynamic>> allContainers = [];
+
+  Future<void> _getUtilsPath(BuildContext context) async {
+    final now = DateTime.now();
+
+    final String formattedZoneName =
+    zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedCultive = cultive.toLowerCase();
+
+    final String year = now.year.toString();
+    final String month = DateFormat('MMM').format(now).toLowerCase();
+    final String day = now.day.toString();
+
+    final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
+
+
+    setState(() {
+      utilPath =
+      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$cntpath';
+    });
+  }
+
+
 
   Future<void> _loadContainer(ContainerViewModel containerViewModel) async {
     if (zoneName.isNotEmpty && cultive.isNotEmpty) {
@@ -286,16 +312,18 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                     elevation: 1,
                     margin: const EdgeInsets.symmetric(vertical: 4.0),
                     child: InkWell(
-                      onTap: () {
-                        print("booking $booking");
+                      onTap: () async {
+                        cntpath = container['Contenedor'];
 
+                        await _getUtilsPath(context);
                         final arguments = {
                           'container': container['Contenedor'],
                           'bkId': bkId,
                           'cultive': cultive,
                           'zone': zoneName,
                           'cntId': container['CntId'],
-                          'booking': booking
+                          'booking': booking,
+                          'utilPath' : utilPath
                         };
 
                         print(arguments);

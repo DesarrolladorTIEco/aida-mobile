@@ -1,3 +1,4 @@
+import 'package:aida/viewmodel/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,7 +38,7 @@ class _SeguridadPatrimonialMenuState
 
     final String year = now.year.toString();
     final String month =
-        DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+        DateFormat('MMM').format(now).toLowerCase();
     final String day = now.day.toString();
 
     final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
@@ -53,6 +54,11 @@ class _SeguridadPatrimonialMenuState
   Future<void> _save(BuildContext context) async {
     final bookingViewModel =
         Provider.of<BookingViewModel>(context, listen: false);
+
+    final userID = Provider.of<AuthViewModel>(context, listen: false).userID;
+    final int parsedUserID =
+        int.tryParse(userID.trim()) ?? 0;
+
 
     final now = DateTime.now();
     final String formattedZoneName =
@@ -70,11 +76,18 @@ class _SeguridadPatrimonialMenuState
               .trim();
     });
 
+    print(bkId);
+    print(cntId);
+    print(parsedUserID);
+    print(path);
+
     try {
       bookingViewModel.isLoading = true;
       bookingViewModel.notifyListeners();
 
-      String? response = await bookingViewModel.saveCaptures(35, 43, 1, path);
+      String? response = await bookingViewModel.saveCaptures(bkId, cntId, parsedUserID, path);
+
+      print(response);
 
       if (response != null) {
         showDialog(
@@ -265,7 +278,6 @@ class _SeguridadPatrimonialMenuState
                               print(path);
 
                               final arguments = {
-                                'url': path,
                                 'url': path,
                               };
 
