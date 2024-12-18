@@ -255,7 +255,7 @@ class _SeguridadPatrimonialMenuState
                           GestureDetector(
                             onTap: () async {
                               if (index == 0) {
-                                title = 'INSPECCIÓN EXTERNA';
+                                title = 'INSPECCION EXTERNA';
                               } else if (index == 1) {
                                 title = 'PRECINTOS';
                               }
@@ -265,6 +265,7 @@ class _SeguridadPatrimonialMenuState
                               print(path);
 
                               final arguments = {
+                                'url': path,
                                 'url': path,
                               };
 
