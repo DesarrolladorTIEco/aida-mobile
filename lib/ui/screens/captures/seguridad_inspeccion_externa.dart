@@ -86,7 +86,7 @@ class _SeguridadInspeccionExternaState
 
     final String year = now.year.toString();
     final String month =
-    DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+    DateFormat('MMM').format(now).toLowerCase();
     final String day = now.day.toString();
 
     final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();

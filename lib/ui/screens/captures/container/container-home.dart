@@ -168,7 +168,8 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                       final arguments = {
                         'cultive': cultive,
                         'zone': zoneName,
-                        'bkId': bkId
+                        'bkId': bkId,
+                        'booking': booking
                       };
 
                       Navigator.pushNamed(context, '/new-container',
@@ -286,6 +287,8 @@ class _ContainerHomeState extends State<ContainerHomePage> {
                     margin: const EdgeInsets.symmetric(vertical: 4.0),
                     child: InkWell(
                       onTap: () {
+                        print("booking $booking");
+
                         final arguments = {
                           'container': container['Contenedor'],
                           'bkId': bkId,

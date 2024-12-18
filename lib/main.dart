@@ -5,6 +5,8 @@ import 'package:aida/ui/screens/captures/general_gallery.dart';
 import 'package:aida/ui/screens/captures/seguridad_precintos.dart';
 import 'package:aida/ui/screens/captures/seguridad_inspeccion_externa.dart';
 import 'package:aida/ui/screens/captures/seguridad_patrimonial_content.dart';
+import 'package:aida/ui/screens/expeditions/booking/booking_home_expediciones.dart';
+import 'package:aida/ui/screens/expeditions/menus/zone_expediciones.dart';
 import 'package:aida/viewmodel/captures/booking_viewmodel.dart';
 import 'package:aida/viewmodel/captures/container_viewmodel.dart';
 import 'package:aida/viewmodel/captures/photo_viewmodel.dart';
@@ -13,6 +15,10 @@ import 'package:aida/ui/screens/captures/booking/new_booking.dart';
 import 'package:aida/ui/screens/captures/booking/booking_home.dart';
 import 'package:aida/ui/screens/captures/menus/menu_planta_despacho.dart';
 import 'package:aida/ui/screens/captures/menus/zone.dart';
+
+
+import 'package:aida/ui/screens/expeditions/menus/menu_planta_expediciones.dart';
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -63,6 +69,7 @@ class MyApp extends StatelessWidget {
           '/login': (context) => const LoginPage(),
           '/welcome': (context) => const WelcomePage(),
 
+
           //christmas
           '/menu': (context) => const MenuScreen(),
           '/xmas-menu': (context) => const XMasMenu(),
@@ -71,8 +78,10 @@ class MyApp extends StatelessWidget {
           '/worker-xmas': (context) => const WorkerScreen(),
           '/stock-xmas': (context) => const StockScreen(),
 
+
           //carrier
           '/carrier': (context) => const CarrierScreen(),
+
 
           //securitics
           '/menu-sec' :(context) => const MenuSecuriticsScreen(),
@@ -85,7 +94,14 @@ class MyApp extends StatelessWidget {
           '/seguridad-inspeccion' : (context) => const SeguridadInspeccionExternaMenu(),
           '/seguridad-precintos' : (context) => const SeguridadPrecintoMenu(),
           '/gallery-container' : (context) => const ImageGalleryPage(),
-          '/general-gallery' : (context) => const GeneralGalleryPage()
+          '/general-gallery' : (context) => const GeneralGalleryPage(),
+
+
+          //expediciones
+          '/menu-expediciones' :(context) => const MenuExpedicionesScreen(),
+          '/zone-expediciones' :(context) => const ZoneExpedicionesScreen(),
+          '/booking-expediciones' :(context) => const BookingHomeExpedicionesPage(),
+
         },
       ),
     );

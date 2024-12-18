@@ -8,7 +8,6 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Obtener el nombre completo y los módulos desde el AuthViewModel
     final authViewModel = Provider.of<AuthViewModel>(context);
     final fullName = authViewModel.fullName;
     final modules = authViewModel.modules;
@@ -27,7 +26,6 @@ class WelcomePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cuadro de información de usuario
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -70,7 +68,8 @@ class WelcomePage extends StatelessWidget {
                   final moduleName = module['Modulo'] ?? 'Sin nombre';
 
                   final iconsMap = {
-                    'Seguridad Patrimonial': Icons.health_and_safety,
+                    'Seguridad Patrimonial': Icons.local_shipping,
+                    'Expediciones': Icons.local_shipping,
                     'Entrega de Canastas': Icons.card_giftcard,
                     'Control de Ingreso y salida de Carros':
                         Icons.directions_car,
@@ -96,6 +95,8 @@ class WelcomePage extends StatelessWidget {
                         Navigator.pushNamed(context, '/workHours');
                       } else if (moduleName == 'Seguridad Patrimonial') {
                         Navigator.pushNamed(context, '/menu-sec');
+                      }else if (moduleName == 'Expediciones') {
+                        Navigator.pushNamed(context, '/menu-expediciones');
                       }
                     },
                     child: Card(

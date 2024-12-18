@@ -14,12 +14,13 @@ class SeguridadPatrimonialContenidoMenu extends StatefulWidget {
       _SeguridadPatrimonialMenuState();
 }
 
-class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenidoMenu> {
+class _SeguridadPatrimonialMenuState
+    extends State<SeguridadPatrimonialContenidoMenu> {
   final CameraContainer _cameraContainer = CameraContainer();
   String container = '';
   String booking = '';
 
-  String title= '';
+  String title = '';
   String zoneName = '';
   String cultive = '';
 
@@ -31,12 +32,12 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
     final now = DateTime.now();
 
     final String formattedZoneName =
-    zoneName.toLowerCase().replaceAll(' ', '_');
+        zoneName.toLowerCase().replaceAll(' ', '_');
     final String formattedCultive = cultive.toLowerCase();
 
     final String year = now.year.toString();
     final String month =
-    DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+        DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
     final String day = now.day.toString();
 
     final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
@@ -45,15 +46,17 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
 
     setState(() {
       path =
-      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted';
+          '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted';
     });
   }
 
   Future<void> _save(BuildContext context) async {
-    final bookingViewModel = Provider.of<BookingViewModel>(context, listen: false);
+    final bookingViewModel =
+        Provider.of<BookingViewModel>(context, listen: false);
 
     final now = DateTime.now();
-    final String formattedZoneName = zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedZoneName =
+        zoneName.toLowerCase().replaceAll(' ', '_');
     final String formattedCultive = cultive.toLowerCase();
     final String year = now.year.toString();
     final String month = DateFormat('MMM').format(now).toLowerCase();
@@ -61,9 +64,10 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
     final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
 
     setState(() {
-      path = '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container'
-          .replaceAll('\\\\', '\\')
-          .trim();
+      path =
+          '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container'
+              .replaceAll('\\\\', '\\')
+              .trim();
     });
 
     try {
@@ -177,11 +181,8 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
                       ),
                       Row(
                         children: [
-                          const Icon(
-                            Icons.warning_amber_rounded,
-                            color: Colors.white70,
-                            size: 20
-                          ),
+                          const Icon(Icons.warning_amber_rounded,
+                              color: Colors.white70, size: 20),
                           const SizedBox(width: 5),
                           Text(
                             "seleccionar opción",
@@ -212,6 +213,8 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
                   ),
                   child: InkWell(
                     onTap: () {
+                      print("booking $booking");
+
                       final arguments = {
                         'container': container,
                         'bkId': bkId,
@@ -277,7 +280,6 @@ class _SeguridadPatrimonialMenuState extends State<SeguridadPatrimonialContenido
                               color: Colors.red.shade800,
                             ),
                           ),
-
                         ],
                       ),
                     ),

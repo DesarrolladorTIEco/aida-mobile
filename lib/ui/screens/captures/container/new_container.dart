@@ -22,6 +22,7 @@ class _NewContainerState extends State<NewContainerPage> {
   final TextEditingController _newContainer = TextEditingController();
 
   String zoneName = '';
+  String booking = '';
   String cultive = '';
   num bkId = 0;
 
@@ -82,7 +83,8 @@ class _NewContainerState extends State<NewContainerPage> {
                       final arguments = {
                         'cultive': cultive,
                         'zone': zoneName,
-                        'bkId': bkId
+                        'bkId': bkId,
+                        'booking': booking
                       };
 
                       Navigator.pushReplacementNamed(context, '/container-home',
@@ -146,6 +148,7 @@ class _NewContainerState extends State<NewContainerPage> {
     if (arguments != null) {
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
       zoneName = (arguments['zone'] ?? 'Desconocido').toString();
+      booking = (arguments['booking'] ?? 'Desconocido').toString();
 
       // Convert bkId to num safely
       var bkIdValue = arguments['bkId'];

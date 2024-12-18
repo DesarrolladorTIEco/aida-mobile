@@ -6,21 +6,22 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class BookingHomePage extends StatefulWidget {
-  const BookingHomePage({Key? key}) : super(key: key);
+class BookingHomeExpedicionesPage extends StatefulWidget {
+  const BookingHomeExpedicionesPage({Key? key}) : super(key: key);
 
   @override
-  State<BookingHomePage> createState() => _BookingHomeState();
+  State<BookingHomeExpedicionesPage> createState() => _BookingHomeExpedicionesState();
 }
 
-class _BookingHomeState extends State<BookingHomePage> {
+class _BookingHomeExpedicionesState extends State<BookingHomeExpedicionesPage> {
   final TextEditingController _search = TextEditingController();
   final TextEditingController _date = TextEditingController();
 
   String zoneName = '';
   String cultive = '';
+  String subTitle = '';
 
-  String selectedOption = 'BOOKING'; // Inicialmente seleccionamos 'BOOKING'
+  String selectedOption = 'BOOKING';
 
   List<Map<String, dynamic>> filteredBookings = [];
   List<Map<String, dynamic>> allBookings = [];
@@ -33,17 +34,16 @@ class _BookingHomeState extends State<BookingHomePage> {
         final formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
 
         if (selectedOption == 'BOOKING') {
-
           await bookingViewModel.fetchBooking(cultive, zoneName, formattedDate);
         } else if (selectedOption == 'BOOKING TERMINADO') {
-          await bookingViewModel.fetchBookingTerminado(cultive, zoneName, formattedDate);
+          await bookingViewModel.fetchBookingTerminado(
+              cultive, zoneName, formattedDate);
         }
 
         setState(() {
           allBookings = bookingViewModel.bookings;
           filteredBookings = List.from(allBookings);
         });
-
       } catch (e) {
         print("Error: error al obtener los bookings: $e");
       }
@@ -57,10 +57,9 @@ class _BookingHomeState extends State<BookingHomePage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final bookingViewModel =
-          Provider.of<BookingViewModel>(context, listen: false);
+      Provider.of<BookingViewModel>(context, listen: false);
       _loadBooking(bookingViewModel);
     });
-
   }
 
   void _filterBookings(String query) {
@@ -110,13 +109,17 @@ class _BookingHomeState extends State<BookingHomePage> {
   @override
   Widget build(BuildContext context) {
     final arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    ModalRoute
+        .of(context)
+        ?.settings
+        .arguments as Map<String, dynamic>?;
 
     final bookingViewModel = Provider.of<BookingViewModel>(context);
 
     if (arguments != null) {
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
       zoneName = (arguments['zone'] ?? 'Desconocido').toString();
+      subTitle = (arguments['subtitle'] ?? 'Expediciones').toString();
     }
 
     final authViewModel = Provider.of<AuthViewModel>(context);
@@ -171,7 +174,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        "SEGURIDAD PATRIMONIAL",
+                        subTitle.toUpperCase(),
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.w500,
                           fontSize: 15,
@@ -180,7 +183,8 @@ class _BookingHomeState extends State<BookingHomePage> {
                         ),
                       ),
                       Text(
-                        "${zoneName.toUpperCase()} [ ${cultive.toUpperCase()} ]",
+                        "${zoneName.toUpperCase()} [ ${cultive
+                            .toUpperCase()} ]",
                         style: GoogleFonts.raleway(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
@@ -231,7 +235,9 @@ class _BookingHomeState extends State<BookingHomePage> {
               ),
               keyboardType: TextInputType.none,
               onTap: () async {
-                DateTime initialDate = DateFormat('dd/MM/yyyy').parse(_date.text.isEmpty ? DateFormat('dd/MM/yyyy').format(DateTime.now()) : _date.text);
+                DateTime initialDate = DateFormat('dd/MM/yyyy').parse(
+                    _date.text.isEmpty ? DateFormat('dd/MM/yyyy').format(
+                        DateTime.now()) : _date.text);
 
                 DateTime? selectedDate = await showDatePicker(
                   context: context,
@@ -250,8 +256,6 @@ class _BookingHomeState extends State<BookingHomePage> {
           ),
 
 
-
-
           Center(
             child: Padding(
               padding: const EdgeInsets.only(top: 20), // Margen superior
@@ -260,7 +264,6 @@ class _BookingHomeState extends State<BookingHomePage> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-
                       final arguments = {
                         'cultive': cultive,
                         'zone': zoneName,
@@ -310,7 +313,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                       // Color del botón
                       shape: RoundedRectangleBorder(
                         borderRadius:
-                            BorderRadius.circular(8), // Borde redondeado mínimo
+                        BorderRadius.circular(8), // Borde redondeado mínimo
                       ),
                       minimumSize: const Size(100, 60),
                       maximumSize: const Size(100, 60),
@@ -378,10 +381,9 @@ class _BookingHomeState extends State<BookingHomePage> {
           const SizedBox(height: 12),
 
 
-
           Container(
             padding:
-                const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
             child: Row(
               children: [
                 // Opción BOOKING
@@ -416,9 +418,9 @@ class _BookingHomeState extends State<BookingHomePage> {
                                 : FontWeight.w600,
                             color: selectedOption == 'BOOKING'
                                 ? Colors
-                                    .white // Texto blanco si está seleccionado
+                                .white // Texto blanco si está seleccionado
                                 : Colors.grey[
-                                    700], // Texto gris si no está seleccionado
+                            700], // Texto gris si no está seleccionado
                           ),
                         ),
                       ),
@@ -456,9 +458,9 @@ class _BookingHomeState extends State<BookingHomePage> {
                                 : FontWeight.w600,
                             color: selectedOption == 'BOOKING TERMINADO'
                                 ? Colors
-                                    .white // Texto blanco si está seleccionado
+                                .white // Texto blanco si está seleccionado
                                 : Colors.grey[
-                                    700], // Texto gris si no está seleccionado
+                            700], // Texto gris si no está seleccionado
                           ),
                         ),
                       ),
@@ -516,7 +518,8 @@ class _BookingHomeState extends State<BookingHomePage> {
                                 ),
                                 const SizedBox(height: 4.0),
                                 Text(
-                                  'Linea de Negocio: ${booking["Cultivo"] ?? "Sin Nombre"}',
+                                  'Linea de Negocio: ${booking["Cultivo"] ??
+                                      "Sin Nombre"}',
                                   style: GoogleFonts.raleway(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -555,8 +558,8 @@ class _BookingHomeState extends State<BookingHomePage> {
                                           height: 16,
                                           decoration: BoxDecoration(
                                             color: booking[
-                                                        'IsSeguridadPatrimonial'] ==
-                                                    "1"
+                                            'IsSeguridadPatrimonial'] ==
+                                                "1"
                                                 ? Colors.green // Verde si es 1
                                                 : Colors.red, // Rojo si es 0
                                             shape: BoxShape.circle,
@@ -590,7 +593,7 @@ class _BookingHomeState extends State<BookingHomePage> {
                                           height: 16,
                                           decoration: BoxDecoration(
                                             color: booking['IsExpediciones'] ==
-                                                    "1"
+                                                "1"
                                                 ? Colors.green // Verde si es 1
                                                 : Colors.red, // Rojo si es 0
                                             shape: BoxShape.circle,
