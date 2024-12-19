@@ -60,25 +60,25 @@ class _MenuScreenState extends State<MenuScreen> {
         return AlertDialog(
           title: Text(
             resultMessage == 'success' ? 'Éxito' : 'Error',
-            style: TextStyle(
+            style: GoogleFonts.raleway(
               fontWeight: FontWeight.bold,
-              color: resultMessage == 'success' ? Colors.green : Colors.red,
+              color: resultMessage == 'success' ? Colors.green : Colors.red.shade800,
             ),
           ),
           content: Text(
             resultMessage == 'success'
                 ? 'Entrega registrada exitosamente.'
                 : resultMessage,
-            style: const TextStyle(fontSize: 16),
+            style: GoogleFonts.raleway(fontSize: 13),
           ),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text(
+              child: Text(
                 'Aceptar',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: GoogleFonts.raleway(fontWeight: FontWeight.bold, color: Colors.red.shade800),
               ),
             ),
           ],

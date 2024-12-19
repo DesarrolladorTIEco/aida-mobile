@@ -20,6 +20,43 @@ class _WorkerScreenState extends State<WorkerScreen> {
     if (dni.isNotEmpty && dni.length == 8) {
       try {
         await workerViewModel.fetchWorkerDni(dni);
+
+        if (workerViewModel.workers.isEmpty) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  "Información",
+                  style: GoogleFonts.raleway(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                content: Text(
+                  "El trabajador no ha recibido canasta.",
+                  style: GoogleFonts.raleway(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      "Aceptar",
+                      style: GoogleFonts.raleway(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       } catch (e) {
         print("Error: Error al obtener los trabajadores: $e");
       }
@@ -123,7 +160,6 @@ class _WorkerScreenState extends State<WorkerScreen> {
                             ),
                           ),
                           SizedBox(height: 4.0),
-                          // Mostrar la Planilla y FechaCreacion
                           Text(
                             'Planilla: ${worker['Planilla'] ?? 'No disponible'}',
                             style: GoogleFonts.raleway(

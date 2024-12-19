@@ -23,8 +23,45 @@ class _ChargeScreenState extends State<ChargeScreen> {
     final dni = _dniController.text.trim(); // Get entered DNI
     if (dni.isNotEmpty && dni.length == 8 && _selectedDate != null) {
       final date = DateFormat('yyyy-MM-dd').format(_selectedDate!); // Formato para fetchWorkers
+      final msg = DateFormat('dd-MM-yyyy').format(_selectedDate!); // Formato para fetchWorkers
       try {
         await workerViewModel.fetchWorkers(dni, date);
+        if (workerViewModel.workers.isEmpty) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  "Información",
+                  style: GoogleFonts.raleway(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                content: Text(
+                  "El responsable no ha entregado canasta durante el dia $msg",
+                  style: GoogleFonts.raleway(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      "Aceptar",
+                      style: GoogleFonts.raleway(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       } catch (e) {
         print("Error: Error al obtener los trabajadores: $e");
       }

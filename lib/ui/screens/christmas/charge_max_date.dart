@@ -26,8 +26,47 @@ class _ChargeDateScreenState extends State<ChargeDateScreen> {
       final startDate =DateFormat('yyyy-MM-dd').format(_startDate!);
       final endDate =DateFormat('yyyy-MM-dd').format(_endDate!);
 
+      final msgStart =DateFormat('dd-MM-yyyy').format(_startDate!);
+      final msgEnd =DateFormat('dd-MM-yyyy').format(_endDate!);
+
       try {
         await workerViewModel.fetchWorkersByRange(dni, startDate, endDate);
+        if (workerViewModel.workers.isEmpty) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  "Información",
+                  style: GoogleFonts.raleway(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                content: Text(
+                  "El responsable no ha entregado canasta durante en rango de fecha desde $msgStart hasta $msgEnd",
+                  style: GoogleFonts.raleway(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      "Aceptar",
+                      style: GoogleFonts.raleway(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       } catch (e) {
         print("Error: Error al obtener los trabajadores: $e");
       }

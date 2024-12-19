@@ -48,7 +48,7 @@ class WorkerViewModel extends ChangeNotifier {
         } else if (message.contains('No existe trabajador')) {
           return message;
         } else {
-          return 'Mensaje no reconocido: $message';
+          return '$message';
         }
       } else {
         return 'No se recibió una respuesta válida del servidor.';

@@ -20,6 +20,43 @@ class _StockScreenState extends State<StockScreen> {
       final date = DateFormat('yyyy-MM-dd').format(_selectedDate!);
       try {
         await workerViewModel.fetchStock(date);
+
+        if (workerViewModel.workers.isEmpty) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(
+                  "Información",
+                  style: GoogleFonts.raleway(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                content: Text(
+                  "No hay datos de entrega",
+                  style: GoogleFonts.raleway(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      "Aceptar",
+                      style: GoogleFonts.raleway(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
       } catch (e) {
         print("Error al obtener los trabajadores: $e");
       }
