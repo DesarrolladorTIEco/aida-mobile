@@ -1,3 +1,4 @@
+import 'package:aida/viewmodel/captures/container_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:aida/core/utils/camera_container.dart';
@@ -22,7 +23,11 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
   String booking = '';
   String url = '';
 
+  List<Map<String, dynamic>> allStatus = [];
+
+
   String title = 'PRECINTOS';
+  String utilPath = '';
 
   String zoneName = '';
   String cultive = '';
@@ -99,9 +104,6 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
       '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
     });
 
-    print("formattedZoneName $formattedZoneName");
-    print("formattedCultive $formattedCultive");
-    print("bookingFormatted $bookingFormatted");
 
     try {
       PhotoModel? response = await photoViewModel.insert(bkId, cntId,
@@ -125,6 +127,63 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
   List<bool> isChecked = List.generate(8, (index) => false);
   bool isListEnabled = false;
 
+
+  Future<void> _loadUtils(ContainerViewModel containerViewModel) async {
+    try {
+      await containerViewModel.checkPhotoCount(
+          bkId, cntId, utilPath.replaceAll('\\\\', '\\').trim(), title.toLowerCase().replaceAll(' ', '_'));
+      var apiResponse = containerViewModel.partStatus;
+
+      if (apiResponse != null && apiResponse.isNotEmpty) {
+        List<Map<String, dynamic>> processedStatus = [];
+
+        for (var part in apiResponse) {
+          String partName = part['part'] != null
+              ? _formatPartName(part['part'])
+              : 'Desconocido';
+          String status = part['status'] ?? 'incompleto';
+          int count = part['count'] ?? 0;
+
+          processedStatus
+              .add({'part': partName, 'count': count, 'status': status});
+        }
+
+        setState(() {
+          allStatus = processedStatus;
+        });
+
+      } else {
+        print("La respuesta de la API está vacía o nula.");
+      }
+    } catch (e) {
+      print("Error: error al obtener los contenedores: $e");
+    }
+  }
+
+  String _formatPartName(String part) {
+    switch (part) {
+      case 'precinto_aduana':
+        return 'Precinto Aduana';
+      case 'precinto_linea_01':
+        return 'Precinto Linea 01';
+      case 'contenedor_precintado':
+        return 'Contenedor Precintado';
+      default:
+        return part;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final containerViewModel =
+      Provider.of<ContainerViewModel>(context, listen: false);
+      _loadUtils(containerViewModel);
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final arguments =
@@ -137,6 +196,7 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
       zoneName = (arguments['zone'] ?? 'Desconocido').toString();
 
       booking = (arguments['booking'] ?? 'Desconocido').toString();
+      utilPath = (arguments['utilPath'] ?? 'Desconocido').toString();
 
       var bkIdValue = arguments['bkId'];
       bkId =
@@ -211,9 +271,12 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
 
           Expanded(
             child: ListView.builder(
-              itemCount: titles.length, // Mostrando los 8 elementos
+              itemCount: titles.length,
               itemBuilder: (context, index) {
                 bool isCheckbox = checkableTitles.contains(titles[index]);
+
+                bool isComplete = allStatus
+                    .any((part) => part['part'] == titles[index] && part['status'] == 'completo');
 
                 return Card(
                   elevation: 1,
@@ -221,6 +284,7 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
                   ),
+                  color: isComplete ? Colors.green.shade200 : Colors.grey.shade50,
                   child: InkWell(
                     child: ListTile(
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),

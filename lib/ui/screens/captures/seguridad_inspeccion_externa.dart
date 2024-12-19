@@ -1,5 +1,6 @@
 import 'package:aida/data/models/captures/photo_model.dart';
 import 'package:aida/viewmodel/auth_viewmodel.dart';
+import 'package:aida/viewmodel/captures/container_viewmodel.dart';
 import 'package:aida/viewmodel/captures/photo_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:aida/core/utils/camera_container.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
 
 class SeguridadInspeccionExternaMenu extends StatefulWidget {
   const SeguridadInspeccionExternaMenu({Key? key}) : super(key: key);
@@ -21,12 +21,15 @@ class _SeguridadInspeccionExternaState
     extends State<SeguridadInspeccionExternaMenu> {
   final CameraContainer _cameraContainer = CameraContainer();
 
+  List<Map<String, dynamic>> allStatus = [];
+
   //DECLARAMOS VARIABLES
   String container = '';
   String booking = '';
   String title = 'INSPECCION EXTERNA';
 
   String zoneName = '';
+  String utilPath = '';
   String cultive = '';
   String path = '';
 
@@ -46,26 +49,27 @@ class _SeguridadInspeccionExternaState
 
   Future<void> _getPath(BuildContext context, String dynamicTitle) async {
     final now = DateTime.now();
-    final String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+    final String formattedDate =
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
 
     final String formattedZoneName =
-    zoneName.toLowerCase().replaceAll(' ', '_');
+        zoneName.toLowerCase().replaceAll(' ', '_');
     final String formattedCultive = cultive.toLowerCase();
 
     final String year = now.year.toString();
     final String month =
-    DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+        DateFormat('MMM').format(now).toLowerCase();
     final String day = now.day.toString();
 
     final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
 
     final String titleFormatted = title.toLowerCase().replaceAll(' ', '_');
     final String dynamicTitleFormatted =
-    dynamicTitle.toLowerCase().replaceAll(' ', '_');
+        dynamicTitle.toLowerCase().replaceAll(' ', '_');
 
     setState(() {
       path =
-      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
+          '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
     });
   }
 
@@ -78,36 +82,32 @@ class _SeguridadInspeccionExternaState
 
     final now = DateTime.now();
     final String formattedDate =
-    DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss").format(now);
 
     final String formattedZoneName =
-    zoneName.toLowerCase().replaceAll(' ', '_');
+        zoneName.toLowerCase().replaceAll(' ', '_');
     final String formattedCultive = cultive.toLowerCase();
 
     final String year = now.year.toString();
-    final String month =
-    DateFormat('MMM').format(now).toLowerCase();
+    final String month = DateFormat('MMM').format(now).toLowerCase();
     final String day = now.day.toString();
 
     final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
 
     final String titleFormatted = title.toLowerCase().replaceAll(' ', '_');
     final String dynamicTitleFormatted =
-    dynamicTitle.toLowerCase().replaceAll(' ', '_');
+        dynamicTitle.toLowerCase().replaceAll(' ', '_');
 
     setState(() {
       path =
-      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
+          '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
     });
-
 
     try {
       PhotoModel? response = await photoViewModel.insert(bkId, cntId,
           titleFormatted, dynamicTitleFormatted, path, parsedUserID);
       await _cameraContainer.openCamera(context, path);
-
     } catch (e) {
-      print("Error al enviar las imagenes: $e"); // Depura cualquier error aquí
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error: ${e.toString()}"),
@@ -123,6 +123,73 @@ class _SeguridadInspeccionExternaState
   List<bool> isChecked = List.generate(8, (index) => false);
   bool isListEnabled = false;
 
+  Future<void> _loadUtils(ContainerViewModel containerViewModel) async {
+    try {
+      await containerViewModel.checkPhotoCount(
+          bkId, cntId, utilPath.replaceAll('\\\\', '\\').trim(), title.toLowerCase().replaceAll(' ', '_'));
+      var apiResponse = containerViewModel.partStatus;
+
+      print(apiResponse);
+
+      if (apiResponse != null && apiResponse.isNotEmpty) {
+        List<Map<String, dynamic>> processedStatus = [];
+
+        for (var part in apiResponse) {
+          String partName = part['part'] != null
+              ? _formatPartName(part['part'])
+              : 'Desconocido';
+          String status = part['status'] ?? 'incompleto';
+          int count = part['count'] ?? 0;
+
+          processedStatus
+              .add({'part': partName, 'count': count, 'status': status});
+        }
+
+        setState(() {
+          allStatus = processedStatus;
+        });
+
+        print(allStatus);
+      } else {
+        print("La respuesta de la API está vacía o nula.");
+      }
+    } catch (e) {
+      print("Error: error al obtener los contenedores: $e");
+    }
+  }
+
+  String _formatPartName(String part) {
+    switch (part) {
+      case 'interchange_(eir)':
+        return 'Interchange (EIR)';
+      case 'panoramica':
+        return 'Panorámica';
+      case 'parte_delantera_contenedor':
+        return 'Parte Delantera Contenedor';
+      case 'parte_posterior_contenedor':
+        return 'Parte Posterior Contenedor';
+      case 'placa_contenedor':
+        return 'Placa Contenedor';
+      case 'lado_derecho_contenedor':
+        return 'Lado Derecho Contenedor';
+      case 'lado_izquierdo_contenedor':
+        return 'Lado Izquierdo Contenedor';
+      default:
+        return part; // Si no hay un formato específico, retorna el nombre tal cual
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final containerViewModel =
+      Provider.of<ContainerViewModel>(context, listen: false);
+      _loadUtils(containerViewModel);
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final arguments =
@@ -133,6 +200,8 @@ class _SeguridadInspeccionExternaState
 
       cultive = (arguments['cultive'] ?? 'Desconocido').toString();
       zoneName = (arguments['zone'] ?? 'Desconocido').toString();
+
+      utilPath = (arguments['utilPath'] ?? 'Desconocido').toString();
 
       booking = (arguments['booking'] ?? 'Desconocido').toString();
 
@@ -212,14 +281,21 @@ class _SeguridadInspeccionExternaState
               itemBuilder: (context, index) {
                 bool isParches = titles[index] == 'Parches';
 
+                bool isComplete = allStatus
+                    .any((part) => part['part'] == titles[index] && part['status'] == 'completo');
+
+                print(isComplete);
                 return Card(
                   elevation: 1,
                   margin: const EdgeInsets.symmetric(vertical: 4.0),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
                   ),
+                  color: isComplete ? Colors.green.shade200 : Colors.grey.shade50,
+
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16.0),
                     title: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -245,9 +321,9 @@ class _SeguridadInspeccionExternaState
                               onTap: isParches && !isChecked[index]
                                   ? null
                                   : () async {
-                                String dynamicTitle = titles[index];
-                                await _sendData(context, dynamicTitle);
-                              },
+                                      String dynamicTitle = titles[index];
+                                      await _sendData(context, dynamicTitle);
+                                    },
                               child: Icon(
                                 Icons.photo_camera,
                                 size: 25,
@@ -261,21 +337,20 @@ class _SeguridadInspeccionExternaState
                               onTap: isParches && !isChecked[index]
                                   ? null // No hace nada si el checkbox no está marcado
                                   : () async {
-                                String dynamicTitle = titles[index];
-                                await _getPath(context, dynamicTitle);
+                                      String dynamicTitle = titles[index];
+                                      await _getPath(context, dynamicTitle);
 
-                                print(path);
 
-                                final arguments = {
-                                  'url': path,
-                                };
+                                      final arguments = {
+                                        'url': path,
+                                      };
 
-                                Navigator.pushNamed(
-                                  context,
-                                  '/gallery-container',
-                                  arguments: arguments,
-                                );
-                              },
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/gallery-container',
+                                        arguments: arguments,
+                                      );
+                                    },
                               child: Icon(
                                 Icons.photo_library_outlined,
                                 size: 25,
@@ -294,7 +369,8 @@ class _SeguridadInspeccionExternaState
                                 },
                                 activeColor: Colors.red.shade800,
                                 visualDensity: VisualDensity.compact,
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
                               ),
                             ],
                           ],
@@ -303,7 +379,6 @@ class _SeguridadInspeccionExternaState
                     ),
                   ),
                 );
-
               },
             ),
           ),

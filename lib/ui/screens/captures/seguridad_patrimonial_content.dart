@@ -1,4 +1,5 @@
 import 'package:aida/viewmodel/auth_viewmodel.dart';
+import 'package:aida/viewmodel/captures/container_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,8 +27,11 @@ class _SeguridadPatrimonialMenuState
   String cultive = '';
 
   String path = '';
+  String utilPath = '';
+
   num bkId = 0;
   num cntId = 0;
+
 
   Future<void> _getPath(BuildContext context) async {
     final now = DateTime.now();
@@ -134,6 +138,43 @@ class _SeguridadPatrimonialMenuState
     }
   }
 
+  Future<void> _loadUtils(ContainerViewModel containerViewModel) async {
+    try {
+      await containerViewModel.checkPhotoCountAll(bkId, cntId, utilPath.replaceAll('\\\\', '\\').trim());
+
+      var apiResponse = containerViewModel.partStatus;
+      print(apiResponse);
+
+      if(apiResponse != null && apiResponse.isNotEmpty) {
+      }
+
+    } catch (e) {
+      print("Error: error al obtener los contenedores: $e");
+    }
+  }
+
+  String _formatPartName(String part) {
+    switch (part) {
+      case 'inspeccion_externa':
+        return 'Inspección Externa';
+      case 'precintos':
+        return 'Precintos';
+      default:
+        return part; // Si no hay un formato específico, retorna el nombre tal cual
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final containerViewModel =
+      Provider.of<ContainerViewModel>(context, listen: false);
+      _loadUtils(containerViewModel);
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final arguments =
@@ -146,6 +187,9 @@ class _SeguridadPatrimonialMenuState
       booking = (arguments['booking'] ?? 'Desconocido').toString();
 
       container = (arguments['container'] ?? 'Desconocido').toString();
+
+      utilPath = (arguments['utilPath'] ?? 'Desconocido').toString();
+
 
       var bkIdValue = arguments['bkId'];
       bkId =
@@ -234,7 +278,8 @@ class _SeguridadPatrimonialMenuState
                         'cntId': cntId,
                         'zone': zoneName,
                         'cultive': cultive,
-                        'booking': booking
+                        'booking': booking,
+                        'utilPath' : utilPath
                       };
 
                       print(arguments);
@@ -275,7 +320,6 @@ class _SeguridadPatrimonialMenuState
 
                               await _getPath(context);
 
-                              print(path);
 
                               final arguments = {
                                 'url': path,

@@ -10,7 +10,10 @@ class ContainerViewModel extends ChangeNotifier {
 
   List<Map<String, dynamic>> _containers = [];
 
+  List<Map<String, dynamic>> _partsStatus  = [];
+
   List<Map<String, dynamic>> get containers => _containers;
+  List<Map<String, dynamic>> get partStatus => _partsStatus;
 
   void clearContainer() {
     _containers.clear();
@@ -76,4 +79,62 @@ class ContainerViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> checkPhotoCount(num bkId, num cntId, String path, String type) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      Map<String, dynamic> data = {
+        "MbBkId": bkId,
+        "MbCntId": cntId,
+        "path": path,
+        "type": type
+      };
+
+      final response = await _containerService.check_photo_counts(data);
+
+      if (response.isNotEmpty) {
+        _partsStatus = List<Map<String, dynamic>>.from(response);
+      } else {
+        _partsStatus = [];
+      }
+
+    } catch (e) {
+      errorMessage = 'Error al validar: ${e.toString()}';
+      print('Error: $errorMessage');
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> checkPhotoCountAll(num bkId, num cntId, String path) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      Map<String, dynamic> data = {
+        "MbBkId": bkId,
+        "MbCntId": cntId,
+        "path": path
+      };
+
+      final response = await _containerService.check_photo_counts_all(data);
+
+      if (response.isNotEmpty) {
+        _partsStatus = List<Map<String, dynamic>>.from(response);
+      } else {
+        _partsStatus = [];
+      }
+
+    } catch (e) {
+      errorMessage = 'Error al validar: ${e.toString()}';
+      print('Error: $errorMessage');
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
 }

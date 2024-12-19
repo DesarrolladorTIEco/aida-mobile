@@ -27,6 +27,51 @@ class ContainerService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> check_photo_counts(
+      Map<String, dynamic> data) async {
+    final String url = '${_apiService.baseUrl}securitic/check-photo-counts';
+
+    final response = await http.post(Uri.parse(url),
+        body: jsonEncode(data), headers: {'Content-Type': 'application/json'});
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+
+      if (responseBody is Map<String, dynamic> &&
+          responseBody.containsKey('data')) {
+        final dataList = responseBody['data'] as List<dynamic>;
+        return dataList.map((e) => e as Map<String, dynamic>).toList();
+      } else {
+        throw 'Respuesta de API no contiene los datos esperados';
+      }
+    } else {
+      throw 'Error en la solicitud: ${response.statusCode}';
+    }
+  }
+
+
+  Future<List<Map<String, dynamic>>> check_photo_counts_all(
+      Map<String, dynamic> data) async {
+    final String url = '${_apiService.baseUrl}securitic/check-photo-counts-all';
+
+    final response = await http.post(Uri.parse(url),
+        body: jsonEncode(data), headers: {'Content-Type': 'application/json'});
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+
+      if (responseBody is Map<String, dynamic> &&
+          responseBody.containsKey('data')) {
+        final dataList = responseBody['data'] as List<dynamic>;
+        return dataList.map((e) => e as Map<String, dynamic>).toList();
+      } else {
+        throw 'Respuesta de API no contiene los datos esperados';
+      }
+    } else {
+      throw 'Error en la solicitud: ${response.statusCode}';
+    }
+  }
+
   Future<Map<String, dynamic>> insert(Map<String, dynamic> data) async {
     final String url = '${_apiService.baseUrl}securitic/add-container';
     final response = await http.post(
@@ -37,7 +82,7 @@ class ContainerService {
 
     if (response.statusCode == 200) {
       return json.decode(response.body);
-    } else{
+    } else {
       var responseData = json.decode(response.body);
       var message = responseData['message'];
 
