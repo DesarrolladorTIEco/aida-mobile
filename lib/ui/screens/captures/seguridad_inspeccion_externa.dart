@@ -191,6 +191,8 @@ class _SeguridadInspeccionExternaState
         return 'Lado Derecho Contenedor';
       case 'lado_izquierdo_contenedor':
         return 'Lado Izquierdo Contenedor';
+      case 'parches':
+        return 'Parches';
       default:
         return part; // Si no hay un formato específico, retorna el nombre tal cual
     }

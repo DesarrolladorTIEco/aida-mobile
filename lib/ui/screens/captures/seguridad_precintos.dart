@@ -123,7 +123,6 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
       final containerViewModel =
           Provider.of<ContainerViewModel>(context, listen: false);
       _loadUtils(containerViewModel);
-
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -181,8 +180,16 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
         return 'Precinto Aduana';
       case 'precinto_linea_01':
         return 'Precinto Linea 01';
+      case 'precinto_senasa':
+        return 'Precinto Senasa';
+      case 'precinto_linea_02':
+        return 'Precinto Linea 02';
+      case 'precinto_ecosac':
+        return 'Precinto Ecosac';
+      case 'cinta_seguridad':
+        return 'Cinta Seguridad';
       case 'contenedor_precintado':
-        return 'Contenedor Precintado';
+        return 'Contenedor precintado';
       default:
         return part;
     }
