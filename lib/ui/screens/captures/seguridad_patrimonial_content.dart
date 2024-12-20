@@ -19,6 +19,9 @@ class SeguridadPatrimonialContenidoMenu extends StatefulWidget {
 class _SeguridadPatrimonialMenuState
     extends State<SeguridadPatrimonialContenidoMenu> {
   final CameraContainer _cameraContainer = CameraContainer();
+
+  List<Map<String, dynamic>> allStatus = [];
+
   String container = '';
   String booking = '';
 
@@ -31,6 +34,11 @@ class _SeguridadPatrimonialMenuState
 
   num bkId = 0;
   num cntId = 0;
+
+  final titles = [
+    'Inspección Externa',
+    'Precintos',
+  ];
 
 
   Future<void> _getPath(BuildContext context) async {
@@ -80,10 +88,6 @@ class _SeguridadPatrimonialMenuState
               .trim();
     });
 
-    print(bkId);
-    print(cntId);
-    print(parsedUserID);
-    print(path);
 
     try {
       bookingViewModel.isLoading = true;
@@ -91,7 +95,6 @@ class _SeguridadPatrimonialMenuState
 
       String? response = await bookingViewModel.saveCaptures(bkId, cntId, parsedUserID, path);
 
-      print(response);
 
       if (response != null) {
         showDialog(
@@ -113,7 +116,6 @@ class _SeguridadPatrimonialMenuState
         );
       }
     } catch (e) {
-      print("Error  $e");
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -141,15 +143,28 @@ class _SeguridadPatrimonialMenuState
   Future<void> _loadUtils(ContainerViewModel containerViewModel) async {
     try {
       await containerViewModel.checkPhotoCountAll(bkId, cntId, utilPath.replaceAll('\\\\', '\\').trim());
-
       var apiResponse = containerViewModel.partStatus;
-      print(apiResponse);
 
       if(apiResponse != null && apiResponse.isNotEmpty) {
+        List<Map<String, dynamic>> processedStatus = [];
+
+        for(var part in apiResponse) {
+          String partName = part['part'] != null ? _formatPartName(part['part']) : 'Desconocido';
+
+          String status = part['status'] ?? 'incompleto';
+
+          processedStatus
+          .add({'part': partName,'status': status});
+        }
+
+        setState(() {
+          allStatus = processedStatus;
+        });
+
       }
 
     } catch (e) {
-      print("Error: error al obtener los contenedores: $e");
+      print("Error: error: $e");
     }
   }
 
@@ -262,16 +277,18 @@ class _SeguridadPatrimonialMenuState
             child: ListView.builder(
               itemCount: 2,
               itemBuilder: (context, index) {
+                bool isComplete = allStatus.any((part) => part['part'] == titles[index] && part['status'] == 'completo');
+
+
                 return Card(
                   elevation: 1,
                   margin: const EdgeInsets.symmetric(vertical: 4.0),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
                   ),
+                  color: isComplete ? Colors.green.shade200 : Colors.grey.shade50,
                   child: InkWell(
                     onTap: () {
-                      print("booking $booking");
-
                       final arguments = {
                         'container': container,
                         'bkId': bkId,
@@ -279,21 +296,17 @@ class _SeguridadPatrimonialMenuState
                         'zone': zoneName,
                         'cultive': cultive,
                         'booking': booking,
-                        'utilPath' : utilPath
+                        'utilPath': utilPath
                       };
 
-                      print(arguments);
                       if (index == 0) {
-                        Navigator.pushNamed(context, '/seguridad-inspeccion',
-                            arguments: arguments);
+                        Navigator.pushNamed(context, '/seguridad-inspeccion', arguments: arguments);
                       } else if (index == 1) {
-                        Navigator.pushNamed(context, '/seguridad-precintos',
-                            arguments: arguments);
+                        Navigator.pushNamed(context, '/seguridad-precintos', arguments: arguments);
                       }
                     },
                     child: ListTile(
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 16.0),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -319,7 +332,6 @@ class _SeguridadPatrimonialMenuState
                               }
 
                               await _getPath(context);
-
 
                               final arguments = {
                                 'url': path,
@@ -347,7 +359,8 @@ class _SeguridadPatrimonialMenuState
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: (allStatus.every((part) => part['status'] == 'completo'))
+          ? FloatingActionButton.extended(
         onPressed: () async {
           await _save(context);
         },
@@ -362,7 +375,8 @@ class _SeguridadPatrimonialMenuState
             color: Colors.white,
           ),
         ),
-      ),
+      )
+          : SizedBox.shrink(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }

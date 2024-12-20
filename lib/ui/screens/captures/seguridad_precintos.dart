@@ -25,13 +25,14 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
 
   List<Map<String, dynamic>> allStatus = [];
 
-
   String title = 'PRECINTOS';
   String utilPath = '';
 
   String zoneName = '';
   String cultive = '';
   String path = '';
+
+  int count = 0;
 
   num bkId = 0;
   num cntId = 0;
@@ -53,28 +54,27 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
     'Cinta Seguridad',
   ];
 
-
   Future<void> _getPath(BuildContext context, String dynamicTitle) async {
     final now = DateTime.now();
 
     final String formattedZoneName =
-    zoneName.toLowerCase().replaceAll(' ', '_');
+        zoneName.toLowerCase().replaceAll(' ', '_');
     final String formattedCultive = cultive.toLowerCase();
 
     final String year = now.year.toString();
     final String month =
-    DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
+        DateFormat('MMM').format(now).toLowerCase(); // Formato de 3 letras
     final String day = now.day.toString();
 
     final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
 
     final String titleFormatted = title.toLowerCase().replaceAll(' ', '_');
     final String dynamicTitleFormatted =
-    dynamicTitle.toLowerCase().replaceAll(' ', '_');
+        dynamicTitle.toLowerCase().replaceAll(' ', '_');
 
     setState(() {
       path =
-      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
+          '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
     });
   }
 
@@ -86,7 +86,8 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
     photoViewModel.isLoading = true;
 
     final now = DateTime.now();
-    final String formattedZoneName = zoneName.toLowerCase().replaceAll(' ', '_');
+    final String formattedZoneName =
+        zoneName.toLowerCase().replaceAll(' ', '_');
     final String formattedCultive = cultive.toLowerCase();
 
     final String year = now.year.toString();
@@ -97,18 +98,31 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
 
     final String titleFormatted = title.toLowerCase().replaceAll(' ', '_');
     final String dynamicTitleFormatted =
-    dynamicTitle.toLowerCase().replaceAll(' ', '_');
+        dynamicTitle.toLowerCase().replaceAll(' ', '_');
 
     setState(() {
       path =
-      '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
+          '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
     });
 
+    final matchingPart = allStatus.firstWhere(
+      (part) => part['part'] == dynamicTitle,
+      orElse: () =>
+          {'count': 0}, // Si no se encuentra, usar un valor predeterminado.
+    );
+    int currentCount = matchingPart['count'] ?? 0;
 
     try {
+      int correlativo = currentCount + 1;
+      await _cameraContainer.openCamera(
+          context, path, dynamicTitleFormatted, correlativo);
+
       PhotoModel? response = await photoViewModel.insert(bkId, cntId,
           titleFormatted, dynamicTitleFormatted, path, parsedUserID);
-      await _cameraContainer.openCamera(context, path);
+
+      final containerViewModel =
+          Provider.of<ContainerViewModel>(context, listen: false);
+      _loadUtils(containerViewModel);
 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -123,15 +137,17 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
     }
   }
 
-
   List<bool> isChecked = List.generate(8, (index) => false);
   bool isListEnabled = false;
 
-
   Future<void> _loadUtils(ContainerViewModel containerViewModel) async {
     try {
+      print("uu");
       await containerViewModel.checkPhotoCount(
-          bkId, cntId, utilPath.replaceAll('\\\\', '\\').trim(), title.toLowerCase().replaceAll(' ', '_'));
+          bkId,
+          cntId,
+          utilPath.replaceAll('\\\\', '\\').trim(),
+          title.toLowerCase().replaceAll(' ', '_'));
       var apiResponse = containerViewModel.partStatus;
 
       if (apiResponse != null && apiResponse.isNotEmpty) {
@@ -142,7 +158,7 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
               ? _formatPartName(part['part'])
               : 'Desconocido';
           String status = part['status'] ?? 'incompleto';
-          int count = part['count'] ?? 0;
+          count = part['count'] ?? 0;
 
           processedStatus
               .add({'part': partName, 'count': count, 'status': status});
@@ -151,7 +167,6 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
         setState(() {
           allStatus = processedStatus;
         });
-
       } else {
         print("La respuesta de la API está vacía o nula.");
       }
@@ -178,16 +193,15 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final containerViewModel =
-      Provider.of<ContainerViewModel>(context, listen: false);
+          Provider.of<ContainerViewModel>(context, listen: false);
       _loadUtils(containerViewModel);
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     final arguments =
-    ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
     if (arguments != null) {
       container = (arguments['container'] ?? 'Desconocido').toString();
@@ -200,7 +214,7 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
 
       var bkIdValue = arguments['bkId'];
       bkId =
-      (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
+          (bkIdValue is String) ? num.tryParse(bkIdValue) ?? 0 : bkIdValue ?? 0;
 
       var cntIdValue = arguments['cntId'];
       cntId = (cntIdValue is String)
@@ -213,7 +227,7 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
         children: [
           Container(
             padding:
-            const EdgeInsets.only(top: 50, left: 12, right: 12, bottom: 20),
+                const EdgeInsets.only(top: 50, left: 12, right: 12, bottom: 20),
             decoration: BoxDecoration(
               color: Colors.red.shade800,
               boxShadow: const [
@@ -268,15 +282,15 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
               ],
             ),
           ),
-
           Expanded(
             child: ListView.builder(
               itemCount: titles.length,
               itemBuilder: (context, index) {
                 bool isCheckbox = checkableTitles.contains(titles[index]);
 
-                bool isComplete = allStatus
-                    .any((part) => part['part'] == titles[index] && part['status'] == 'completo');
+                bool isComplete = allStatus.any((part) =>
+                    part['part'] == titles[index] &&
+                    part['status'] == 'completo');
 
                 return Card(
                   elevation: 1,
@@ -284,10 +298,12 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
                   ),
-                  color: isComplete ? Colors.green.shade200 : Colors.grey.shade50,
+                  color:
+                      isComplete ? Colors.green.shade200 : Colors.grey.shade50,
                   child: InkWell(
                     child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 16.0),
                       title: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -313,9 +329,9 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
                                 onTap: isCheckbox && !isChecked[index]
                                     ? null
                                     : () async {
-                                  String dynamicTitle = titles[index];
-                                  await _sendData(context, dynamicTitle);
-                                },
+                                        String dynamicTitle = titles[index];
+                                        await _sendData(context, dynamicTitle);
+                                      },
                                 child: Icon(
                                   Icons.photo_camera,
                                   size: 25,
@@ -329,19 +345,19 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
                                 onTap: isCheckbox && !isChecked[index]
                                     ? null
                                     : () async {
-                                  String dynamicTitle = titles[index];
-                                  await _getPath(context, dynamicTitle);
+                                        String dynamicTitle = titles[index];
+                                        await _getPath(context, dynamicTitle);
 
-                                  final arguments = {
-                                    'url': path,
-                                  };
+                                        final arguments = {
+                                          'url': path,
+                                        };
 
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/gallery-container',
-                                    arguments: arguments,
-                                  );
-                                },
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/gallery-container',
+                                          arguments: arguments,
+                                        );
+                                      },
                                 child: Icon(
                                   Icons.photo_library_outlined,
                                   size: 25,
@@ -358,14 +374,15 @@ class _SeguridadPrecintoState extends State<SeguridadPrecintoMenu> {
                                       isChecked[index] = value ?? false;
                                     });
                                   },
-                                  activeColor: Colors.red.shade800, // Color rojo cuando está activado
+                                  activeColor: Colors.red.shade800,
+                                  // Color rojo cuando está activado
                                   visualDensity: VisualDensity.compact,
-                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                               ],
                             ],
                           ),
-
                         ],
                       ),
                     ),

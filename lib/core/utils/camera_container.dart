@@ -18,14 +18,11 @@ class CameraContainer {
     return List.generate(length, (index) => chars[rand.nextInt(chars.length)]).join();
   }
 
-  Future<XFile?> openCamera(BuildContext context, String path) async {
+  Future<XFile?> openCamera(BuildContext context, String path, String title, int correlativo) async {
     try {
-      final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
-      final fullName = (authViewModel.fullName ?? 'Usuario').replaceAll(' ', '_');
-
       final XFile? image = await _picker.pickImage(source: ImageSource.camera);
       if (image != null) {
-        String dynamicFilename = "${fullName}_${DateTime.now().day.toString().padLeft(2, '0')}${DateTime.now().month.toString().padLeft(2, '0')}${DateTime.now().year}${DateTime.now().hour.toString().padLeft(2, '0')}${DateTime.now().minute.toString().padLeft(2, '0')}_${generateRandomString(5)}";
+        String dynamicFilename = "${title}-0${correlativo}";
 
         await _uploadImageToServer(context, File(image.path), path, dynamicFilename);
       } else {

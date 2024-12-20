@@ -34,6 +34,7 @@ class _SeguridadInspeccionExternaState
   String path = '';
 
   num bkId = 0;
+  int count = 0;
   num cntId = 0;
 
   final titles = [
@@ -57,8 +58,7 @@ class _SeguridadInspeccionExternaState
     final String formattedCultive = cultive.toLowerCase();
 
     final String year = now.year.toString();
-    final String month =
-        DateFormat('MMM').format(now).toLowerCase();
+    final String month = DateFormat('MMM').format(now).toLowerCase();
     final String day = now.day.toString();
 
     final String bookingFormatted = booking.replaceAll("N° ", "").toLowerCase();
@@ -103,10 +103,26 @@ class _SeguridadInspeccionExternaState
           '${dotenv.get('MY_PATH', fallback: 'Ruta no disponible')}$formattedZoneName\\\\$formattedCultive\\\\$year\\\\$month\\\\$day\\\\$bookingFormatted\\\\$container\\\\$titleFormatted\\\\$dynamicTitleFormatted';
     });
 
+
+    // Extraer el valor de `count` correspondiente a `dynamicTitle`.
+    final matchingPart = allStatus.firstWhere(
+      (part) => part['part'] == dynamicTitle,
+      orElse: () => {'count': 0},
+    );
+    int currentCount = matchingPart['count'] ?? 0;
+
+
     try {
+      int correlativo = currentCount + 1;
+      await _cameraContainer.openCamera(
+          context, path, dynamicTitleFormatted, correlativo);
+
       PhotoModel? response = await photoViewModel.insert(bkId, cntId,
           titleFormatted, dynamicTitleFormatted, path, parsedUserID);
-      await _cameraContainer.openCamera(context, path);
+
+      final containerViewModel =
+          Provider.of<ContainerViewModel>(context, listen: false);
+      _loadUtils(containerViewModel);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -125,11 +141,14 @@ class _SeguridadInspeccionExternaState
 
   Future<void> _loadUtils(ContainerViewModel containerViewModel) async {
     try {
-      await containerViewModel.checkPhotoCount(
-          bkId, cntId, utilPath.replaceAll('\\\\', '\\').trim(), title.toLowerCase().replaceAll(' ', '_'));
-      var apiResponse = containerViewModel.partStatus;
+      print("uu");
 
-      print(apiResponse);
+      await containerViewModel.checkPhotoCount(
+          bkId,
+          cntId,
+          utilPath.replaceAll('\\\\', '\\').trim(),
+          title.toLowerCase().replaceAll(' ', '_'));
+      var apiResponse = containerViewModel.partStatus;
 
       if (apiResponse != null && apiResponse.isNotEmpty) {
         List<Map<String, dynamic>> processedStatus = [];
@@ -139,7 +158,7 @@ class _SeguridadInspeccionExternaState
               ? _formatPartName(part['part'])
               : 'Desconocido';
           String status = part['status'] ?? 'incompleto';
-          int count = part['count'] ?? 0;
+          count = part['count'] ?? 0;
 
           processedStatus
               .add({'part': partName, 'count': count, 'status': status});
@@ -148,8 +167,6 @@ class _SeguridadInspeccionExternaState
         setState(() {
           allStatus = processedStatus;
         });
-
-        print(allStatus);
       } else {
         print("La respuesta de la API está vacía o nula.");
       }
@@ -163,7 +180,7 @@ class _SeguridadInspeccionExternaState
       case 'interchange_(eir)':
         return 'Interchange (EIR)';
       case 'panoramica':
-        return 'Panorámica';
+        return 'Panoramica';
       case 'parte_delantera_contenedor':
         return 'Parte Delantera Contenedor';
       case 'parte_posterior_contenedor':
@@ -184,11 +201,10 @@ class _SeguridadInspeccionExternaState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final containerViewModel =
-      Provider.of<ContainerViewModel>(context, listen: false);
+          Provider.of<ContainerViewModel>(context, listen: false);
       _loadUtils(containerViewModel);
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -253,9 +269,9 @@ class _SeguridadInspeccionExternaState
                       Row(
                         children: [
                           const Icon(
-                            Icons.warning_amber_rounded, // Icono de advertencia
-                            color: Colors.white70, // Color del icono
-                            size: 20, // Tamaño del icono
+                            Icons.warning_amber_rounded,
+                            color: Colors.white70,
+                            size: 20,
                           ),
                           const SizedBox(width: 5),
                           Text(
@@ -281,18 +297,18 @@ class _SeguridadInspeccionExternaState
               itemBuilder: (context, index) {
                 bool isParches = titles[index] == 'Parches';
 
-                bool isComplete = allStatus
-                    .any((part) => part['part'] == titles[index] && part['status'] == 'completo');
+                bool isComplete = allStatus.any((part) =>
+                    part['part'] == titles[index] &&
+                    part['status'] == 'completo');
 
-                print(isComplete);
                 return Card(
                   elevation: 1,
                   margin: const EdgeInsets.symmetric(vertical: 4.0),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.zero,
                   ),
-                  color: isComplete ? Colors.green.shade200 : Colors.grey.shade50,
-
+                  color:
+                      isComplete ? Colors.green.shade200 : Colors.grey.shade50,
                   child: ListTile(
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16.0),
@@ -339,7 +355,6 @@ class _SeguridadInspeccionExternaState
                                   : () async {
                                       String dynamicTitle = titles[index];
                                       await _getPath(context, dynamicTitle);
-
 
                                       final arguments = {
                                         'url': path,
